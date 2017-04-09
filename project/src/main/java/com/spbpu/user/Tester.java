@@ -4,19 +4,18 @@
 
 package com.spbpu.user;
 
+import com.spbpu.exceptions.NoRightsException;
+import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Project;
 
-public class Tester extends User implements ReportManager {
+public class Tester extends User implements ReportCreator, ReportManager {
 
     private Project project;
 
-    public Tester(String name_, String login_, String email_, Project project_) {
-        super(name_, login_, email_);
-        project = project_;
-    }
     public Tester(User user, Project project_) {
-        this(user.getName(), user.getLogin(), user.getMailAddress(), project_);
+        super(user);
+        project = project_;
     }
 
     @Override
@@ -24,6 +23,14 @@ public class Tester extends User implements ReportManager {
         BugReport report = new BugReport(project, this, description);
         project.addReport(report);
         return report;
+    }
+
+    @Override
+    public void commentReport(BugReport report, String comment) throws NoRightsException {
+        if (report.getCreator().equals(this))
+            report.addComment((ReportCreator) this, comment);
+        else
+            report.addComment((ReportManager) this, comment);
     }
 
 }

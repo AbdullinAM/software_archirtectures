@@ -4,6 +4,7 @@
 package com.spbpu.project;
 
 
+import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.user.TicketDeveloper;
 import com.spbpu.user.TicketManager;
 
@@ -26,7 +27,7 @@ public class Ticket {
     private ArrayList<TicketDeveloper> assignees;
     private Date creationTime;
     private String task;
-    private ArrayList<String> comments;
+    private ArrayList<Comment> comments;
 
     public Ticket(Milestone milestone_, TicketManager creator_, String task_) {
         this(milestone_, creator_, new Date(), task_);
@@ -62,21 +63,24 @@ public class Ticket {
         return task;
     }
 
-    public ArrayList<String> getComments() {
+    public ArrayList<Comment> getComments() {
         return comments;
     }
 
     public void addAssignee(TicketDeveloper developer) {
-        if (!assignees.contains(developer))
+        if (!assignees.contains(developer)) {
             assignees.add(developer);
+            developer.notifyNew(this);
+        }
     }
 
     public void addComment(TicketManager manager, String comment) {
-        comments.add("[" + (new Date()).toString() + "] Manager " + manager.toString() + ": " + comment);
+        comments.add(new Comment(new Date(), manager.getUser(), comment));
     }
 
-    public void addComment(TicketDeveloper developer, String comment) {
-        comments.add("[" + (new Date()).toString() + "] Developer " + developer.toString() + ": " + comment);
+    public void addComment(TicketDeveloper developer, String comment) throws NoRightsException {
+        if (!assignees.contains(developer)) throw new NoRightsException(developer.toString() + " cannot change " + toString());
+        comments.add(new Comment(new Date(), developer.getUser(), comment));
     }
 
     public boolean isNew()          { return status.equals(Status.NEW); }
@@ -90,25 +94,22 @@ public class Ticket {
         addComment(manager, comment);
     }
 
-    public boolean setAccepted(TicketDeveloper developer) {
-        if (!assignees.contains(developer)) return false;
+    public void setAccepted(TicketDeveloper developer) throws NoRightsException {
+        if (!assignees.contains(developer)) throw new NoRightsException(developer.toString() + " cannot change " + toString());
         status = Status.ACCEPTED;
         addComment(developer, "ACCEPTED");
-        return true;
     }
 
-    public boolean setInProgress(TicketDeveloper developer) {
-        if (!assignees.contains(developer)) return false;
+    public void setInProgress(TicketDeveloper developer) throws NoRightsException {
+        if (!assignees.contains(developer)) throw new NoRightsException(developer.toString() + " cannot change " + toString());
         status = Status.IN_PROGRESS;
         addComment(developer, "IN PROGRESS");
-        return true;
     }
 
-    public boolean setFinished(TicketDeveloper developer) {
-        if (!assignees.contains(developer)) return false;
+    public void setFinished(TicketDeveloper developer) throws NoRightsException {
+        if (!assignees.contains(developer)) throw new NoRightsException(developer.toString() + " cannot change " + toString());
         status = Status.FINISHED;
         addComment(developer, "FINISHED");
-        return true;
     }
 
     public void setClosed(TicketManager manager) {

@@ -8,12 +8,13 @@ import com.spbpu.user.Manager;
 import com.spbpu.user.User;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class StorageRepository {
 
-    private static HashMap<String, User> users = new HashMap<>();
-    private static HashMap<User, String> passwds = new HashMap<>();
-    private static HashMap<String, Project> projects = new HashMap<>();
+    private static Map<String, User> users = new HashMap<>();
+    private static Map<String, String> passwds = new HashMap<>();
+    private static Map<String, Project> projects = new HashMap<>();
 
     public StorageRepository() {}
 
@@ -23,9 +24,13 @@ public class StorageRepository {
         User newUser = new User(login, name, email);
         synchronized (this) {
             users.put(login, newUser);
-            passwds.put(newUser, password);
+            passwds.put(login, password);
         }
         return true;
+    }
+
+    public User getUser(String login) {
+        return users.get(login);
     }
 
     public boolean authenticateUser(String login, String password) {
@@ -34,7 +39,7 @@ public class StorageRepository {
     }
 
     public boolean authenticateUser(User user, String password) {
-        return passwds.get(user).equals(password);
+        return passwds.get(user.getLogin()).equals(password);
     }
 
     public Project addProject(String name, Manager manager) {
@@ -44,5 +49,15 @@ public class StorageRepository {
             projects.put(name, project);
         }
         return project;
+    }
+
+    synchronized public void clear() {
+        users.clear();
+        passwds.clear();
+        projects.clear();
+    }
+
+    public String getPasswd() {
+        return passwds.toString();
     }
 }

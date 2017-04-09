@@ -4,21 +4,23 @@
 
 package com.spbpu.user;
 
+import com.spbpu.exceptions.NoRightsException;
+import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Project;
 import com.spbpu.project.Ticket;
 
-public class TeamLeader extends User implements ReportManager, ReportDeveloper, TicketManager, TicketDeveloper {
+import java.util.List;
+
+public class TeamLeader extends User implements ReportCreator, ReportDeveloper, TicketManager, TicketDeveloper {
 
     private Project project;
-
-    public TeamLeader(String name_, String login_, String email_, Project project_) {
-        super(name_, login_, email_);
-        project = project_;
-    }
+    private List<Ticket> assignedTickets;
+    private List<BugReport> assignedBugReports;
 
     public TeamLeader(User user, Project project_) {
-        this(user.getName(), user.getLogin(), user.getMailAddress(), project_);
+        super(user);
+        project = project_;
     }
 
     @Override
@@ -29,15 +31,15 @@ public class TeamLeader extends User implements ReportManager, ReportDeveloper, 
     }
 
     @Override
-    public void commentReport(BugReport report, String comment) {
+    public void commentReport(BugReport report, String comment) throws NoRightsException {
         if (report.getCreator().equals(this))
-            report.addComment((ReportManager)this, comment);
+            report.addComment((ReportCreator)this, comment);
         else
             report.addComment((ReportDeveloper) this, comment);
     }
 
     @Override
-    public void commentTicket(Ticket ticket, String comment) {
+    public void commentTicket(Ticket ticket, String comment) throws NoRightsException {
         if (ticket.getCreator().equals(this))
             ticket.addComment((TicketManager) this, comment);
         else

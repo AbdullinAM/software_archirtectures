@@ -4,6 +4,7 @@
 
 package com.spbpu.user;
 
+import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
 import com.spbpu.storage.StorageRepository;
@@ -19,8 +20,8 @@ public class Manager extends User implements TicketManager {
         super(name_, login_, email_);
     }
 
-    public Manager(User user, Project project_) {
-        this(user.getName(), user.getLogin(), user.getMailAddress());
+    public Manager(User user) {
+        super(user);
     }
 
     public Project createProject(String name) {

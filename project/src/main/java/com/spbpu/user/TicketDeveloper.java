@@ -4,22 +4,31 @@
 
 package com.spbpu.user;
 
+import com.spbpu.exceptions.NoRightsException;
+import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.Ticket;
 
-public interface TicketDeveloper {
-    default boolean acceptTicket(Ticket ticket) {
-        return ticket.setAccepted(this);
+public interface TicketDeveloper extends UserInterface {
+
+    default void notifyNew(Ticket ticket) {}
+
+    default void acceptTicket(Ticket ticket) throws NoRightsException, NotAuthenticatedException {
+        checkAuthenticated();
+        ticket.setAccepted(this);
     }
 
-    default boolean setInProgress(Ticket ticket) {
-        return ticket.setInProgress(this);
+    default void setInProgress(Ticket ticket) throws NoRightsException, NotAuthenticatedException {
+        checkAuthenticated();
+        ticket.setInProgress(this);
     }
 
-    default boolean finishTicket(Ticket ticket) {
-        return ticket.setFinished(this);
+    default void finishTicket(Ticket ticket) throws NoRightsException, NotAuthenticatedException {
+        checkAuthenticated();
+        ticket.setFinished(this);
     }
 
-    default void commentTicket(Ticket ticket, String comment) {
+    default void commentTicket(Ticket ticket, String comment) throws NoRightsException, NotAuthenticatedException {
+        checkAuthenticated();
         ticket.addComment(this, comment);
     }
 }

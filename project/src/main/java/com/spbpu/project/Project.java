@@ -6,17 +6,20 @@ package com.spbpu.project;
 
 import com.spbpu.user.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Project {
 
     private String name;
     private Manager manager;
     private TeamLeader teamLeader;
-    private HashSet<Developer> developers;
-    private HashSet<Tester> testers;
-    private HashSet<Milestone> milestones;
-    private HashSet<BugReport> reports;
+    private Set<Developer> developers;
+    private Set<Tester> testers;
+    private Set<Milestone> milestones;
+    private Set<BugReport> reports;
 
     public Project(String name_, Manager manager_) {
         name = name_;
@@ -56,16 +59,25 @@ public class Project {
         return teamLeader;
     }
 
-    public HashSet<Developer> getDevelopers() {
+    public Set<Developer> getDevelopers() {
         return developers;
     }
 
-    public HashSet<Tester> getTesters() {
+    public Set<Tester> getTesters() {
         return testers;
     }
 
-    public HashSet<Milestone> getMilestones() {
+    public Set<Milestone> getMilestones() {
         return milestones;
+    }
+
+    public List<ReportDeveloper> getReportDevelopers() {
+        List<ReportDeveloper> reportDevelopers = new ArrayList<>();
+        reportDevelopers.add(teamLeader);
+        for (Developer dev : developers) {
+            reportDevelopers.add(dev);
+        }
+        return reportDevelopers;
     }
 
 }
