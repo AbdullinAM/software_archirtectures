@@ -56,8 +56,4 @@ public class StorageRepository {
         passwds.clear();
         projects.clear();
     }
-
-    public String getPasswd() {
-        return passwds.toString();
-    }
 }

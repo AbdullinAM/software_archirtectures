@@ -80,8 +80,13 @@ public class BPBugReportTest extends TestCase {
         BugReport report = teamLeader.createReport("Bug in code");
         assertTrue("Report is new", report.isOpened());
 
+        assertEquals(1, project.getReports().size());
+        assertTrue(project.getReports().contains(report));
+
         developer.acceptReport(report);
         assertTrue("Report not accepted", report.isAccepted());
+
+        assertEquals(report, developer.getAssignedBugReports().get(0));
 
         developer.fixReport(report);
         assertTrue("Report not fixed", report.isFixed());
@@ -111,6 +116,29 @@ public class BPBugReportTest extends TestCase {
             teamLeader.acceptReport(report);
             fail("Doubly accepted");
         } catch (AlreadyAcceptedException e) {
+            assertTrue(e.getMessage(), true);
+        }
+    }
+
+    @Test
+    public void testNoRights() throws Exception {
+        BugReport report = teamLeader.createReport("Bug in code");
+        assertTrue("Report is new", report.isOpened());
+
+        developer.acceptReport(report);
+        assertTrue("Report accepted", report.isAccepted());
+
+        try {
+            wrongDev.fixReport(report);
+            fail("report changed by someone who has no rights");
+        } catch (NoRightsException e) {
+            assertTrue(e.getMessage(), true);
+        }
+
+        try {
+            wrongDev.commentReport(report, "Can't comment this");
+            fail("report changed by someone who has no rights");
+        } catch (NoRightsException e) {
             assertTrue(e.getMessage(), true);
         }
     }

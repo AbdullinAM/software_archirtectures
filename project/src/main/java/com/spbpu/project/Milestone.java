@@ -4,8 +4,12 @@
 
 package com.spbpu.project;
 
+import com.spbpu.exceptions.EndBeforeStartException;
+import com.spbpu.exceptions.TwoActiveMilestonesException;
+
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 public class Milestone {
 
@@ -21,9 +25,10 @@ public class Milestone {
     private Date activeDate;
     private Date endDate;
     private Date closingDate;
-    private HashSet<Ticket> tickets;
+    private Set<Ticket> tickets;
 
-    public Milestone(Project project_, Date startDate, Date endDate) {
+    public Milestone(Project project_, Date startDate, Date endDate) throws EndBeforeStartException {
+        if (endDate.before(startDate)) throw new EndBeforeStartException("Milestone end is before start");
         project = project_;
         status = Status.OPENED;
         this.startDate = startDate;
@@ -36,6 +41,10 @@ public class Milestone {
 
     public Project getProject() {
         return project;
+    }
+
+    public Set<Ticket> getTickets() {
+        return tickets;
     }
 
     public void addTicket(Ticket ticket) {
@@ -63,8 +72,13 @@ public class Milestone {
     public boolean isActive() { return status.equals(Status.ACTIVE); }
     public boolean isClosed() { return status.equals(Status.CLOSED); }
 
-    public boolean setActive() {
+    public boolean setActive() throws TwoActiveMilestonesException {
         if (isActive()) return true;
+
+        for (Milestone milestone : project.getMilestones()) {
+            if (milestone.isActive()) throw new TwoActiveMilestonesException("Attempting to create two active milestones");
+        }
+
         status = Status.ACTIVE;
         activeDate = new Date();
         return true;
@@ -75,6 +89,7 @@ public class Milestone {
         for (Ticket t : tickets)
             if (!t.isClosed()) return false;
         closingDate = new Date();
+        status = Status.CLOSED;
         return true;
     }
 }

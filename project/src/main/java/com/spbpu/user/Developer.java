@@ -28,6 +28,14 @@ public class Developer extends User  implements ReportCreator, ReportDeveloper, 
         assignedBugReports = new ArrayList<>();
     }
 
+    public List<BugReport> getAssignedBugReports() {
+        return assignedBugReports;
+    }
+
+    public List<Ticket> getAssignedTickets() {
+        return assignedTickets;
+    }
+
     @Override
     public BugReport createReport(String description) throws NotAuthenticatedException {
         checkAuthenticated();
@@ -43,5 +51,19 @@ public class Developer extends User  implements ReportCreator, ReportDeveloper, 
             report.addComment((ReportCreator) this, comment);
         else
             report.addComment((ReportDeveloper) this, comment);
+    }
+
+    @Override
+    public void acceptReport(BugReport report) throws AlreadyAcceptedException, NotAuthenticatedException {
+        checkAuthenticated();
+        report.setAccepted(this);
+        if (! assignedBugReports.contains(report)) assignedBugReports.add(report);
+    }
+
+    @Override
+    public void acceptTicket(Ticket ticket) throws NoRightsException, NotAuthenticatedException {
+        checkAuthenticated();
+        ticket.setAccepted(this);
+        if (! assignedTickets.contains(ticket)) assignedTickets.add(ticket);
     }
 }

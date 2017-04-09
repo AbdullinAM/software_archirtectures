@@ -49,6 +49,14 @@ public class Project {
 
     public void addMilestone(Milestone milestone) {
         assert milestone.getProject().equals(this);
+        milestones.add(milestone);
+    }
+
+    public Milestone getActiveMilestone() {
+        for (Milestone milestone : milestones)
+            if (milestone.isActive()) return milestone;
+
+        return null;
     }
 
     public Manager getManager() {
@@ -69,6 +77,10 @@ public class Project {
 
     public Set<Milestone> getMilestones() {
         return milestones;
+    }
+
+    public Set<BugReport> getReports() {
+        return reports;
     }
 
     public List<ReportDeveloper> getReportDevelopers() {

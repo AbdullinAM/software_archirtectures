@@ -5,6 +5,7 @@
 package com.spbpu.user;
 
 import com.spbpu.exceptions.NotAuthenticatedException;
+import com.spbpu.exceptions.TwoActiveMilestonesException;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
 import com.spbpu.storage.StorageRepository;
@@ -29,13 +30,13 @@ public class Manager extends User implements TicketManager {
         return project;
     }
 
-    public Milestone createMilestone(Project project, Date start, Date end) {
+    public Milestone createMilestone(Project project, Date start, Date end) throws Exception {
         Milestone milestone = new Milestone(project, start, end);
         project.addMilestone(milestone);
         return milestone;
     }
 
-    public boolean setActive(Milestone milestone) {
+    public boolean setActive(Milestone milestone) throws TwoActiveMilestonesException {
         return milestone.setActive();
     }
 
