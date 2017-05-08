@@ -83,6 +83,9 @@ public class BPBugReportTest extends TestCase {
         assertEquals(1, project.getReports().size());
         assertTrue(project.getReports().contains(report));
 
+        assertEquals(1, developer.getMessages().size());
+        assertEquals("New bug report: " + report.toString(), developer.getMessages().get(0));
+
         developer.acceptReport(report);
         assertTrue("Report not accepted", report.isAccepted());
 

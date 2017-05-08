@@ -77,6 +77,11 @@ public class BPTicketTest extends TestCase {
         assertEquals(teamLeader, ticket.getAssignees().get(0));
         assertEquals(developer, ticket.getAssignees().get(1));
 
+        assertEquals(1, developer.getMessages().size());
+        assertEquals(1, teamLeader.getMessages().size());
+        assertEquals("New ticket: " + ticket.toString(), developer.getMessages().get(0));
+        assertEquals("New ticket: " + ticket.toString(), teamLeader.getMessages().get(0));
+
         developer.acceptTicket(ticket);
         assertTrue(ticket.isAccepted());
 

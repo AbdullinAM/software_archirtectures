@@ -10,7 +10,12 @@ import com.spbpu.project.Ticket;
 
 public interface TicketDeveloper extends UserInterface {
 
-    default void notifyNew(Ticket ticket) {}
+    default void notifyNew(Ticket ticket) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("New ticket: ");
+        builder.append(ticket.toString());
+        addMessage(builder.toString());
+    }
 
     default void acceptTicket(Ticket ticket) throws NoRightsException, NotAuthenticatedException {
         checkAuthenticated();

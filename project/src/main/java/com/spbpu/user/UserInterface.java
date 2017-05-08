@@ -6,7 +6,11 @@ package com.spbpu.user;
 
 import com.spbpu.exceptions.NotAuthenticatedException;
 
+import java.util.ArrayList;
+
 public interface UserInterface {
     User getUser();
     void checkAuthenticated() throws NotAuthenticatedException;
+    void addMessage(String message);
+    ArrayList<String> getMessages();
 }

@@ -7,18 +7,22 @@ package com.spbpu.user;
 import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.storage.StorageRepository;
 
+import java.util.ArrayList;
+
 public class User implements UserInterface {
 
     private String login;
     private String name;
     private String email;
     private boolean authenticated;
+    private ArrayList<String> messages;
 
     public User(String login_, String name_, String email_) {
         login = login_;
         name = name_;
         email = email_;
         authenticated = false;
+        messages = new ArrayList<>();
     }
 
     public User(User user) {
@@ -26,6 +30,7 @@ public class User implements UserInterface {
         name = user.name;
         email = user.email;
         authenticated = user.authenticated;
+        messages = new ArrayList<>();
     }
 
     public String getLogin() {
@@ -66,6 +71,16 @@ public class User implements UserInterface {
     public void checkAuthenticated() throws NotAuthenticatedException {
         if (isAuthenticated()) return;
         throw new NotAuthenticatedException(toString() + " is not authenticated");
+    }
+
+    @Override
+    public void addMessage(String message) {
+        messages.add(message);
+    }
+
+    @Override
+    public ArrayList<String> getMessages() {
+        return messages;
     }
 
     @Override

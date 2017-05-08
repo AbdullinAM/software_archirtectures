@@ -11,7 +11,12 @@ import com.spbpu.project.BugReport;
 
 public interface ReportDeveloper extends UserInterface {
 
-    default void notifyNew(BugReport report) {}
+    default void notifyNew(BugReport report) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("New bug report: ");
+        builder.append(report.toString());
+        addMessage(builder.toString());
+    }
 
     default void acceptReport(BugReport report) throws AlreadyAcceptedException, NotAuthenticatedException {
         checkAuthenticated();
