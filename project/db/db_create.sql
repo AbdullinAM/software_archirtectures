@@ -16,7 +16,8 @@ DROP TABLE IF EXISTS USERS;
 CREATE TABLE USERS (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  login VARCHAR(100) NOT NULL,
+  login VARCHAR(100) UNIQUE NOT NULL,
+  email VARCHAR(100) NOT NULL,
   password CHAR(40)   # sha1 hash
 );
 
@@ -29,7 +30,7 @@ CREATE TABLE MESSAGE (
 
 CREATE TABLE PROJECT (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
+  name VARCHAR(100) UNIQUE NOT NULL,
   manager INT NOT NULL,
   teamleader INT NOT NULL,
   FOREIGN KEY (manager) REFERENCES USERS(id),
@@ -121,11 +122,11 @@ CREATE TABLE PROJECT_TESTERS (
 );
 
 # inserting some data
-INSERT INTO USERS(USERS.name, USERS.login, USERS.password) VALUES ("First User", "user1", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.password) VALUES ("Second User", "user2", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.password) VALUES ("Third User", "user3", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.password) VALUES ("Fourth User", "user4", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.password) VALUES ("Fifth User", "user5", SHA1("user"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("First User", "user1", "email", SHA1("user"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Second User", "user2", "email", SHA1("user"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Third User", "user3", "email", SHA1("user"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Fourth User", "user4", "email", SHA1("user"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Fifth User", "user5", "email", SHA1("user"));
 
 INSERT INTO PROJECT(PROJECT.name, PROJECT.manager, PROJECT.teamleader) VALUES(
   "First project",
