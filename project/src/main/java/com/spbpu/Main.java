@@ -12,6 +12,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, SQLException {
         UserMapper mapper = new UserMapper();
-        mapper.findByLogin("user1");
+        User user = mapper.findByLogin("user1");
+        System.out.println(user.getId());
     }
 }

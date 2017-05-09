@@ -10,15 +10,23 @@ import java.util.Date;
 
 public class Comment {
 
+    private int id;
     private Date date;
     private User commenter;
     private String comment;
 
-    Comment(Date date_, User user_, String comment_) {
+    public Comment(Date date_, User user_, String comment_) {
         date = date_;
         commenter = user_;
         comment = comment_;
     }
+
+    public Comment(int id_, Date date_, User user_, String comment_) {
+        this(date_, user_, comment_);
+        id = id_;
+    }
+
+    public int getId() { return id; }
 
     public Date getDate() {
         return date;

@@ -21,7 +21,7 @@ public class StorageRepository {
     public boolean addUser(String login, String name, String email, String password) {
         if (users.containsKey(login)) return false;
 
-        User newUser = new User(login, name, email);
+        User newUser = new User(0, login, name, email, null);
         synchronized (this) {
             users.put(login, newUser);
             passwds.put(login, password);

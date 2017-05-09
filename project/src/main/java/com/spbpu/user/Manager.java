@@ -17,10 +17,6 @@ public class Manager extends User implements TicketManager {
 
     private ArrayList<Project> projects;
 
-    public Manager(String name_, String login_, String email_) {
-        super(name_, login_, email_);
-    }
-
     public Manager(User user) {
         super(user);
     }

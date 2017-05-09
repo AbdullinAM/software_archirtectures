@@ -5,6 +5,7 @@
 package com.spbpu.user;
 
 import com.spbpu.exceptions.NotAuthenticatedException;
+import com.spbpu.project.Message;
 import com.spbpu.storage.StorageRepository;
 
 import java.util.ArrayList;
@@ -12,21 +13,15 @@ import java.util.List;
 
 public class User implements UserInterface {
 
+    private int id;
     private String login;
     private String name;
     private String email;
     private boolean authenticated;
-    private List<String> messages;
+    private List<Message> messages;
 
-    public User(String login_, String name_, String email_) {
-        login = login_;
-        name = name_;
-        email = email_;
-        authenticated = false;
-        messages = new ArrayList<>();
-    }
-
-    public User(String login_, String name_, String email_, List<String> messages_) {
+    public User(int id_, String login_, String name_, String email_, List<Message> messages_) {
+        id = id_;
         login = login_;
         name = name_;
         email = email_;
@@ -35,12 +30,15 @@ public class User implements UserInterface {
     }
 
     public User(User user) {
+        id = user.id;
         login = user.login;
         name = user.name;
         email = user.email;
         authenticated = user.authenticated;
         messages = new ArrayList<>();
     }
+
+    public int getId() { return id; }
 
     public String getLogin() {
         return login;
@@ -84,11 +82,11 @@ public class User implements UserInterface {
 
     @Override
     public void addMessage(String message) {
-        messages.add(message);
+        messages.add(new Message(this, message));
     }
 
     @Override
-    public List<String> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 

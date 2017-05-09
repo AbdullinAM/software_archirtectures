@@ -1,6 +1,8 @@
 package com.spbpu.storage.user;
 
+import com.spbpu.project.Message;
 import com.spbpu.storage.DataGateway;
+import com.spbpu.storage.project.MessageMapper;
 import com.spbpu.user.User;
 
 import java.io.IOException;
@@ -17,9 +19,11 @@ public class UserMapper implements UserMapperInterface<User> {
 
     private Set<User> users;
     private Connection connection;
+    private MessageMapper msgMapper;
 
     public UserMapper() throws SQLException, IOException {
         users = new HashSet<>();
+        msgMapper = new MessageMapper();
 
         DataGateway gateway = DataGateway.getInstance();
         connection = gateway.getDataSource().getConnection();
@@ -56,11 +60,45 @@ public class UserMapper implements UserMapperInterface<User> {
         ResultSet rs = extractUserStatement.executeQuery();
 
         if (!rs.next()) return null;
+        int id = rs.getInt("id");
         String name = rs.getString("name");
         String email = rs.getString("email");
-        List<String> messages = getMessagesForUser(rs.getInt("id"));
+        List<Message> messages = msgMapper.findAllForUser(id);
 
-        User newUser = new User(login, name, email, messages);
+        User newUser = new User(id, login, name, email, messages);
+        for (Message it : messages)
+            it.setOwner(newUser);
+
+        users.add(newUser);
+
+        return newUser;
+    }
+
+    @Override
+    public User findByID(int id) throws SQLException {
+        for (User it : users) {
+            if (it.getId() == id)
+                return it;
+        }
+
+        // User not found, extract from database
+        String selectSQL = "SELECT * FROM USERS WHERE id = ?;";
+        PreparedStatement extractUserStatement = connection.prepareStatement(selectSQL);
+        extractUserStatement.setInt(1, id);
+        ResultSet rs = extractUserStatement.executeQuery();
+
+        if (!rs.next()) return null;
+
+        int uid = rs.getInt("id");
+        String login = rs.getString("login");
+        String name = rs.getString("name");
+        String email = rs.getString("email");
+        List<Message> messages = msgMapper.findAllForUser(id);
+
+        User newUser = new User(id, login, name, email, messages);
+        for (Message it : messages)
+            it.setOwner(newUser);
+
         users.add(newUser);
 
         return newUser;
@@ -76,11 +114,12 @@ public class UserMapper implements UserMapperInterface<User> {
         ResultSet rs = extractUserStatement.executeQuery(userSelectStatement);
 
         while (rs.next()) {
+            int id = rs.getInt("id");
             String login = rs.getString("login");
             String name = rs.getString("name");
             String email = rs.getString("email");
-            List<String> messages = getMessagesForUser(rs.getInt("id"));
-            User newUser = new User(login, name, email, messages);
+            List<Message> messages = msgMapper.findAllForUser(id);
+            User newUser = new User(id, login, name, email, messages);
             users.add(newUser);
             all.add(newUser);
         }
@@ -90,7 +129,20 @@ public class UserMapper implements UserMapperInterface<User> {
 
     @Override
     public void update(User item) throws SQLException {
+        if (users.contains(item)) {
+            // user itself is immutable, he can only have new messages
+            for (Message it : item.getMessages())
+                msgMapper.update(it);
 
+        } else {
+            String insertSQL = "INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES (?, ?, ?, SHA1(?));";
+            PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+            insertStatement.setString(1, item.getName());
+            insertStatement.setString(2, item.getLogin());
+            insertStatement.setString(3, item.getMailAddress());
+            insertStatement.setString(4, "user");
+            insertStatement.execute();
+        }
     }
 
     @Override
