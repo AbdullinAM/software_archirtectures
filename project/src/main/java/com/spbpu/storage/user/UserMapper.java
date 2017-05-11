@@ -17,33 +17,15 @@ import java.util.Set;
  */
 public class UserMapper implements UserMapperInterface<User> {
 
-    private Set<User> users;
+    private static Set<User> users = new HashSet<>();
     private Connection connection;
     private MessageMapper msgMapper;
 
     public UserMapper() throws SQLException, IOException {
-        users = new HashSet<>();
         msgMapper = new MessageMapper();
 
         DataGateway gateway = DataGateway.getInstance();
         connection = gateway.getDataSource().getConnection();
-    }
-
-    @Override
-    public List<String> getMessagesForUser(int id) throws SQLException {
-        List<String> messages = new ArrayList<>();
-
-        String messagesSelectStatement = "SELECT * FROM MESSAGE WHERE user = ?;";
-        PreparedStatement extractMessagesStatement = connection.prepareStatement(messagesSelectStatement);
-        extractMessagesStatement.setInt(1, id);
-
-        ResultSet rs = extractMessagesStatement.executeQuery();
-        while (rs.next()) {
-            String message = rs.getString("message");
-            messages.add(message);
-        }
-
-        return messages;
     }
 
     @Override
@@ -147,7 +129,7 @@ public class UserMapper implements UserMapperInterface<User> {
 
     @Override
     public void closeConnection() throws SQLException {
+        msgMapper.closeConnection();
         connection.close();
-
     }
 }

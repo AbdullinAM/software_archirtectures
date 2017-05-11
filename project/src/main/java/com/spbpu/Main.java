@@ -14,5 +14,7 @@ public class Main {
         UserMapper mapper = new UserMapper();
         User user = mapper.findByLogin("user1");
         System.out.println(user.getId());
+        System.out.println(user.toString());
+        mapper.closeConnection();
     }
 }

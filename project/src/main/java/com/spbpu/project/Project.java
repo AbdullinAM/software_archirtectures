@@ -59,6 +59,8 @@ public class Project {
         return null;
     }
 
+    public String getName() { return name; }
+
     public Manager getManager() {
         return manager;
     }

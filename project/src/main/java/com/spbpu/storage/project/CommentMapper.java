@@ -5,7 +5,6 @@
 package com.spbpu.storage.project;
 
 import com.spbpu.project.Comment;
-import com.spbpu.project.Message;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
 import com.spbpu.storage.user.UserMapper;
@@ -13,18 +12,16 @@ import com.spbpu.user.User;
 
 import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Date;
 
 public class CommentMapper implements Mapper<Comment> {
 
-    private Set<Comment> comments;
+    private static Set<Comment> comments = new HashSet<>();
     private Connection connection;
     private UserMapper userMapper;
 
     public CommentMapper() throws IOException, SQLException {
-        comments = new HashSet<>();
         userMapper = new UserMapper();
         connection = DataGateway.getInstance().getDataSource().getConnection();
     }
@@ -92,6 +89,7 @@ public class CommentMapper implements Mapper<Comment> {
 
     @Override
     public void closeConnection() throws SQLException {
+        userMapper.closeConnection();
         connection.close();
     }
 }

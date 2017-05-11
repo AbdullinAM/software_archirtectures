@@ -17,11 +17,10 @@ import java.util.Set;
  */
 public class MessageMapper implements Mapper<Message> {
 
-    private Set<Message> messages;
+    private static Set<Message> messages = new HashSet<>();
     private Connection connection;
 
     public MessageMapper() throws IOException, SQLException {
-        messages = new HashSet<>();
         connection = DataGateway.getInstance().getDataSource().getConnection();
     }
 
