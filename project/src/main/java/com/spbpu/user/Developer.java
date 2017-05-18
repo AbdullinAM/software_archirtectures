@@ -16,17 +16,30 @@ import java.util.List;
 
 public class Developer extends User  implements ReportCreator, ReportDeveloper, TicketDeveloper {
 
-    private Project project;
+    private List<Project> projects;
     private List<Ticket> assignedTickets;
     private List<BugReport> assignedBugReports;
 
 
-    public Developer(User user, Project project_) {
+    public Developer(User user) {
         super(user);
-        project = project_;
+        projects = new ArrayList<>();
         assignedTickets = new ArrayList<>();
         assignedBugReports = new ArrayList<>();
     }
+
+    public Developer(User user, List<Project> projects_) {
+        super(user);
+        projects = projects_;
+        assignedTickets = new ArrayList<>();
+        assignedBugReports = new ArrayList<>();
+    }
+
+    public void addProject(Project project) {
+        projects.add(project);
+    }
+
+    public List<Project> getProjects() { return projects; }
 
     public List<BugReport> getAssignedBugReports() {
         return assignedBugReports;
@@ -37,7 +50,10 @@ public class Developer extends User  implements ReportCreator, ReportDeveloper, 
     }
 
     @Override
-    public BugReport createReport(String description) throws NotAuthenticatedException {
+    public BugReport createReport(Project project, String description) throws NotAuthenticatedException,
+            NoRightsException {
+        if (!projects.contains(project))
+            throw new NoRightsException(toString() + " cannot add report to " + project.getName());
         checkAuthenticated();
         BugReport report = new BugReport(project, this, description);
         project.addReport(report);

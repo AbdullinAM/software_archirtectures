@@ -16,16 +16,30 @@ import java.util.List;
 
 public class TeamLeader extends User implements ReportCreator, ReportDeveloper, TicketManager, TicketDeveloper {
 
-    private Project project;
+    private List<Project> projects;
     private List<Ticket> assignedTickets;
     private List<BugReport> assignedBugReports;
 
-    public TeamLeader(User user, Project project_) {
+    public TeamLeader(User user) {
         super(user);
-        project = project_;
+        projects = new ArrayList<>();
         assignedTickets = new ArrayList<>();
         assignedBugReports = new ArrayList<>();
     }
+
+    public TeamLeader(User user, List<Project> projects_) {
+        super(user);
+        projects = projects_;
+        assignedTickets = new ArrayList<>();
+        assignedBugReports = new ArrayList<>();
+    }
+
+    public void addProject(Project project) {
+        assert project.getTeamLeader().equals(this);
+        projects.add(project);
+    }
+
+    public List<Project> getProjects() { return projects; }
 
     public List<BugReport> getAssignedBugReports() {
         return assignedBugReports;
@@ -36,7 +50,8 @@ public class TeamLeader extends User implements ReportCreator, ReportDeveloper, 
     }
 
     @Override
-    public BugReport createReport(String description) {
+    public BugReport createReport(Project project, String description) throws NotAuthenticatedException,
+            NoRightsException {
         BugReport report = new BugReport(project, this, description);
         project.addReport(report);
         return report;

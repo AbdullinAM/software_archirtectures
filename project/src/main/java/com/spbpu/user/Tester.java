@@ -9,17 +9,28 @@ import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Project;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tester extends User implements ReportCreator, ReportManager {
 
-    private Project project;
+    private List<Project> projects;
 
-    public Tester(User user, Project project_) {
+    public Tester(User user) {
         super(user);
-        project = project_;
+        projects = new ArrayList<>();
+    }
+
+    public Tester(User user, List<Project> projects_) {
+        super(user);
+        projects = projects_;
     }
 
     @Override
-    public BugReport createReport(String description) {
+    public BugReport createReport(Project project, String description) throws NotAuthenticatedException,
+            NoRightsException {
+        if (!projects.contains(project))
+            throw new NoRightsException(toString() + " cannot add report to " + project.getName());
         BugReport report = new BugReport(project, this, description);
         project.addReport(report);
         return report;

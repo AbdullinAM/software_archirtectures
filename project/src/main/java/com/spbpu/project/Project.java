@@ -13,6 +13,7 @@ import java.util.Set;
 
 public class Project {
 
+    private int id;
     private String name;
     private Manager manager;
     private TeamLeader teamLeader;
@@ -29,6 +30,18 @@ public class Project {
         milestones = new HashSet<>();
         reports = new HashSet<>();
     }
+
+    public Project(int id_, String name_, Manager manager_) {
+        id = id_;
+        name = name_;
+        manager = manager_;
+        developers = new HashSet<>();
+        testers = new HashSet<>();
+        milestones = new HashSet<>();
+        reports = new HashSet<>();
+    }
+
+    public int getId() { return id; }
 
     public void setTeamLeader(TeamLeader tl) {
         teamLeader = tl;

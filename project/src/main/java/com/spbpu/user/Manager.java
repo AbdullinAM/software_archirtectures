@@ -57,12 +57,12 @@ public class Manager extends User implements TicketManager {
     }
 
     public void addDeveloper(Project project, User user) {
-        Developer dev = new Developer(user, project);
-        project.addDeveloper(dev);
+        //Developer dev = new Developer(user, project);
+        //project.addDeveloper(dev);
     }
 
     public void addTester(Project project, User user) {
-        Tester tester = new Tester(user, project);
-        project.addTester(tester);
+        //Tester tester = new Tester(user, project);
+        //project.addTester(tester);
     }
 }
