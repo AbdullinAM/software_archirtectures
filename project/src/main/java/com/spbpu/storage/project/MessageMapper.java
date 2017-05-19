@@ -84,7 +84,8 @@ public class MessageMapper implements Mapper<Message> {
             PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
             insertStatement.setInt(1, item.getOwner().getId());
             insertStatement.setString(2, item.getMessage());
-            insertStatement.execute();
+            item.setId(insertStatement.executeUpdate());
+            messages.add(item);
         }
     }
 

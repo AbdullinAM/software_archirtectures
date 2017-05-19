@@ -38,8 +38,6 @@ public class User implements UserInterface {
         messages = new ArrayList<>();
     }
 
-    public int getId() { return id; }
-
     public String getLogin() {
         return login;
     }
@@ -68,6 +66,14 @@ public class User implements UserInterface {
     public String toString() {
         return  login + ":" + name + "<" + email + ">";
     }
+
+    @Override
+    public void setId(int id_) {
+        id = id_;
+    }
+
+    @Override
+    public int getId() { return id; }
 
     @Override
     public User getUser() {

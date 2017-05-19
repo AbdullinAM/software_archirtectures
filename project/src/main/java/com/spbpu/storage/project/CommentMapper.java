@@ -83,7 +83,8 @@ public class CommentMapper implements Mapper<Comment> {
             insertStatement.setDate(1, new java.sql.Date(item.getDate().getTime()));
             insertStatement.setInt(2, item.getCommenter().getId());
             insertStatement.setString(3, item.getComment());
-            insertStatement.execute();
+            item.setId(insertStatement.executeUpdate());
+            comments.add(item);
         }
     }
 

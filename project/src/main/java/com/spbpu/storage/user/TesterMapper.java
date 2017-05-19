@@ -1,17 +1,11 @@
-/**
- * Created by kivi on 11.05.17.
- */
-
 package com.spbpu.storage.user;
 
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.project.ProjectMapper;
-import com.spbpu.user.Developer;
-import com.spbpu.user.Manager;
+import com.spbpu.user.Tester;
 import com.spbpu.user.User;
 
-import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,75 +13,78 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DeveloperMapper implements UserMapperInterface<Developer> {
+/**
+ * Created by kivi on 19.05.17.
+ */
+public class TesterMapper implements UserMapperInterface<Tester> {
 
-    private static Set<Developer> developers = new HashSet<>();
+    private static Set<Tester> testers = new HashSet<>();
     private Connection connection;
     private UserMapper userMapper;
     private ProjectMapper projectMapper;
 
-    public DeveloperMapper() throws IOException, SQLException {
+    public TesterMapper() throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
         userMapper = new UserMapper();
         projectMapper = new ProjectMapper();
     }
 
     @Override
-    public Developer findByLogin(String login) throws SQLException {
-        for (Developer it : developers)
+    public Tester findByLogin(String login) throws SQLException {
+        for (Tester it : testers)
             if (it.getName().equals(login)) return it;
 
         User user = userMapper.findByLogin(login);
         if (user == null) return null;
-        Developer developer = new Developer(user);
-        developers.add(developer);
+        Tester tester = new Tester(user);
+        testers.add(tester);
 
-        String extractProject = "SELECT (DEVELOPERS.project) FROM DEVELOPERS WHERE DEVELOPERS.developer = ?;";
+        String extractProject = "SELECT (TESTERS.project) FROM TESTERS WHERE TESTERS.tester = ?;";
         PreparedStatement stmt = connection.prepareStatement(extractProject);
-        stmt.setInt(1, developer.getId());
+        stmt.setInt(1, tester.getId());
 
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             int project = rs.getInt("project");
-            developer.addProject(projectMapper.findByID(project));
+            tester.addProject(projectMapper.findByID(project));
         }
 
-        return developer;
+        return tester;
     }
 
     @Override
-    public Developer findByID(int id) throws SQLException {
-        for (Developer it : developers)
+    public Tester findByID(int id) throws SQLException {
+        for (Tester it : testers)
             if (it.getId() == id) return it;
 
         User user = userMapper.findByID(id);
         if (user == null) return null;
-        Developer developer = new Developer(user);
-        developers.add(developer);
+        Tester tester = new Tester(user);
+        testers.add(tester);
 
-        String extractProject = "SELECT (DEVELOPERS.project) FROM DEVELOPERS WHERE DEVELOPERS.developer = ?;";
+        String extractProject = "SELECT (TESTERS.project) FROM TESTERS WHERE TESTERS.tester = ?;";
         PreparedStatement stmt = connection.prepareStatement(extractProject);
-        stmt.setInt(1, developer.getId());
+        stmt.setInt(1, tester.getId());
 
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             int project = rs.getInt("project");
-            developer.addProject(projectMapper.findByID(project));
+            tester.addProject(projectMapper.findByID(project));
         }
 
-        return developer;
+        return tester;
     }
 
     @Override
-    public List<Developer> findAll() throws SQLException {
-        List<Developer> all = new ArrayList<>();
-        developers.clear();
+    public List<Tester> findAll() throws SQLException {
+        List<Tester> all = new ArrayList<>();
+        testers.clear();
 
-        String extractAll = "SELECT DISTINCT DEVELOPERS.developer FROM DEVELOPERS;";
+        String extractAll = "SELECT DISTINCT TESTERS.tester FROM TESTERS;";
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(extractAll);
         while (rs.next()) {
-            int user = rs.getInt("developer");
+            int user = rs.getInt("tester");
             all.add(findByID(user));
         }
 
@@ -95,13 +92,13 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
     }
 
     @Override
-    public void update(Developer item) throws SQLException {
-        if (!developers.contains(item)) {
+    public void update(Tester item) throws SQLException {
+        if (!testers.contains(item)) {
             userMapper.update(item);
-            developers.add(item);
+            testers.add(item);
         }
         for (Project project : item.getProjects()) {
-            String insertSQL = "INSERT IGNORE INTO DEVELOPERS(project, developer) VALUES (?, ?);";
+            String insertSQL = "INSERT IGNORE INTO TESTERS(project, tester) VALUES (?, ?);";
             PreparedStatement statement = connection.prepareStatement(insertSQL);
             statement.setInt(1, project.getId());
             statement.setInt(2, item.getId());

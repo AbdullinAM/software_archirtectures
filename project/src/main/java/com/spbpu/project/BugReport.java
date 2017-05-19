@@ -12,6 +12,7 @@ import com.spbpu.user.ReportManager;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class BugReport {
 
@@ -22,19 +23,21 @@ public class BugReport {
         CLOSED
     }
 
+    private int id;
     private Project project;
     private ReportCreator creator;
     private ReportDeveloper assignee;
     private Status status;
     private Date creationTime;
     private String description;
-    private ArrayList<Comment> comments;
+    private List<Comment> comments;
 
     public BugReport(Project project_, ReportCreator creator_, String description_) {
-        this(project_, creator_, description_, new Date());
+        this(-1, project_, creator_, description_, new Date());
     }
 
-    public BugReport(Project project_, ReportCreator creator_, String description_, Date creationTime_) {
+    public BugReport(int id_, Project project_, ReportCreator creator_, String description_, Date creationTime_) {
+        id = id_;
         project = project_;
         creator = creator_;
         assignee = null;
@@ -47,6 +50,12 @@ public class BugReport {
             dev.notifyNew(this);
         }
     }
+
+    public void setId(int id_) { id = id_; }
+    public int getId() { return id; }
+
+    public void addComment(Comment comment) { comments.add(comment); }
+    public void setDeveloper(ReportDeveloper developer) { assignee = developer; }
 
     public Project getProject() {
         return project;
@@ -70,7 +79,7 @@ public class BugReport {
         return description;
     }
 
-    public ArrayList<Comment> getComments() {
+    public List<Comment> getComments() {
         return comments;
     }
 

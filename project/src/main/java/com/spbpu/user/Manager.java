@@ -52,8 +52,8 @@ public class Manager extends User implements TicketManager {
     }
 
     public void setTeamLeader(Project project, User user) {
-        TeamLeader tl = new TeamLeader(user, project);
-        project.setTeamLeader(tl);
+        //TeamLeader tl = new TeamLeader(user, project);
+        //project.setTeamLeader(tl);
     }
 
     public void addDeveloper(Project project, User user) {

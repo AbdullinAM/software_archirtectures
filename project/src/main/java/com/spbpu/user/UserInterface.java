@@ -10,6 +10,8 @@ import com.spbpu.project.Message;
 import java.util.List;
 
 public interface UserInterface {
+    void setId(int id_);
+    int getId();
     User getUser();
     void checkAuthenticated() throws NotAuthenticatedException;
     void addMessage(String message);

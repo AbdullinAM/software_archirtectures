@@ -11,6 +11,8 @@ import com.spbpu.project.BugReport;
 
 public interface ReportDeveloper extends UserInterface {
 
+    void assign(BugReport report);
+
     default void notifyNew(BugReport report) {
         StringBuilder builder = new StringBuilder();
         builder.append("New bug report: ");

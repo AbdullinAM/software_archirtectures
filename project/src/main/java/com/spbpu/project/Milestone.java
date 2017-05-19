@@ -19,6 +19,7 @@ public class Milestone {
         CLOSED
     }
 
+    private int id;
     private Project project;
     private Status status;
     private Date startDate;
@@ -28,7 +29,12 @@ public class Milestone {
     private Set<Ticket> tickets;
 
     public Milestone(Project project_, Date startDate, Date endDate) throws EndBeforeStartException {
+        this(-1, project_, startDate, endDate);
+    }
+
+    public Milestone(int id_, Project project_, Date startDate, Date endDate) throws EndBeforeStartException {
         if (endDate.before(startDate)) throw new EndBeforeStartException("Milestone end is before start");
+        id = id_;
         project = project_;
         status = Status.OPENED;
         this.startDate = startDate;
@@ -38,6 +44,9 @@ public class Milestone {
         activeDate = null;
         closingDate = null;
     }
+
+    public void setId(int id_) { id = id_; }
+    public int getId() { return id; }
 
     public Project getProject() {
         return project;
@@ -56,6 +65,9 @@ public class Milestone {
         return startDate;
     }
 
+    public void setActiveDate(Date date) {
+        activeDate = date;
+    }
     public Date getActiveDate() {
         return activeDate;
     }
@@ -64,6 +76,9 @@ public class Milestone {
         return endDate;
     }
 
+    public void setClosingDate(Date date) {
+        closingDate = date;
+    }
     public Date getClosingDate() {
         return closingDate;
     }

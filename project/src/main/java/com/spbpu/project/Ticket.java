@@ -21,6 +21,7 @@ public class Ticket {
         CLOSED
     }
 
+    private int id;
     private Milestone milestone;
     private TicketManager creator;
     private Status status;
@@ -30,10 +31,11 @@ public class Ticket {
     private ArrayList<Comment> comments;
 
     public Ticket(Milestone milestone_, TicketManager creator_, String task_) {
-        this(milestone_, creator_, new Date(), task_);
+        this(-1, milestone_, creator_, new Date(), task_);
     }
 
-    public Ticket(Milestone milestone_, TicketManager creator_, Date creationTime_, String task_) {
+    public Ticket(int id_, Milestone milestone_, TicketManager creator_, Date creationTime_, String task_) {
+        id = id_;
         milestone = milestone_;
         creator = creator_;
         status = Status.NEW;
@@ -42,6 +44,9 @@ public class Ticket {
         task = task_;
         comments = new ArrayList<>();
     }
+
+    public void setId(int id_) { id = id_; }
+    public int getId() { return id; }
 
     public Milestone getMilestone() {
         return milestone;
@@ -74,6 +79,8 @@ public class Ticket {
         }
     }
 
+    public void addComment(Comment comment) { comments.add(comment); }
+
     public void addComment(TicketManager manager, String comment) {
         comments.add(new Comment(new Date(), manager.getUser(), comment));
     }
@@ -82,6 +89,8 @@ public class Ticket {
         if (!assignees.contains(developer)) throw new NoRightsException(developer.toString() + " cannot change " + toString());
         comments.add(new Comment(new Date(), developer.getUser(), comment));
     }
+
+    public Ticket.Status getStatus() { return status; }
 
     public boolean isNew()          { return status.equals(Status.NEW); }
     public boolean isAccepted()     { return status.equals(Status.ACCEPTED); }

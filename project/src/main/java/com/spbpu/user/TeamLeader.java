@@ -18,12 +18,14 @@ public class TeamLeader extends User implements ReportCreator, ReportDeveloper, 
 
     private List<Project> projects;
     private List<Ticket> assignedTickets;
+    private List<BugReport> managedBugReports;
     private List<BugReport> assignedBugReports;
 
     public TeamLeader(User user) {
         super(user);
         projects = new ArrayList<>();
         assignedTickets = new ArrayList<>();
+        managedBugReports = new ArrayList<>();
         assignedBugReports = new ArrayList<>();
     }
 
@@ -85,5 +87,17 @@ public class TeamLeader extends User implements ReportCreator, ReportDeveloper, 
         checkAuthenticated();
         ticket.setAccepted(this);
         if (! assignedTickets.contains(ticket)) assignedTickets.add(ticket);
+    }
+
+    @Override
+    public void assign(BugReport report) {
+        if (!assignedBugReports.contains(report))
+            assignedBugReports.add(report);
+    }
+
+    @Override
+    public void managing(BugReport report) {
+        if(!managedBugReports.contains(report))
+            managedBugReports.add(report);
     }
 }

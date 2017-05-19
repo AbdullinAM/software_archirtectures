@@ -5,7 +5,6 @@
 package com.spbpu.project;
 
 import com.spbpu.user.User;
-import com.sun.istack.internal.Nullable;
 
 public class Message {
     private int id;
@@ -26,6 +25,7 @@ public class Message {
         owner = owner_;
     }
 
+    public void setId(int id_) { id = id_; }
     public int getId() { return id; }
     public User getOwner() { return owner; }
     public String getMessage() { return message; }

@@ -123,7 +123,8 @@ public class UserMapper implements UserMapperInterface<User> {
             insertStatement.setString(2, item.getLogin());
             insertStatement.setString(3, item.getMailAddress());
             insertStatement.setString(4, "user");
-            insertStatement.execute();
+            item.setId(insertStatement.executeUpdate());
+            users.add(item);
         }
     }
 

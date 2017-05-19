@@ -26,7 +26,7 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
     private UserMapper userMapper;
     private ProjectMapper projectMapper;
 
-    ManagerMapper() throws IOException, SQLException {
+    public ManagerMapper() throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
         userMapper = new UserMapper();
         projectMapper = new ProjectMapper();
@@ -38,6 +38,7 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
             if (it.getLogin().equals(login)) return it;
 
         User user = userMapper.findByLogin(login);
+        if (user == null) return null;
         Manager manager = new Manager(user);
         managers.add(manager);
 
@@ -59,6 +60,7 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
             if (it.getId() == id) return it;
 
         User user = userMapper.findByID(id);
+        if (user == null) return null;
         Manager manager = new Manager(user);
         managers.add(manager);
 
@@ -91,6 +93,7 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
     public void update(Manager item) throws SQLException {
         if (!managers.contains(item)) {
             userMapper.update(item);
+            managers.add(item);
         }
 
         for (Project it : item.getProjects())

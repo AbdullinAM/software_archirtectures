@@ -26,6 +26,7 @@ public class Comment {
         id = id_;
     }
 
+    public void setId(int id_) { id = id_; }
     public int getId() { return id; }
 
     public Date getDate() {

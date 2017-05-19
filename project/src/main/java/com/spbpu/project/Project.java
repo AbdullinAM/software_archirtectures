@@ -41,6 +41,7 @@ public class Project {
         reports = new HashSet<>();
     }
 
+    public void setId(int id_) { id = id_; }
     public int getId() { return id; }
 
     public void setTeamLeader(TeamLeader tl) {
@@ -98,6 +99,18 @@ public class Project {
         return reports;
     }
 
+    public List<ReportCreator> getReportCreators() {
+        List<ReportCreator> reportCreators = new ArrayList<>();
+        reportCreators.add(teamLeader);
+        for (Developer dev : developers) {
+            reportCreators.add(dev);
+        }
+        for (Tester tester : testers) {
+            reportCreators.add(tester);
+        }
+        return reportCreators;
+    }
+
     public List<ReportDeveloper> getReportDevelopers() {
         List<ReportDeveloper> reportDevelopers = new ArrayList<>();
         reportDevelopers.add(teamLeader);
@@ -105,6 +118,22 @@ public class Project {
             reportDevelopers.add(dev);
         }
         return reportDevelopers;
+    }
+
+    public List<TicketManager> getTicketManagers() {
+        List<TicketManager> managers = new ArrayList<>();
+        managers.add(manager);
+        if (teamLeader != null) managers.add(teamLeader);
+        return managers;
+    }
+
+    public List<TicketDeveloper> getTicketDevelopers() {
+        List<TicketDeveloper> devs = new ArrayList<>();
+        if (teamLeader != null) devs.add(teamLeader);
+        for (Developer developer : developers)
+            devs.add(developer);
+
+        return devs;
     }
 
 }

@@ -15,15 +15,29 @@ import java.util.List;
 public class Tester extends User implements ReportCreator, ReportManager {
 
     private List<Project> projects;
+    private List<BugReport> managedBugReports;
 
     public Tester(User user) {
         super(user);
         projects = new ArrayList<>();
+        managedBugReports = new ArrayList<>();
     }
 
     public Tester(User user, List<Project> projects_) {
         super(user);
         projects = projects_;
+    }
+
+    public List<Project> getProjects() { return projects; }
+
+    public void addProject(Project project) {
+        projects.add(project);
+    }
+
+    @Override
+    public void managing(BugReport report) {
+        if(!managedBugReports.contains(report))
+            managedBugReports.add(report);
     }
 
     @Override
