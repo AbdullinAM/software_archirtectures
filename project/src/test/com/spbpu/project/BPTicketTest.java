@@ -31,13 +31,9 @@ public class BPTicketTest extends TestCase {
     public void setUp() throws Exception {
         /// Adding users to repository
         repository = new StorageRepository();
-        repository.addUser("manager", "Manager", "man@mail.com", "pass");
-        repository.addUser("developer", "Developer", "dev@mail.com", "pass");
-        repository.addUser("teamleader", "teamleader", "tl@mail.com", "pass");
-        repository.addUser("tester", "Tester", "test@mail.com", "pass");
 
         /// Creating project and assigning users
-        manager = new Manager(repository.getUser("manager"));
+        manager = repository.getManager(repository.getUser("manager"));
         manager.signIn("pass");
         project = manager.createProject("New project");
 
@@ -79,8 +75,8 @@ public class BPTicketTest extends TestCase {
 
         assertEquals(1, developer.getMessages().size());
         assertEquals(1, teamLeader.getMessages().size());
-        assertEquals("New ticket: " + ticket.toString(), developer.getMessages().get(0));
-        assertEquals("New ticket: " + ticket.toString(), teamLeader.getMessages().get(0));
+        assertEquals("New ticket: " + ticket.toString(), developer.getMessages().get(0).getMessage());
+        assertEquals("New ticket: " + ticket.toString(), teamLeader.getMessages().get(0).getMessage());
 
         developer.acceptTicket(ticket);
         assertTrue(ticket.isAccepted());

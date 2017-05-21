@@ -17,10 +17,12 @@ import java.util.List;
 
 public class Manager extends User implements TicketManager {
 
+    private StorageRepository repository;
     private List<Project> projects;
 
     public Manager(User user) {
         super(user);
+        repository = new StorageRepository();
         projects = new ArrayList<>();
     }
 
@@ -52,17 +54,20 @@ public class Manager extends User implements TicketManager {
     }
 
     public void setTeamLeader(Project project, User user) {
-        //TeamLeader tl = new TeamLeader(user, project);
-        //project.setTeamLeader(tl);
+        TeamLeader tl = repository.getTeamLeader(user);
+        project.setTeamLeader(tl);
+        tl.addProject(project);
     }
 
     public void addDeveloper(Project project, User user) {
-        //Developer dev = new Developer(user, project);
-        //project.addDeveloper(dev);
+        Developer dev = repository.getDeveloper(user);
+        project.addDeveloper(dev);
+        dev.addProject(project);
     }
 
     public void addTester(Project project, User user) {
-        //Tester tester = new Tester(user, project);
-        //project.addTester(tester);
+        Tester tester = repository.getTester(user);
+        project.addTester(tester);
+        tester.addProject(project);
     }
 }

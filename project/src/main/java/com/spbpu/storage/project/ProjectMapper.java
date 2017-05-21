@@ -153,4 +153,14 @@ public class ProjectMapper implements Mapper<Project> {
         reportMapper.closeConnection();
         connection.close();
     }
+
+    @Override
+    public void clear() {
+        teamLeaderMapper.clear();
+        developerMapper.clear();
+        milestoneMapper.clear();
+        testerMapper.clear();
+        reportMapper.clear();
+        projects.clear();
+    }
 }

@@ -107,4 +107,9 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
         projectMapper.closeConnection();
         connection.close();
     }
+
+    @Override
+    public void clear() {
+        managers.clear();
+    }
 }

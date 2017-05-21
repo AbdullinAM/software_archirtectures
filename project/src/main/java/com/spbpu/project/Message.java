@@ -30,7 +30,12 @@ public class Message {
     public User getOwner() { return owner; }
     public String getMessage() { return message; }
 
+    @Override
     public int hashCode() {
         return id;
+    }
+    @Override
+    public String toString() {
+        return "To: " + owner.getName() + "\n" + message;
     }
 }

@@ -13,5 +13,6 @@ public interface Mapper<T> {
     List<T> findAll() throws SQLException, EndBeforeStartException;
     void update(T item) throws SQLException;
     void closeConnection() throws SQLException;
+    void clear();
 }
 

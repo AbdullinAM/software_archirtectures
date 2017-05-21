@@ -126,8 +126,14 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
 
     @Override
     public void closeConnection() throws SQLException {
+        developers.clear();
         userMapper.closeConnection();
         connection.close();
+    }
+
+    @Override
+    public void clear() {
+        developers.clear();
     }
 
 }

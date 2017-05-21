@@ -87,4 +87,9 @@ public class MessageMapper implements Mapper<Message> {
     public void closeConnection() throws SQLException {
         connection.close();
     }
+
+    @Override
+    public void clear() {
+        messages.clear();
+    }
 }

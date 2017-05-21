@@ -10,11 +10,11 @@ import com.spbpu.storage.project.MessageMapper;
 import com.spbpu.user.User;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class UserMapper implements UserMapperInterface<User> {
 
@@ -27,6 +27,29 @@ public class UserMapper implements UserMapperInterface<User> {
 
         DataGateway gateway = DataGateway.getInstance();
         connection = gateway.getDataSource().getConnection();
+    }
+
+    public boolean addUser(User user, String password) throws SQLException {
+        String insertSQL = "INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES (?, ?, ?, SHA1(?));";
+        PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+        insertStatement.setString(1, user.getName());
+        insertStatement.setString(2, user.getLogin());
+        insertStatement.setString(3, user.getMailAddress());
+        insertStatement.setString(4, password);
+        user.setId(insertStatement.executeUpdate());
+        users.add(user);
+        return true;
+    }
+
+    public boolean authenticateUser(User user, String password) throws SQLException {
+        String userSelectStatement = "SELECT USERS.password FROM USERS WHERE id = ?;";
+        PreparedStatement extractUserStatement = connection.prepareStatement(userSelectStatement);
+        extractUserStatement.setInt(1, user.getId());
+        ResultSet rs = extractUserStatement.executeQuery();
+
+        if (!rs.next()) return false;
+
+        return encryptPassword(password).equals(rs.getString("password"));
     }
 
     @Override
@@ -110,12 +133,11 @@ public class UserMapper implements UserMapperInterface<User> {
                 msgMapper.update(it);
 
         } else {
-            String insertSQL = "INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES (?, ?, ?, SHA1(?));";
+            String insertSQL = "INSERT INTO USERS(USERS.name, USERS.login, USERS.email) VALUES (?, ?, ?);";
             PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
             insertStatement.setString(1, item.getName());
             insertStatement.setString(2, item.getLogin());
             insertStatement.setString(3, item.getMailAddress());
-            insertStatement.setString(4, "user");
             item.setId(insertStatement.executeUpdate());
             users.add(item);
         }
@@ -125,5 +147,42 @@ public class UserMapper implements UserMapperInterface<User> {
     public void closeConnection() throws SQLException {
         msgMapper.closeConnection();
         connection.close();
+    }
+
+    @Override
+    public void clear() {
+        users.clear();
+    }
+
+    private static String encryptPassword(String password) {
+        String sha1 = "";
+        try
+        {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(password.getBytes("UTF-8"));
+            sha1 = byteToHex(crypt.digest());
+        }
+        catch(NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        return sha1;
+    }
+
+    private static String byteToHex(final byte[] hash)
+    {
+        Formatter formatter = new Formatter();
+        for (byte b : hash)
+        {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
     }
 }

@@ -128,4 +128,9 @@ public class TesterMapper implements UserMapperInterface<Tester> {
         connection.close();
     }
 
+    @Override
+    public void clear() {
+        testers.clear();
+    }
+
 }

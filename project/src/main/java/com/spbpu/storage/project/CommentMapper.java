@@ -85,4 +85,9 @@ public class CommentMapper implements Mapper<Comment> {
         userMapper.closeConnection();
         connection.close();
     }
+
+    @Override
+    public void clear() {
+        comments.clear();
+    }
 }

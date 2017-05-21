@@ -21,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, SQLException, EndBeforeStartException, NotAuthenticatedException, NoRightsException, AlreadyAcceptedException {
         ManagerMapper mmapper = new ManagerMapper();
-        Manager manager = mmapper.findByLogin("user1");
+        Manager manager = mmapper.findByLogin("manager");
         System.out.println(manager.getId());
         System.out.println(manager.toString());
         for (Project project : manager.getProjects()) {

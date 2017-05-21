@@ -37,7 +37,6 @@ public class TeamLeader extends User implements ReportCreator, ReportDeveloper, 
     }
 
     public void addProject(Project project) {
-        assert project.getTeamLeader().equals(this);
         projects.add(project);
     }
 

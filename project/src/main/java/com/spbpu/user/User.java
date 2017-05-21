@@ -88,7 +88,8 @@ public class User implements UserInterface {
 
     @Override
     public void addMessage(String message) {
-        messages.add(new Message(this, message));
+        Message m = new Message(this, message);
+        messages.add(m);
     }
 
     @Override

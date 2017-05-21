@@ -90,6 +90,18 @@ public class Project {
         return null;
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        Project project = (Project) obj;
+        return name.equals(project.getName());
+    }
+
     public String getName() { return name; }
 
     public Manager getManager() {

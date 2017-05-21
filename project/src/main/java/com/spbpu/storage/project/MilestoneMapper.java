@@ -120,4 +120,10 @@ public class MilestoneMapper implements Mapper<Milestone> {
         ticketMapper.closeConnection();
         connection.close();
     }
+
+    @Override
+    public void clear() {
+        ticketMapper.clear();
+        milestones.clear();
+    }
 }

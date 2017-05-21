@@ -1,5 +1,6 @@
 package com.spbpu.storage;
 
+import com.spbpu.exceptions.AlreadyExistsException;
 import com.spbpu.user.User;
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +31,11 @@ public class StorageRepositoryTest {
         assertTrue("Can't add user", repository.addUser("devel", "devel", "devel", "pass"));
         assertNotNull("Added user not found", repository.getUser("devel"));
 
-        assertFalse("Added user second time", repository.addUser("devel", "devel", "devel", "pass"));
+        try {
+            assertFalse("Added user second time", repository.addUser("devel", "devel", "devel", "pass"));
+        } catch (AlreadyExistsException e) {
+            assertTrue("Exception thrown", true);
+        }
         assertTrue("Can't add user", repository.addUser("devel2", "devel2", "devel2", "pass"));
 
         assertNotNull("Added user not found", repository.getUser("devel"));

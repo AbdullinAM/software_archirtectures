@@ -30,11 +30,9 @@ public class BPMilestoneTest extends TestCase {
     public void setUp() throws Exception {
         /// Adding users to repository
         repository = new StorageRepository();
-        repository.addUser("manager", "Manager", "man@mail.com", "pass");
-        repository.addUser("teamleader", "teamleader", "tl@mail.com", "pass");
 
         /// Creating project and assigning users
-        manager = new Manager(repository.getUser("manager"));
+        manager = repository.getManager(repository.getUser("manager"));
         manager.signIn("pass");
         project = manager.createProject("New project");
 

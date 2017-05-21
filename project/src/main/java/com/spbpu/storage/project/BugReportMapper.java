@@ -153,4 +153,10 @@ public class BugReportMapper implements Mapper<BugReport> {
         commentMapper.closeConnection();
         connection.close();
     }
+
+    @Override
+    public void clear() {
+        commentMapper.clear();
+        bugReports.clear();
+    }
 }

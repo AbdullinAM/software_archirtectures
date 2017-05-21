@@ -127,4 +127,10 @@ public class TeamLeaderMapper implements UserMapperInterface<TeamLeader> {
 
         return teamLeader;
     }
+
+    @Override
+    public void clear() {
+        teamLeaders.clear();
+    }
+
 }

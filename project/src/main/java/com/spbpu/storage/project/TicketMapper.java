@@ -140,4 +140,10 @@ public class TicketMapper implements Mapper<Ticket> {
         commentMapper.closeConnection();
         connection.close();
     }
+
+    @Override
+    public void clear() {
+        commentMapper.clear();
+        tickets.clear();
+    }
 }
