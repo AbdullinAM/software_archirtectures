@@ -121,12 +121,17 @@ public class TicketMapper implements Mapper<Ticket> {
             String update = "UPDATE TICKET SET status = ? WHERE id = ?;";
             PreparedStatement updateStatus = connection.prepareStatement(update);
             updateStatus.setString(1, item.getStatus().name());
-            updateStatus.setInt(1, item.getId());
+            updateStatus.setInt(2, item.getId());
             updateStatus.execute();
         }
 
-        for (Comment it : item.getComments())
+        for (Comment it : item.getComments()) {
+            String insertSQL = "INSERT UPDATE INTO TICKET_COMMENTS(commentid, ticket) VALUES (?, ?);";
+            PreparedStatement stmt = connection.prepareStatement(insertSQL);
+            stmt.setInt(1, it.getId());
+            stmt.setInt(2, item.getId());
             commentMapper.update(it);
+        }
 
     }
 

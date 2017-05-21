@@ -98,7 +98,7 @@ public class User implements UserInterface {
 
     @Override
     public boolean equals(Object obj) {
-        if ( (obj == null) || (obj.getClass() != this.getClass()) ) return false;
+        if ( (obj == null) ) return false;
         User other = (User)obj;
         return login.equals(other.login);
     }

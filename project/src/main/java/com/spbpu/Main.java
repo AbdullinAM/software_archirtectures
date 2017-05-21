@@ -26,9 +26,6 @@ public class Main {
         System.out.println(manager.toString());
         for (Project project : manager.getProjects()) {
             System.out.println(project.toString());
-            TeamLeader tl = project.getTeamLeader();
-            BugReport report = (BugReport) project.getReports().toArray()[0];
-            tl.acceptReport(report);
         }
         mmapper.update(manager);
         mmapper.closeConnection();

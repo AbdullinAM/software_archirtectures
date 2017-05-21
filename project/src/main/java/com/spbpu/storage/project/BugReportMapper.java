@@ -130,10 +130,21 @@ public class BugReportMapper implements Mapper<BugReport> {
             statement.setString(5, item.getDescription());
             item.setId(statement.executeUpdate());
             bugReports.add(item);
+        } else {
+            String update = "UPDATE BUGREPORT SET status = ? WHERE id = ?;";
+            PreparedStatement updateStatus = connection.prepareStatement(update);
+            updateStatus.setString(1, item.getStatus().name());
+            updateStatus.setInt(2, item.getId());
+            updateStatus.execute();
         }
 
-        for (Comment it : item.getComments())
+        for (Comment it : item.getComments()) {
+            String insertSQL = "INSERT UPDATE INTO BUGREPORT_COMMENTS(commentid, bugreport) VALUES (?, ?);";
+            PreparedStatement stmt = connection.prepareStatement(insertSQL);
+            stmt.setInt(1, it.getId());
+            stmt.setInt(2, item.getId());
             commentMapper.update(it);
+        }
 
     }
 
