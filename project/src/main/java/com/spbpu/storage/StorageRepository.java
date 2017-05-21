@@ -137,15 +137,18 @@ public class StorageRepository {
         return null;
     }
 
-    synchronized public void clear() {
+    public void clear() {
+        userMapper.clear();
+        managerMapper.clear();
+        projectMapper.clear();
+        teamLeaderMapper.clear();
+        developerMapper.clear();
+        testerMapper.clear();
+    }
+
+    synchronized public void drop() {
         try {
             DataGateway.getInstance().dropAll();
-            userMapper.clear();
-            managerMapper.clear();
-            projectMapper.clear();
-            teamLeaderMapper.clear();
-            developerMapper.clear();
-            testerMapper.clear();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {

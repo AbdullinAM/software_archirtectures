@@ -22,6 +22,7 @@ public class StorageRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
+        repository.drop();
         repository.clear();
         repository = null;
     }
