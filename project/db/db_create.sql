@@ -126,30 +126,30 @@ CREATE TABLE TESTERS (
 );
 
 # inserting some data
-INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("First User", "user1", "email", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Second User", "user2", "email", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Third User", "user3", "email", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Fourth User", "user4", "email", SHA1("user"));
-INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Fifth User", "user5", "email", SHA1("user"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Manager", "manager", "email", SHA1("pass"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Developer", "developer", "email", SHA1("pass"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("TeamLeader", "teamleader", "email", SHA1("pass"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Tester", "tester", "email", SHA1("pass"));
+INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Developer", "wrongDev", "email", SHA1("pass"));
 
 INSERT INTO PROJECT(PROJECT.name, PROJECT.manager) VALUES(
   "First project",
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user1")
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "manager")
 );
 
 INSERT INTO TEAMLEADERS(TEAMLEADERS.teamleader, TEAMLEADERS.project) VALUES (
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user2"),
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "teamleader"),
   (SELECT (PROJECT.id) FROM PROJECT WHERE PROJECT.name = "First project")
 );
 
 INSERT INTO DEVELOPERS (DEVELOPERS.project, DEVELOPERS.developer) VALUES (
   (SELECT (PROJECT.id) FROM PROJECT WHERE PROJECT.name = "First project"),
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user3")
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "developer")
 );
 
 INSERT INTO TESTERS(TESTERS.project, TESTERS.tester) VALUES (
   (SELECT (PROJECT.id) FROM PROJECT WHERE PROJECT.name = "First project"),
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user4")
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "tester")
 );
 
 INSERT INTO MILESTONE(MILESTONE.project, MILESTONE.status, MILESTONE.startDate, MILESTONE.endDate) VALUES (
@@ -161,7 +161,7 @@ INSERT INTO MILESTONE(MILESTONE.project, MILESTONE.status, MILESTONE.startDate, 
 
 INSERT INTO TICKET(TICKET.milestone, TICKET.creator, TICKET.status, TICKET.creationTime, TICKET.task) VALUES (
   1,
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user2"),
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "teamleader"),
   "NEW",
   NOW(),
   "Do this"
@@ -169,7 +169,7 @@ INSERT INTO TICKET(TICKET.milestone, TICKET.creator, TICKET.status, TICKET.creat
 
 INSERT INTO BUGREPORT(BUGREPORT.project, BUGREPORT.creator, BUGREPORT.status, BUGREPORT.creationTime, BUGREPORT.description) VALUES (
   (SELECT (PROJECT.id) FROM PROJECT WHERE PROJECT.name = "First project"),
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user3"),
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "developer"),
   "OPENED",
   NOW(),
   "New bug"
