@@ -25,9 +25,9 @@ public class TicketMapper implements Mapper<Ticket> {
     private MilestoneMapper milestoneMapper;
     private CommentMapper commentMapper;
 
-    public TicketMapper() throws IOException, SQLException {
+    public TicketMapper(MilestoneMapper mm) throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
-        milestoneMapper = new MilestoneMapper();
+        milestoneMapper = mm;
         commentMapper = new CommentMapper();
     }
 
@@ -94,7 +94,6 @@ public class TicketMapper implements Mapper<Ticket> {
     @Override
     public List<Ticket> findAll() throws SQLException, EndBeforeStartException {
         List<Ticket> all = new ArrayList<>();
-        tickets.clear();
 
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery("SELECT TICKET.id FROM TICKET;");
@@ -118,6 +117,12 @@ public class TicketMapper implements Mapper<Ticket> {
             insert.setString(5, item.getTask());
             item.setId(insert.executeUpdate());
             tickets.add(item);
+        } else {
+            String update = "UPDATE TICKET SET status = ? WHERE id = ?;";
+            PreparedStatement updateStatus = connection.prepareStatement(update);
+            updateStatus.setString(1, item.getStatus().name());
+            updateStatus.setInt(1, item.getId());
+            updateStatus.execute();
         }
 
         for (Comment it : item.getComments())
@@ -127,7 +132,6 @@ public class TicketMapper implements Mapper<Ticket> {
 
     @Override
     public void closeConnection() throws SQLException {
-        milestoneMapper.closeConnection();
         commentMapper.closeConnection();
         connection.close();
     }

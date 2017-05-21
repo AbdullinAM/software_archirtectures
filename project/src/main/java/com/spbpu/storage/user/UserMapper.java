@@ -1,7 +1,11 @@
+/**
+ * Created by kivi on 08.05.17.
+ */
+
 package com.spbpu.storage.user;
 
-import com.spbpu.project.Message;
-import com.spbpu.storage.DataGateway;
+import com.spbpu.project.*;
+import com.spbpu.storage.*;
 import com.spbpu.storage.project.MessageMapper;
 import com.spbpu.user.User;
 
@@ -12,9 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by kivi on 08.05.17.
- */
 public class UserMapper implements UserMapperInterface<User> {
 
     private static Set<User> users = new HashSet<>();
@@ -88,22 +89,14 @@ public class UserMapper implements UserMapperInterface<User> {
 
     @Override
     public List<User> findAll() throws SQLException {
-        users.clear();
         List<User> all = new ArrayList<>();
 
-        String userSelectStatement = "SELECT * FROM USERS;";
+        String userSelectStatement = "SELECT USERS.id FROM USERS;";
         Statement extractUserStatement = connection.createStatement();
         ResultSet rs = extractUserStatement.executeQuery(userSelectStatement);
 
         while (rs.next()) {
-            int id = rs.getInt("id");
-            String login = rs.getString("login");
-            String name = rs.getString("name");
-            String email = rs.getString("email");
-            List<Message> messages = msgMapper.findAllForUser(id);
-            User newUser = new User(id, login, name, email, messages);
-            users.add(newUser);
-            all.add(newUser);
+            all.add(findByID(rs.getInt("id")));
         }
 
         return all;

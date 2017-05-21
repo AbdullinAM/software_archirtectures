@@ -1,5 +1,6 @@
 package com.spbpu.storage.user;
 
+import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.project.ProjectMapper;
@@ -23,14 +24,30 @@ public class TesterMapper implements UserMapperInterface<Tester> {
     private UserMapper userMapper;
     private ProjectMapper projectMapper;
 
-    public TesterMapper() throws IOException, SQLException {
+    public TesterMapper(ProjectMapper pm) throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
         userMapper = new UserMapper();
-        projectMapper = new ProjectMapper();
+        projectMapper = pm;
+    }
+
+
+    public List<Tester> findDevelopersOfProject(Project project) throws SQLException, EndBeforeStartException {
+        List<Tester> tessters = new ArrayList<>();
+
+        String extractTesters = "SELECT (TESTERS.tester) FROM TESTERS WHERE TESTERS.project = ?;";
+        PreparedStatement stmt = connection.prepareStatement(extractTesters);
+        stmt.setInt(1, project.getId());
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            tessters.add(findByID(rs.getInt("tester")));
+        }
+
+        return tessters;
     }
 
     @Override
-    public Tester findByLogin(String login) throws SQLException {
+    public Tester findByLogin(String login) throws SQLException, EndBeforeStartException {
         for (Tester it : testers)
             if (it.getName().equals(login)) return it;
 
@@ -53,7 +70,7 @@ public class TesterMapper implements UserMapperInterface<Tester> {
     }
 
     @Override
-    public Tester findByID(int id) throws SQLException {
+    public Tester findByID(int id) throws SQLException, EndBeforeStartException {
         for (Tester it : testers)
             if (it.getId() == id) return it;
 
@@ -76,9 +93,8 @@ public class TesterMapper implements UserMapperInterface<Tester> {
     }
 
     @Override
-    public List<Tester> findAll() throws SQLException {
+    public List<Tester> findAll() throws SQLException, EndBeforeStartException {
         List<Tester> all = new ArrayList<>();
-        testers.clear();
 
         String extractAll = "SELECT DISTINCT TESTERS.tester FROM TESTERS;";
         Statement statement = connection.createStatement();
@@ -109,7 +125,6 @@ public class TesterMapper implements UserMapperInterface<Tester> {
     @Override
     public void closeConnection() throws SQLException {
         userMapper.closeConnection();
-        projectMapper.closeConnection();
         connection.close();
     }
 

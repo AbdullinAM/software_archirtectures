@@ -4,6 +4,7 @@
 
 package com.spbpu.storage.user;
 
+import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.project.ProjectMapper;
@@ -26,14 +27,29 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
     private UserMapper userMapper;
     private ProjectMapper projectMapper;
 
-    public DeveloperMapper() throws IOException, SQLException {
+    public DeveloperMapper(ProjectMapper pm) throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
         userMapper = new UserMapper();
-        projectMapper = new ProjectMapper();
+        projectMapper = pm;
+    }
+
+    public List<Developer> findDevelopersOfProject(Project project) throws SQLException, EndBeforeStartException {
+        List<Developer> devs = new ArrayList<>();
+
+        String extractDevelopers = "SELECT (DEVELOPERS.developer) FROM DEVELOPERS WHERE DEVELOPERS.project = ?;";
+        PreparedStatement stmt = connection.prepareStatement(extractDevelopers);
+        stmt.setInt(1, project.getId());
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            devs.add(findByID(rs.getInt("developer")));
+        }
+
+        return devs;
     }
 
     @Override
-    public Developer findByLogin(String login) throws SQLException {
+    public Developer findByLogin(String login) throws SQLException, EndBeforeStartException {
         for (Developer it : developers)
             if (it.getName().equals(login)) return it;
 
@@ -56,7 +72,7 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
     }
 
     @Override
-    public Developer findByID(int id) throws SQLException {
+    public Developer findByID(int id) throws SQLException, EndBeforeStartException {
         for (Developer it : developers)
             if (it.getId() == id) return it;
 
@@ -79,9 +95,8 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
     }
 
     @Override
-    public List<Developer> findAll() throws SQLException {
+    public List<Developer> findAll() throws SQLException, EndBeforeStartException {
         List<Developer> all = new ArrayList<>();
-        developers.clear();
 
         String extractAll = "SELECT DISTINCT DEVELOPERS.developer FROM DEVELOPERS;";
         Statement statement = connection.createStatement();
@@ -112,7 +127,6 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
     @Override
     public void closeConnection() throws SQLException {
         userMapper.closeConnection();
-        projectMapper.closeConnection();
         connection.close();
     }
 

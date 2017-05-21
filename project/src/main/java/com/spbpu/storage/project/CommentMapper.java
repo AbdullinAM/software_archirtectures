@@ -50,22 +50,14 @@ public class CommentMapper implements Mapper<Comment> {
 
     @Override
     public List<Comment> findAll() throws SQLException {
-        comments.clear();
         List<Comment> all = new ArrayList<>();
 
-        String selectSQL = "SELECT * FROM COMMENTS;";
+        String selectSQL = "SELECT COMMENTS.id FROM COMMENTS;";
         Statement selectStatement = connection.createStatement();
         ResultSet rs = selectStatement.executeQuery(selectSQL);
 
         while (rs.next()) {
-            int id = rs.getInt("id");
-            Date date = rs.getDate("time");
-            User commenter = userMapper.findByID(rs.getInt("commenter"));
-            String message = rs.getString("description");
-
-            Comment newComment = new Comment(id, date, commenter, message);
-            comments.add(newComment);
-            all.add(newComment);
+            all.add(findByID(rs.getInt("id")));
         }
 
         return all;

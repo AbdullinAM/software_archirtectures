@@ -4,19 +4,14 @@
 
 package com.spbpu.storage.project;
 
+import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Comment;
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
-import com.spbpu.storage.user.DeveloperMapper;
-import com.spbpu.storage.user.TeamLeaderMapper;
-import com.spbpu.storage.user.TesterMapper;
-import com.spbpu.storage.user.UserMapper;
 import com.spbpu.user.ReportCreator;
 import com.spbpu.user.ReportDeveloper;
-import com.spbpu.user.TeamLeader;
-import com.spbpu.user.User;
 
 import java.io.IOException;
 import java.sql.*;
@@ -30,14 +25,29 @@ public class BugReportMapper implements Mapper<BugReport> {
     private ProjectMapper projectMapper;
     private CommentMapper commentMapper;
 
-    public BugReportMapper() throws IOException, SQLException {
+    public BugReportMapper(ProjectMapper pm) throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
-        projectMapper = new ProjectMapper();
+        projectMapper = pm;
         commentMapper = new CommentMapper();
     }
 
+    public List<BugReport> findReportsOfProject(Project project) throws SQLException, EndBeforeStartException {
+        List<BugReport> reports = new ArrayList<>();
+
+        String extractReports = "SELECT BUGREPORT.id FROM BUGREPORT WHERE BUGREPORT.project = ?";
+        PreparedStatement stmt = connection.prepareStatement(extractReports);
+        stmt.setInt(1, project.getId());
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            reports.add(findByID(rs.getInt("id")));
+        }
+
+        return reports;
+    }
+
     @Override
-    public BugReport findByID(int id) throws SQLException {
+    public BugReport findByID(int id) throws SQLException, EndBeforeStartException {
         for (BugReport it : bugReports)
             if (it.getId() == id) return it;
 
@@ -96,9 +106,8 @@ public class BugReportMapper implements Mapper<BugReport> {
     }
 
     @Override
-    public List<BugReport> findAll() throws SQLException {
+    public List<BugReport> findAll() throws SQLException, EndBeforeStartException {
         List<BugReport> all = new ArrayList<>();
-        bugReports.clear();
 
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery("SELECT * FROM BUGREPORT;");
@@ -130,7 +139,6 @@ public class BugReportMapper implements Mapper<BugReport> {
 
     @Override
     public void closeConnection() throws SQLException {
-        projectMapper.closeConnection();
         commentMapper.closeConnection();
         connection.close();
     }

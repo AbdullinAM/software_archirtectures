@@ -1,5 +1,6 @@
 package com.spbpu.storage.user;
 
+import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.project.ProjectMapper;
@@ -23,14 +24,28 @@ public class TeamLeaderMapper implements UserMapperInterface<TeamLeader> {
     private UserMapper userMapper;
     private ProjectMapper projectMapper;
 
-    public TeamLeaderMapper() throws IOException, SQLException {
+    public TeamLeaderMapper(ProjectMapper pm) throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
         userMapper = new UserMapper();
-        projectMapper = new ProjectMapper();
+        projectMapper = pm;
+    }
+
+    public TeamLeader findTeamLeaderOfProject(Project project) throws SQLException, EndBeforeStartException {
+        for (TeamLeader teamLeader : teamLeaders)
+            if (teamLeader.getProjects().contains(project)) return teamLeader;
+
+        String extractTL = "SELECT (TEAMLEADERS.teamleader) FROM TEAMLEADERS WHERE TEAMLEADERS.project = ?;";
+        PreparedStatement stmt = connection.prepareStatement(extractTL);
+        stmt.setInt(1, project.getId());
+        ResultSet rs = stmt.executeQuery();
+
+        if (!rs.next()) return null;
+
+        return findByID(rs.getInt("teamleader"));
     }
 
     @Override
-    public TeamLeader findByID(int id) throws SQLException {
+    public TeamLeader findByID(int id) throws SQLException, EndBeforeStartException {
         for (TeamLeader it : teamLeaders)
             if (it.getId() == id) return it;
 
@@ -53,9 +68,8 @@ public class TeamLeaderMapper implements UserMapperInterface<TeamLeader> {
     }
 
     @Override
-    public List<TeamLeader> findAll() throws SQLException {
+    public List<TeamLeader> findAll() throws SQLException, EndBeforeStartException {
         List<TeamLeader> all = new ArrayList<>();
-        teamLeaders.clear();
 
         String extractAll = "SELECT TEAMLEADERS.teamleader FROM TEAMLEADERS;";
         Statement statement = connection.createStatement();
@@ -75,10 +89,11 @@ public class TeamLeaderMapper implements UserMapperInterface<TeamLeader> {
             teamLeaders.add(item);
         }
         for (Project project : item.getProjects()) {
-            String insertSQL = "INSERT UPDATE INTO TEAMLEADERS(project, teamleader) VALUES (?, ?);";
+            String insertSQL = "INSERT INTO TEAMLEADERS(project, teamleader) VALUES (?, ?) ON DUPLICATE KEY UPDATE teamleader = ?;";
             PreparedStatement statement = connection.prepareStatement(insertSQL);
             statement.setInt(1, project.getId());
             statement.setInt(2, item.getId());
+            statement.setInt(3, item.getId());
             statement.execute();
         }
 
@@ -87,12 +102,11 @@ public class TeamLeaderMapper implements UserMapperInterface<TeamLeader> {
     @Override
     public void closeConnection() throws SQLException {
         userMapper.closeConnection();
-        projectMapper.closeConnection();
         connection.close();
     }
 
     @Override
-    public TeamLeader findByLogin(String login) throws SQLException {
+    public TeamLeader findByLogin(String login) throws SQLException, EndBeforeStartException {
         for (TeamLeader it : teamLeaders)
             if (it.getName().equals(login)) return it;
 

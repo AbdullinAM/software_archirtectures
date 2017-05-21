@@ -4,6 +4,7 @@
 
 package com.spbpu.storage.user;
 
+import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
@@ -29,11 +30,11 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
     public ManagerMapper() throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
         userMapper = new UserMapper();
-        projectMapper = new ProjectMapper();
+        projectMapper = new ProjectMapper(this);
     }
 
     @Override
-    public Manager findByLogin(String login) throws SQLException {
+    public Manager findByLogin(String login) throws SQLException, EndBeforeStartException {
         for (Manager it : managers)
             if (it.getLogin().equals(login)) return it;
 
@@ -55,7 +56,7 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
     }
 
     @Override
-    public Manager findByID(int id) throws SQLException {
+    public Manager findByID(int id) throws SQLException, EndBeforeStartException {
         for (Manager it : managers)
             if (it.getId() == id) return it;
 

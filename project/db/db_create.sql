@@ -134,10 +134,14 @@ INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES (
 INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Fourth User", "user4", "email", SHA1("user"));
 INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES ("Fifth User", "user5", "email", SHA1("user"));
 
-INSERT INTO PROJECT(PROJECT.name, PROJECT.manager, PROJECT.teamleader) VALUES(
+INSERT INTO PROJECT(PROJECT.name, PROJECT.manager) VALUES(
   "First project",
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user1"),
-  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user2")
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user1")
+);
+
+INSERT INTO TEAMLEADERS(TEAMLEADERS.teamleader, TEAMLEADERS.project) VALUES (
+  (SELECT (USERS.id) FROM USERS WHERE USERS.login = "user2"),
+  (SELECT (PROJECT.id) FROM PROJECT WHERE PROJECT.name = "First project")
 );
 
 INSERT INTO DEVELOPERS (DEVELOPERS.project, DEVELOPERS.developer) VALUES (

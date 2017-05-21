@@ -7,18 +7,14 @@ package com.spbpu.storage.project;
 import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
+import com.spbpu.project.Ticket;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class MilestoneMapper implements Mapper<Milestone> {
 
@@ -27,10 +23,25 @@ public class MilestoneMapper implements Mapper<Milestone> {
     private ProjectMapper projectMapper;
     private TicketMapper ticketMapper;
 
-    public MilestoneMapper() throws IOException, SQLException {
+    public MilestoneMapper(ProjectMapper pm) throws IOException, SQLException {
         connection = DataGateway.getInstance().getDataSource().getConnection();
-        projectMapper = new ProjectMapper();
-        ticketMapper = new TicketMapper();
+        projectMapper = pm;
+        ticketMapper = new TicketMapper(this);
+    }
+
+    public List<Milestone> findProjectMilestones(Project project) throws SQLException, EndBeforeStartException {
+        List<Milestone> projectMilestones = new ArrayList<>();
+
+        String findSQL = "SELECT MILESTONE.id FROM MILESTONE WHERE MILESTONE.project = ?;";
+        PreparedStatement stmt = connection.prepareStatement(findSQL);
+        stmt.setInt(1, project.getId());
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            projectMilestones.add(findByID(rs.getInt("id")));
+        }
+
+        return projectMilestones;
     }
 
     @Override
@@ -61,18 +72,51 @@ public class MilestoneMapper implements Mapper<Milestone> {
     }
 
     @Override
-    public List<Milestone> findAll() throws SQLException {
-        return null;
+    public List<Milestone> findAll() throws SQLException, EndBeforeStartException {
+        List<Milestone> all = new ArrayList<>();
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT MILESTONE.id FROM MILESTONE;");
+        while (rs.next()) {
+            all.add(findByID(rs.getInt("id")));
+        }
+        return all;
     }
 
     @Override
     public void update(Milestone item) throws SQLException {
+        if (!milestones.contains(item)) {
+            String insertSQL = "INSERT INTO MILESTONE(project, status, startDate, endDate) VALUES (?, ?, ?, ?);";
+            PreparedStatement stmt = connection.prepareStatement(insertSQL);
+            stmt.setInt(1, item.getProject().getId());
+            stmt.setString(2, item.getStatus().name());
+            stmt.setDate(3, new java.sql.Date(item.getStartDate().getTime()));
+            stmt.setDate(4, new java.sql.Date(item.getEndDate().getTime()));
+            item.setId(stmt.executeUpdate());
+        } else {
+            String update = "UPDATE MILESTONE SET status = ? WHERE id = 1;";
+            PreparedStatement updateStatus = connection.prepareStatement(update);
+            updateStatus.setString(1, item.getStatus().name());
+            updateStatus.setInt(1, item.getId());
+            updateStatus.execute();
+        }
 
+        if (item.getActiveDate() != null) {
+            PreparedStatement updateActive = connection.prepareStatement("UPDATE MILESTONE SET activeDate = ? WHERE id = ?;");
+            updateActive.setDate(1, new java.sql.Date(item.getActiveDate().getTime()));
+            updateActive.execute();
+        }
+        if (item.getClosingDate() != null) {
+            PreparedStatement updateClosing = connection.prepareStatement("UPDATE MILESTONE SET closingDate = ? WHERE id = ?;");
+            updateClosing.setDate(1, new java.sql.Date(item.getClosingDate().getTime()));
+            updateClosing.execute();
+        }
+
+        for (Ticket ticket : item.getTickets())
+            ticketMapper.update(ticket);
     }
 
     @Override
     public void closeConnection() throws SQLException {
-        projectMapper.closeConnection();
         ticketMapper.closeConnection();
         connection.close();
     }

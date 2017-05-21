@@ -48,6 +48,8 @@ public class Milestone {
     public void setId(int id_) { id = id_; }
     public int getId() { return id; }
 
+    public Milestone.Status getStatus() { return status; }
+
     public Project getProject() {
         return project;
     }

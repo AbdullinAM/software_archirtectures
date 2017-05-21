@@ -56,20 +56,14 @@ public class MessageMapper implements Mapper<Message> {
 
     @Override
     public List<Message> findAll() throws SQLException {
-        messages.clear();
         List<Message> all = new ArrayList<>();
 
-        String selectSQL = "SELECT * FROM MESSAGE;";
+        String selectSQL = "SELECT MESSAGE.id FROM MESSAGE;";
         Statement selectStatement = connection.createStatement();
         ResultSet rs = selectStatement.executeQuery(selectSQL);
 
         while (rs.next()) {
-            int id = rs.getInt("id");
-            String message = rs.getString("message");
-
-            Message newMessage = new Message(id, message);
-            messages.add(newMessage);
-            all.add(newMessage);
+            all.add(findByID(rs.getInt("id")));
         }
 
         return all;

@@ -41,6 +41,23 @@ public class Project {
         reports = new HashSet<>();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Name: " + name + "\n");
+        sb.append("Manager: " + manager.getName() + "\n");
+        sb.append("TeamLeader: " + ((teamLeader == null) ? "not set" : teamLeader.getName()) + "\n");
+        for (Developer dev : developers)
+            sb.append("Developer: " + dev.getName() + "\n");
+        for (Tester tester : testers)
+            sb.append("Tester: " + tester.getName() + "\n");
+        for (Milestone milestone : milestones)
+            sb.append("Milestone: " + milestone.toString() + "\n");
+        for (BugReport report : reports)
+            sb.append("Report: " + report.toString() + "\n");
+        return sb.toString();
+    }
+
     public void setId(int id_) { id = id_; }
     public int getId() { return id; }
 
@@ -101,7 +118,7 @@ public class Project {
 
     public List<ReportCreator> getReportCreators() {
         List<ReportCreator> reportCreators = new ArrayList<>();
-        reportCreators.add(teamLeader);
+        if (teamLeader != null) reportCreators.add(teamLeader);
         for (Developer dev : developers) {
             reportCreators.add(dev);
         }
