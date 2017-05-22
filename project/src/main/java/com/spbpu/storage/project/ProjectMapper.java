@@ -88,6 +88,24 @@ public class ProjectMapper implements Mapper<Project> {
         return managerProjects;
     }
 
+    public Project findByName(String name) throws SQLException, EndBeforeStartException {
+        for (Project it : projects)
+            if (it.getName().equals(name)) return it;
+
+        String findSQL = "SELECT * FROM PROJECT WHERE PROJECT.name = ?;";
+        PreparedStatement extract = connection.prepareStatement(findSQL);
+        extract.setString(1, name);
+        ResultSet rs = extract.executeQuery();
+
+        if (!rs.next()) return null;
+
+        Manager manager = managerMapper.findByID(rs.getInt("manager"));
+        for (Project it : manager.getProjects())
+            if (it.getId() == rs.getInt("id")) return it;
+
+        return null;
+    }
+
     @Override
     public Project findByID(int id) throws SQLException, EndBeforeStartException {
         for (Project it : projects)

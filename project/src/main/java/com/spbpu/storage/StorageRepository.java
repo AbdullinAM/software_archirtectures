@@ -137,6 +137,28 @@ public class StorageRepository {
         return null;
     }
 
+    public Project getProject(String name) {
+        try {
+            return projectMapper.findByName(name);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (EndBeforeStartException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Project getProject(int id) {
+        try {
+            return projectMapper.findByID(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (EndBeforeStartException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void clear() {
         userMapper.clear();
         managerMapper.clear();

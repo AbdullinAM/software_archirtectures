@@ -46,6 +46,7 @@ public class TeamLeader extends User implements ReportCreator, ReportDeveloper, 
         return assignedBugReports;
     }
 
+    @Override
     public List<Ticket> getAssignedTickets() {
         return assignedTickets;
     }

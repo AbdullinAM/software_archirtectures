@@ -47,6 +47,7 @@ public class Developer extends User  implements ReportCreator, ReportDeveloper, 
         return assignedBugReports;
     }
 
+    @Override
     public List<Ticket> getAssignedTickets() {
         return assignedTickets;
     }

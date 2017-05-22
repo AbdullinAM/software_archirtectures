@@ -8,6 +8,8 @@ import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.Ticket;
 
+import java.util.List;
+
 public interface TicketDeveloper extends UserInterface {
 
     default void notifyNew(Ticket ticket) {
@@ -36,4 +38,6 @@ public interface TicketDeveloper extends UserInterface {
         checkAuthenticated();
         ticket.addComment(this, comment);
     }
+
+    List<Ticket> getAssignedTickets();
 }
