@@ -108,14 +108,19 @@ public class TicketMapper implements Mapper<Ticket> {
     @Override
     public void update(Ticket item) throws SQLException {
         if (!tickets.contains(item)) {
+            String[] generated = { "id" };
             String insertSQL = "INSERT INTO TICKET(milestone, creator, status, creationTime, task) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement insert = connection.prepareStatement(insertSQL);
+            PreparedStatement insert = connection.prepareStatement(insertSQL, generated);
             insert.setInt(1, item.getMilestone().getId());
             insert.setInt(2, item.getCreator().getId());
             insert.setString(3, item.getStatus().name());
             insert.setDate(4, new java.sql.Date(item.getCreationTime().getTime()));
             insert.setString(5, item.getTask());
-            item.setId(insert.executeUpdate());
+            ResultSet rs = insert.getGeneratedKeys();
+            if (rs.next()) {
+                long id = rs.getLong(1);
+                item.setId((int) id);
+            }
             tickets.add(item);
         } else {
             String update = "UPDATE TICKET SET status = ? WHERE id = ?;";

@@ -74,11 +74,16 @@ public class MessageMapper implements Mapper<Message> {
         if (messages.contains(item)) {
             // message object is immutable, don't need to update
         } else {
+            String[] generated = { "id" };
             String insertSQL = "INSERT INTO MESSAGE(MESSAGE.user, MESSAGE.message) VALUES (?, ?);";
-            PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+            PreparedStatement insertStatement = connection.prepareStatement(insertSQL, generated);
             insertStatement.setInt(1, item.getOwner().getId());
             insertStatement.setString(2, item.getMessage());
-            item.setId(insertStatement.executeUpdate());
+            ResultSet rs = insertStatement.getGeneratedKeys();
+            if (rs.next()) {
+                long id = rs.getLong(1);
+                item.setId((int) id);
+            }
             messages.add(item);
         }
     }

@@ -85,13 +85,18 @@ public class MilestoneMapper implements Mapper<Milestone> {
     @Override
     public void update(Milestone item) throws SQLException {
         if (!milestones.contains(item)) {
+            String[] generated = { "id" };
             String insertSQL = "INSERT INTO MILESTONE(project, status, startDate, endDate) VALUES (?, ?, ?, ?);";
-            PreparedStatement stmt = connection.prepareStatement(insertSQL);
+            PreparedStatement stmt = connection.prepareStatement(insertSQL, generated);
             stmt.setInt(1, item.getProject().getId());
             stmt.setString(2, item.getStatus().name());
             stmt.setDate(3, new java.sql.Date(item.getStartDate().getTime()));
             stmt.setDate(4, new java.sql.Date(item.getEndDate().getTime()));
-            item.setId(stmt.executeUpdate());
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                long id = rs.getLong(1);
+                item.setId((int) id);
+            }
         } else {
             String update = "UPDATE MILESTONE SET status = ? WHERE id = 1;";
             PreparedStatement updateStatus = connection.prepareStatement(update);

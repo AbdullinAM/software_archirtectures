@@ -121,14 +121,19 @@ public class BugReportMapper implements Mapper<BugReport> {
     @Override
     public void update(BugReport item) throws SQLException {
         if (!bugReports.contains(item)) {
+            String[] generated = { "id" };
             String insertSQL = "INSERT INTO BUGREPORT(project, creator, status, creationTime, description) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(insertSQL);
+            PreparedStatement statement = connection.prepareStatement(insertSQL, generated);
             statement.setInt(1, item.getProject().getId());
             statement.setInt(2, item.getCreator().getId());
             statement.setString(3, item.getStatus().name());
             statement.setDate(4, new java.sql.Date(item.getCreationTime().getTime()));
             statement.setString(5, item.getDescription());
-            item.setId(statement.executeUpdate());
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                long id = rs.getLong(1);
+                item.setId((int) id);
+            }
             bugReports.add(item);
         } else {
             String update = "UPDATE BUGREPORT SET status = ? WHERE id = ?;";

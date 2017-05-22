@@ -30,13 +30,19 @@ public class UserMapper implements UserMapperInterface<User> {
     }
 
     public boolean addUser(User user, String password) throws SQLException {
+        String generatedColumns[] = { "USERS.id" };
         String insertSQL = "INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES (?, ?, ?, SHA1(?));";
         PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
         insertStatement.setString(1, user.getName());
         insertStatement.setString(2, user.getLogin());
         insertStatement.setString(3, user.getMailAddress());
         insertStatement.setString(4, password);
-        user.setId(insertStatement.executeUpdate());
+        insertStatement.execute();
+        ResultSet rs = insertStatement.getGeneratedKeys();
+        if (rs.next()) {
+            long id = rs.getLong(1);
+            user.setId((int) id);
+        }
         users.add(user);
         return true;
     }
@@ -133,12 +139,18 @@ public class UserMapper implements UserMapperInterface<User> {
                 msgMapper.update(it);
 
         } else {
+            String generatedColumns[] = { "USERS.id" };
             String insertSQL = "INSERT INTO USERS(USERS.name, USERS.login, USERS.email) VALUES (?, ?, ?);";
-            PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+            PreparedStatement insertStatement = connection.prepareStatement(insertSQL, generatedColumns);
             insertStatement.setString(1, item.getName());
             insertStatement.setString(2, item.getLogin());
             insertStatement.setString(3, item.getMailAddress());
-            item.setId(insertStatement.executeUpdate());
+            insertStatement.execute();
+            ResultSet rs = insertStatement.getGeneratedKeys();
+            if (rs.next()) {
+                long id = rs.getLong(1);
+                item.setId((int) id);
+            }
             users.add(item);
         }
     }

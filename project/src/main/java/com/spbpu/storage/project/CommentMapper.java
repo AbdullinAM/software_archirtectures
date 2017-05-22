@@ -70,12 +70,17 @@ public class CommentMapper implements Mapper<Comment> {
         } else {
             userMapper.update(item.getCommenter());
 
+            String[] generated = { "id" };
             String insertSQL = "INSERT INTO COMMENTS(COMMENTS.time, COMMENTS.commenter, COMMENTS.description) VALUES (?, ?, ?);";
-            PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+            PreparedStatement insertStatement = connection.prepareStatement(insertSQL, generated);
             insertStatement.setDate(1, new java.sql.Date(item.getDate().getTime()));
             insertStatement.setInt(2, item.getCommenter().getId());
             insertStatement.setString(3, item.getComment());
-            item.setId(insertStatement.executeUpdate());
+            ResultSet rs = insertStatement.getGeneratedKeys();
+            if (rs.next()) {
+                long id = rs.getLong(1);
+                item.setId((int) id);
+            }
             comments.add(item);
         }
     }

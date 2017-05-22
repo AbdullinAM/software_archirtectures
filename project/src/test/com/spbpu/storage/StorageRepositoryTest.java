@@ -29,18 +29,18 @@ public class StorageRepositoryTest {
 
     @Test
     public void addUserTest() throws Exception {
-        assertTrue("Can't add user", repository.addUser("devel", "devel", "devel", "pass"));
-        assertNotNull("Added user not found", repository.getUser("devel"));
+        assertTrue("Can't add user", repository.addUser("testuser", "testuser", "testuser", "pass"));
+        assertNotNull("Added user not found", repository.getUser("testuser"));
 
         try {
-            assertFalse("Added user second time", repository.addUser("devel", "devel", "devel", "pass"));
+            assertFalse("Added user second time", repository.addUser("testuser", "testuser", "testuser", "pass"));
         } catch (AlreadyExistsException e) {
             assertTrue("Exception thrown", true);
         }
-        assertTrue("Can't add user", repository.addUser("devel2", "devel2", "devel2", "pass"));
+        assertTrue("Can't add user", repository.addUser("testuser2", "testuser2", "testuser2", "pass"));
 
-        assertNotNull("Added user not found", repository.getUser("devel"));
-        assertNotNull("Added user not found", repository.getUser("devel2"));
+        assertNotNull("Added user not found", repository.getUser("testuser"));
+        assertNotNull("Added user not found", repository.getUser("testuser2"));
     }
 
     @Test
