@@ -8,6 +8,7 @@ import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
+import com.spbpu.project.Ticket;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
 import com.spbpu.storage.user.DeveloperMapper;
@@ -185,5 +186,16 @@ public class ProjectMapper implements Mapper<Project> {
         testerMapper.clear();
         reportMapper.clear();
         projects.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        teamLeaderMapper.update();
+        developerMapper.update();
+        milestoneMapper.update();
+        testerMapper.update();
+        reportMapper.update();
+        for (Project it : projects)
+            update(it);
     }
 }

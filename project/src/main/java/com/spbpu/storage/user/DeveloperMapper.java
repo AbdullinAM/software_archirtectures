@@ -133,7 +133,15 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
 
     @Override
     public void clear() {
+        userMapper.clear();
         developers.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        userMapper.update();
+        for (Developer it : developers)
+            update(it);
     }
 
 }

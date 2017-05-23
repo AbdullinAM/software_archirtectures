@@ -5,6 +5,7 @@ package com.spbpu.storage;
 
 import com.spbpu.exceptions.AlreadyExistsException;
 import com.spbpu.exceptions.EndBeforeStartException;
+import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
 import com.spbpu.storage.project.ProjectMapper;
 import com.spbpu.storage.user.*;
@@ -166,6 +167,19 @@ public class StorageRepository {
         teamLeaderMapper.clear();
         developerMapper.clear();
         testerMapper.clear();
+    }
+
+    public void update() {
+        try {
+            userMapper.update();
+            managerMapper.update();
+            projectMapper.update();
+            teamLeaderMapper.update();
+            developerMapper.update();
+            testerMapper.update();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     synchronized public void drop() {

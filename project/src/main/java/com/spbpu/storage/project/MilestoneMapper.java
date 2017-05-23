@@ -13,6 +13,7 @@ import com.spbpu.storage.Mapper;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.chrono.MinguoEra;
 import java.util.*;
 import java.util.Date;
 
@@ -130,5 +131,12 @@ public class MilestoneMapper implements Mapper<Milestone> {
     public void clear() {
         ticketMapper.clear();
         milestones.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        ticketMapper.update();
+        for (Milestone it : milestones)
+            update(it);
     }
 }

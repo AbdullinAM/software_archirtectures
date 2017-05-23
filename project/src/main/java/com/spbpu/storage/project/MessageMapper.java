@@ -1,6 +1,7 @@
 package com.spbpu.storage.project;
 
 import com.spbpu.project.Message;
+import com.spbpu.project.Ticket;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
 import com.spbpu.user.User;
@@ -96,5 +97,11 @@ public class MessageMapper implements Mapper<Message> {
     @Override
     public void clear() {
         messages.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        for (Message it : messages)
+            update(it);
     }
 }

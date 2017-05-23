@@ -12,6 +12,7 @@ import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
 import com.spbpu.user.TicketDeveloper;
 import com.spbpu.user.TicketManager;
+import com.spbpu.user.User;
 
 import java.io.IOException;
 import java.sql.*;
@@ -150,5 +151,12 @@ public class TicketMapper implements Mapper<Ticket> {
     public void clear() {
         commentMapper.clear();
         tickets.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        commentMapper.update();
+        for (Ticket it : tickets)
+            update(it);
     }
 }

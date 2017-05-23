@@ -203,6 +203,7 @@ public class FacadeImpl implements Facade {
         if (creator == null) return null;
 
         BugReport report = creator.createReport(proj, description);
+        repository.update();
         return report.getId();
     }
 
@@ -214,6 +215,7 @@ public class FacadeImpl implements Facade {
         for (BugReport it : proj.getReports())
             if (it.getId() == report) {
                 manager.reopenReport(it, comment);
+                repository.update();
                 return true;
             }
         return false;
@@ -234,6 +236,7 @@ public class FacadeImpl implements Facade {
         for (BugReport it : proj.getReports())
             if (it.getId() == report) {
                 it.setAccepted(dev);
+                repository.update();
                 return true;
             }
         return false;
@@ -254,6 +257,7 @@ public class FacadeImpl implements Facade {
         for (BugReport it : proj.getReports())
             if (it.getId() == report) {
                 it.setFixed(dev);
+                repository.update();
                 return true;
             }
         return false;
@@ -267,6 +271,7 @@ public class FacadeImpl implements Facade {
         for (BugReport it : proj.getReports())
             if (it.getId() == report) {
                 it.setClosed(manager);
+                repository.update();
                 return true;
             }
         return false;
@@ -339,6 +344,7 @@ public class FacadeImpl implements Facade {
         Project proj = repository.getProject(project);
         Manager manager = repository.getManager(repository.getUser(user));
         Milestone ml = manager.createMilestone(proj, start, end);
+        repository.update();
         return ml.getId();
     }
 
@@ -349,6 +355,7 @@ public class FacadeImpl implements Facade {
         for (Milestone it : proj.getMilestones())
             if (it.getId() == milestone) {
                 it.setActive();
+                repository.update();
                 return true;
             }
         return false;
@@ -361,6 +368,7 @@ public class FacadeImpl implements Facade {
         for (Milestone it : proj.getMilestones())
             if (it.getId() == milestone) {
                 it.setClosed();
+                repository.update();
                 return true;
             }
         return false;
@@ -462,7 +470,9 @@ public class FacadeImpl implements Facade {
 
         for (TicketManager it : proj.getTicketManagers()) {
             if (it.getUser().getLogin().equals(user)) {
-                it.createTicket(ml, task);
+                Ticket t = it.createTicket(ml, task);
+                repository.update();
+                return t.getId();
             }
         }
 
@@ -486,6 +496,7 @@ public class FacadeImpl implements Facade {
         for (Ticket it : all)
             if (it.getId() == ticket) {
                 it.setNew(manager, comment);
+                repository.update();
                 return true;
             }
         return false;
@@ -505,6 +516,8 @@ public class FacadeImpl implements Facade {
         for (Ticket it : dev.getAssignedTickets())
             if (it.getId() == ticket) {
                 it.setAccepted(dev);
+                repository.update();
+                return true;
             }
 
         return false;
@@ -524,6 +537,8 @@ public class FacadeImpl implements Facade {
         for (Ticket it : dev.getAssignedTickets())
             if (it.getId() == ticket) {
                 it.setInProgress(dev);
+                repository.update();
+                return true;
             }
 
         return false;
@@ -543,6 +558,8 @@ public class FacadeImpl implements Facade {
         for (Ticket it : dev.getAssignedTickets())
             if (it.getId() == ticket) {
                 it.setFinished(dev);
+                repository.update();
+                return true;
             }
 
         return false;
@@ -565,6 +582,7 @@ public class FacadeImpl implements Facade {
         for (Ticket it : all)
             if (it.getId() == ticket) {
                 it.setClosed(manager);
+                repository.update();
                 return true;
             }
         return false;

@@ -130,7 +130,15 @@ public class TeamLeaderMapper implements UserMapperInterface<TeamLeader> {
 
     @Override
     public void clear() {
+        userMapper.clear();
         teamLeaders.clear();
     }
 
+
+    @Override
+    public void update() throws SQLException {
+        userMapper.update();
+        for (TeamLeader it : teamLeaders)
+            update(it);
+    }
 }

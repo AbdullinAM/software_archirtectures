@@ -166,6 +166,12 @@ public class UserMapper implements UserMapperInterface<User> {
         users.clear();
     }
 
+    @Override
+    public void update() throws SQLException {
+        for (User it : users)
+            update(it);
+    }
+
     private static String encryptPassword(String password) {
         String sha1 = "";
         try

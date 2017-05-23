@@ -130,7 +130,15 @@ public class TesterMapper implements UserMapperInterface<Tester> {
 
     @Override
     public void clear() {
+        userMapper.clear();
         testers.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        userMapper.update();
+        for (Tester it : testers)
+            update(it);
     }
 
 }

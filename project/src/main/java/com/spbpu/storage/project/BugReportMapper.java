@@ -8,6 +8,7 @@ import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Comment;
 import com.spbpu.project.Project;
+import com.spbpu.project.Ticket;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
 import com.spbpu.user.ReportCreator;
@@ -163,5 +164,11 @@ public class BugReportMapper implements Mapper<BugReport> {
     public void clear() {
         commentMapper.clear();
         bugReports.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        for (BugReport it : bugReports)
+            update(it);
     }
 }

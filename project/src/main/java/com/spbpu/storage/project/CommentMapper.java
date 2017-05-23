@@ -5,6 +5,7 @@
 package com.spbpu.storage.project;
 
 import com.spbpu.project.Comment;
+import com.spbpu.project.Ticket;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.Mapper;
 import com.spbpu.storage.user.UserMapper;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class CommentMapper implements Mapper<Comment> {
 
@@ -94,5 +96,11 @@ public class CommentMapper implements Mapper<Comment> {
     @Override
     public void clear() {
         comments.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        for (Comment it : comments)
+            update(it);
     }
 }

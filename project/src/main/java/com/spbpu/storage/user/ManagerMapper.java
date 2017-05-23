@@ -110,6 +110,16 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
 
     @Override
     public void clear() {
+        projectMapper.clear();
+        userMapper.clear();
         managers.clear();
+    }
+
+    @Override
+    public void update() throws SQLException {
+        projectMapper.update();
+        userMapper.update();
+        for (Manager it : managers)
+            update(it);
     }
 }
