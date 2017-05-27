@@ -15,6 +15,7 @@ public interface Facade {
     String getUserName(String user) throws Exception;
     List<String> getMessages(String user) throws Exception;
     List<Pair<String, Integer>> getAssignedTickets(String user) throws Exception;
+    List<Pair<String, Integer>> getAssignedReports(String user) throws Exception;
     // user availabilities
     boolean createProject(String user, String name) throws Exception;
     // get projects

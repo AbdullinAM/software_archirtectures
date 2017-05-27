@@ -56,12 +56,21 @@ public class UserViewController {
     @FXML private TableColumn<Pair<String, Integer>, String> ticketDescriptionColumn;
     @FXML private TableColumn<Pair<String, Integer>, String> ticketAuthorColumn;
 
+    @FXML private Tab reportTab;
+    @FXML private TableView<Pair<String, Integer>> reportTable;
+    @FXML private TableColumn<Pair<String, Integer>, String> reportIdColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> reportProjectColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> reportStatusColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> reportDescriptionColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> reportAuthorColumn;
+
     public void setup(String user_) throws Exception {
         user = user_;
         userLabel.setText(user);
         setUpProjectTable();
         setUpMessageTable();
         setUpTicketTable();
+        setUpReportTable();
         onClickUpdateButton();
     }
 
@@ -78,6 +87,7 @@ public class UserViewController {
         updateProjectTable();
         updateMessageTable();
         updateTicketTable();
+        updateReportTable();
     }
 
     @FXML
@@ -167,6 +177,40 @@ public class UserViewController {
         ticketTable.setItems(tickets);
     }
 
+    private void setUpReportTable() throws Exception {
+        reportIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSecond().toString()));
+        reportProjectColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst()));
+        reportStatusColumn.setCellValueFactory(cell -> {
+            try {
+                return new SimpleStringProperty(facade.getReportStatus(cell.getValue().getFirst(), cell.getValue().getSecond()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty("");
+        });
+        reportDescriptionColumn.setCellValueFactory(cell -> {
+            try {
+                return new SimpleStringProperty(facade.getReportDescription(cell.getValue().getFirst(), cell.getValue().getSecond()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty("");
+        });
+        reportAuthorColumn.setCellValueFactory(cell -> {
+            try {
+                return new SimpleStringProperty(facade.getReportAuthor(cell.getValue().getFirst(), cell.getValue().getSecond()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty("");
+        });
+    }
+
+    private void updateReportTable() throws Exception {
+        ObservableList<Pair<String, Integer>> tickets = FXCollections.observableArrayList();
+        facade.getAssignedReports(user).stream().forEach(pair -> tickets.add(pair));
+        ticketTable.setItems(tickets);
+    }
 }
 
 

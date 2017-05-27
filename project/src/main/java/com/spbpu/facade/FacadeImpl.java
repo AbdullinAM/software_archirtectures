@@ -45,11 +45,20 @@ public class FacadeImpl implements Facade {
     public List<String> getMessages(String user) throws Exception {
         return repository.getUser(user).getMessages().stream().map(message -> message.getMessage()).collect(Collectors.toList());
     }
+
     @Override
     public List<Pair<String, Integer>> getAssignedTickets(String user) throws Exception {
         Developer dev = repository.getDeveloper(repository.getUser(user));
         return dev.getAssignedTickets().stream().
                 map(ticket -> new Pair<String, Integer>(ticket.getMilestone().getProject().getName(), ticket.getId())).
+                collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Pair<String, Integer>> getAssignedReports(String user) throws Exception {
+        Developer dev = repository.getDeveloper(repository.getUser(user));
+        return dev.getAssignedBugReports().stream().
+                map(report -> new Pair<String, Integer>(report.getProject().getName(), report.getId())).
                 collect(Collectors.toList());
     }
 
