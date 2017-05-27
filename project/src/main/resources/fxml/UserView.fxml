@@ -45,6 +45,28 @@
                   </AnchorPane>
             </content>
           </Tab>
+            <Tab fx:id="ticketTab" text="Tickets">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="ticketTable" layoutY="14.0" prefHeight="328.0" prefWidth="600.0">
+                          <columns>
+                            <TableColumn fx:id="ticketIdColumn" prefWidth="50.0" text="ID" />
+                              <TableColumn fx:id="ticketProjectColumn" prefWidth="86.0" text="Project" />
+                            <TableColumn fx:id="ticketStatusColumn" prefWidth="89.0" text="Status" />
+                              <TableColumn fx:id="ticketDescriptionColumn" prefWidth="273.0" text="Description" />
+                              <TableColumn fx:id="ticketAuthorColumn" prefWidth="101.0" text="Author" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Bug reports">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
       <Button fx:id="signOutButton" layoutX="524.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#onClickSignOutButton" text="Sign out" />

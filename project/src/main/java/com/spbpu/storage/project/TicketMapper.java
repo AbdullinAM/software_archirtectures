@@ -32,12 +32,24 @@ public class TicketMapper implements Mapper<Ticket> {
         commentMapper = new CommentMapper();
     }
 
+    public List<Ticket> findTicketsOfMilestone(Milestone milestone) throws SQLException, EndBeforeStartException {
+        List<Ticket> result = new ArrayList<>();
+        String extractSQL = "SELECT TICKET.id FROM TICKET WHERE TICKET.milestone = ?;";
+        PreparedStatement extract = connection.prepareStatement(extractSQL);
+        extract.setInt(1, milestone.getId());
+        ResultSet rs = extract.executeQuery();
+        while (rs.next()) {
+            result.add(findByID(rs.getInt("id")));
+        }
+        return result;
+    }
+
     @Override
     public Ticket findByID(int id) throws SQLException, EndBeforeStartException {
         for (Ticket it : tickets)
             if (it.getId() == id) return it;
 
-        String extractSQL = "SELECT * FROM TICKET WHERE id = ?";
+        String extractSQL = "SELECT * FROM TICKET WHERE id = ?;";
         PreparedStatement extract = connection.prepareStatement(extractSQL);
         extract.setInt(1, id);
 
@@ -68,7 +80,7 @@ public class TicketMapper implements Mapper<Ticket> {
         tickets.add(ticket);
 
         // extract comments
-        String extractCommentsSQL = "SELECT TICKET_COMMENTS.commentid FROM TICKET_COMMENTS WHERE TICKET_COMMENTS.ticket = ?";
+        String extractCommentsSQL = "SELECT TICKET_COMMENTS.commentid FROM TICKET_COMMENTS WHERE TICKET_COMMENTS.ticket = ?;";
         PreparedStatement extractComments = connection.prepareStatement(extractCommentsSQL);
         extractComments.setInt(1, id);
         ResultSet rsComments = extractComments.executeQuery();
@@ -77,16 +89,20 @@ public class TicketMapper implements Mapper<Ticket> {
         }
 
         // get assignees
-        String extracAssigneesSQL = "SELECT TICKET_ASSIGNEES.assignee FROM TICKET_ASSIGNEES WHERE TICKET_ASSIGNEES.ticket = ?";
+        String extracAssigneesSQL = "SELECT TICKET_ASSIGNEES.assignee FROM TICKET_ASSIGNEES WHERE TICKET_ASSIGNEES.ticket = ?;";
         PreparedStatement extractAssignees = connection.prepareStatement(extracAssigneesSQL);
-        extractComments.setInt(1, id);
+        extractAssignees.setInt(1, id);
 
         ResultSet rsAssignees = extractAssignees.executeQuery();
         List<TicketDeveloper> developers = milestone.getProject().getTicketDevelopers();
         while (rsAssignees.next()) {
             int devid = rsAssignees.getInt("assignee");
-            for (TicketDeveloper it : developers)
-                if (it.getId() == devid) ticket.addAssignee(it);
+            for (TicketDeveloper it : developers) {
+                if (it.getId() == devid) {
+                    ticket.addAssignee(it);
+                    it.assign(ticket);
+                }
+            }
         }
 
         return ticket;
@@ -109,9 +125,8 @@ public class TicketMapper implements Mapper<Ticket> {
     @Override
     public void update(Ticket item) throws SQLException {
         if (!tickets.contains(item)) {
-            String[] generated = { "id" };
-            String insertSQL = "INSERT INTO TICKET(milestone, creator, status, creationTime, task) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement insert = connection.prepareStatement(insertSQL, generated);
+            String insertSQL = "INSERT INTO TICKET(milestone, creator, status, creationTime, task) VALUES (?, ?, ?, ?, ?);";
+            PreparedStatement insert = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             insert.setInt(1, item.getMilestone().getId());
             insert.setInt(2, item.getCreator().getId());
             insert.setString(3, item.getStatus().name());

@@ -54,6 +54,7 @@ public class Milestone {
         return project;
     }
 
+    public void setTickets(Set<Ticket> tickets_) { tickets = tickets_; }
     public Set<Ticket> getTickets() {
         return tickets;
     }

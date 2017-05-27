@@ -4,7 +4,9 @@
 
 package com.spbpu.storage.project;
 
+import com.spbpu.exceptions.AlreadyAcceptedException;
 import com.spbpu.exceptions.EndBeforeStartException;
+import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Comment;
 import com.spbpu.project.Project;
@@ -101,7 +103,10 @@ public class BugReportMapper implements Mapper<BugReport> {
                 break;
             }
         }
-        if (developer != null) report.setDeveloper(developer);
+        if (developer != null) {
+            report.setDeveloper(developer);
+            developer.assign(report);
+        }
 
         return report;
     }
@@ -122,9 +127,8 @@ public class BugReportMapper implements Mapper<BugReport> {
     @Override
     public void update(BugReport item) throws SQLException {
         if (!bugReports.contains(item)) {
-            String[] generated = { "id" };
             String insertSQL = "INSERT INTO BUGREPORT(project, creator, status, creationTime, description) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(insertSQL, generated);
+            PreparedStatement statement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1, item.getProject().getId());
             statement.setInt(2, item.getCreator().getId());
             statement.setString(3, item.getStatus().name());

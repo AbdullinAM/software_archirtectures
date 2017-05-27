@@ -6,6 +6,7 @@ package com.spbpu.gui;
 
 import com.spbpu.Main;
 import com.spbpu.facade.Facade;
+import com.spbpu.facade.Pair;
 import com.spbpu.project.Project;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,6 +23,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
 
 import javax.swing.text.*;
 import java.util.Optional;
@@ -36,19 +38,31 @@ public class UserViewController {
     @FXML private Button signOutButton;
     @FXML private Button addProjectButton;
     @FXML private TabPane tabs;
+
     @FXML private Tab projectTab;
-    @FXML private Tab messageTab;
     @FXML private TableView<String> projectTable;
     @FXML private TableColumn<String, String> projectNameColumn;
     @FXML private TableColumn<String, String> projectRoleColumn;
+
+    @FXML private Tab messageTab;
     @FXML private TableView<String> messageTable;
     @FXML private TableColumn<String, String> messageColumn;
+
+    @FXML private Tab ticketTab;
+    @FXML private TableView<Pair<String, Integer>> ticketTable;
+    @FXML private TableColumn<Pair<String, Integer>, String> ticketIdColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> ticketProjectColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> ticketStatusColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> ticketDescriptionColumn;
+    @FXML private TableColumn<Pair<String, Integer>, String> ticketAuthorColumn;
 
     public void setup(String user_) throws Exception {
         user = user_;
         userLabel.setText(user);
         setUpProjectTable();
         setUpMessageTable();
+        setUpTicketTable();
+        onClickUpdateButton();
     }
 
     @FXML
@@ -61,8 +75,9 @@ public class UserViewController {
 
     @FXML
     private void onClickUpdateButton() throws Exception {
-        setUpProjectTable();
-        setUpMessageTable();
+        updateProjectTable();
+        updateMessageTable();
+        updateTicketTable();
     }
 
     @FXML
@@ -95,6 +110,9 @@ public class UserViewController {
             }
             return new SimpleStringProperty("");
         });
+    }
+
+    private void updateProjectTable() {
         ObservableList<String> projects = FXCollections.observableArrayList();
         try {
             facade.getAllProjects(user).stream().forEach(project -> projects.add(project));
@@ -104,12 +122,51 @@ public class UserViewController {
         projectTable.setItems(projects);
     }
 
-    private void setUpMessageTable() throws Exception {
+    private void setUpMessageTable() {
         messageColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue()));
+    }
+
+    private void updateMessageTable() throws Exception {
         ObservableList<String> messages = FXCollections.observableArrayList();
         facade.getMessages(user).stream().forEach(message -> messages.add(message));
         messageTable.setItems(messages);
     }
+
+    private void setUpTicketTable() throws Exception {
+        ticketIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSecond().toString()));
+        ticketProjectColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst()));
+        ticketStatusColumn.setCellValueFactory(cell -> {
+            try {
+                return new SimpleStringProperty(facade.getTicketStatus(cell.getValue().getFirst(), cell.getValue().getSecond()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty("");
+        });
+        ticketDescriptionColumn.setCellValueFactory(cell -> {
+            try {
+                return new SimpleStringProperty(facade.getTicketTask(cell.getValue().getFirst(), cell.getValue().getSecond()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty("");
+        });
+        ticketAuthorColumn.setCellValueFactory(cell -> {
+            try {
+                return new SimpleStringProperty(facade.getTicketAuthor(cell.getValue().getFirst(), cell.getValue().getSecond()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty("");
+        });
+    }
+
+    private void updateTicketTable() throws Exception {
+        ObservableList<Pair<String, Integer>> tickets = FXCollections.observableArrayList();
+        facade.getAssignedTickets(user).stream().forEach(pair -> tickets.add(pair));
+        ticketTable.setItems(tickets);
+    }
+
 }
 
 

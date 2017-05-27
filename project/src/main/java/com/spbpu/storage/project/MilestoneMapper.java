@@ -16,6 +16,7 @@ import java.sql.*;
 import java.time.chrono.MinguoEra;
 import java.util.*;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class MilestoneMapper implements Mapper<Milestone> {
 
@@ -69,6 +70,8 @@ public class MilestoneMapper implements Mapper<Milestone> {
         if (closingDate != null) milestone.setClosingDate(closingDate);
         milestones.add(milestone);
 
+        milestone.setTickets(ticketMapper.findTicketsOfMilestone(milestone).stream().collect(Collectors.toSet()));
+
         return milestone;
     }
 
@@ -86,9 +89,8 @@ public class MilestoneMapper implements Mapper<Milestone> {
     @Override
     public void update(Milestone item) throws SQLException {
         if (!milestones.contains(item)) {
-            String[] generated = { "id" };
             String insertSQL = "INSERT INTO MILESTONE(project, status, startDate, endDate) VALUES (?, ?, ?, ?);";
-            PreparedStatement stmt = connection.prepareStatement(insertSQL, generated);
+            PreparedStatement stmt = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, item.getProject().getId());
             stmt.setString(2, item.getStatus().name());
             stmt.setDate(3, new java.sql.Date(item.getStartDate().getTime()));

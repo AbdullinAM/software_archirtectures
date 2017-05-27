@@ -92,6 +92,11 @@ public class Developer extends User  implements ReportCreator, ReportDeveloper, 
     }
 
     @Override
+    public void assign(Ticket ticket) {
+        if (!assignedTickets.contains(ticket)) assignedTickets.add(ticket);
+    }
+
+    @Override
     public void acceptTicket(Ticket ticket) throws NoRightsException, NotAuthenticatedException {
         checkAuthenticated();
         ticket.setAccepted(this);

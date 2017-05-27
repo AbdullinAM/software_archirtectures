@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface TicketDeveloper extends UserInterface {
 
+    void assign(Ticket ticket);
+
     default void notifyNew(Ticket ticket) {
         StringBuilder builder = new StringBuilder();
         builder.append("New ticket: ");

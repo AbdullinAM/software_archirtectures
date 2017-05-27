@@ -51,7 +51,7 @@ public class DeveloperMapper implements UserMapperInterface<Developer> {
     @Override
     public Developer findByLogin(String login) throws SQLException, EndBeforeStartException {
         for (Developer it : developers)
-            if (it.getName().equals(login)) return it;
+            if (it.getLogin().equals(login)) return it;
 
         User user = userMapper.findByLogin(login);
         if (user == null) return null;

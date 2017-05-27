@@ -100,4 +100,9 @@ public class TeamLeader extends User implements ReportCreator, ReportDeveloper, 
         if(!managedBugReports.contains(report))
             managedBugReports.add(report);
     }
+
+    @Override
+    public void assign(Ticket ticket) {
+        if (!assignedTickets.contains(ticket)) assignedTickets.add(ticket);
+    }
 }
