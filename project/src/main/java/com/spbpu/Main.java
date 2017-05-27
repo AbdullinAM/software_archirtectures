@@ -2,10 +2,7 @@ package com.spbpu;
 
 import com.spbpu.facade.Facade;
 import com.spbpu.facade.FacadeImpl;
-import com.spbpu.gui.MainViewController;
-import com.spbpu.gui.MilestoneViewController;
-import com.spbpu.gui.ProjectViewController;
-import com.spbpu.gui.UserViewController;
+import com.spbpu.gui.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -93,7 +90,16 @@ public class Main extends Application {
     }
 
     public static void showTicketView(String user, String project, Integer tiket) throws Exception {
-        System.out.println("ticket");
+        Stage stage = new Stage();
+        String fxmlFile = "/fxml/TicketView.fxml";
+        FXMLLoader loader = new FXMLLoader();
+        AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
+        TicketViewController uvc = loader.getController();
+        uvc.setup(user, project, tiket);
+        Scene scene = new Scene(root, 600, 400);
+        stage.setScene(scene);
+        stage.setTitle("Ticket info");
+        stage.show();
     }
 
     public static void showReportView(String user, String project, Integer report) throws Exception {

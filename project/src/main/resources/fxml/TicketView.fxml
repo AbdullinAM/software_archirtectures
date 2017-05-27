@@ -9,33 +9,33 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="602.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.TicketView">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.gui.TicketViewController">
    <children>
       <Label layoutX="14.0" layoutY="14.0" text="Ticket:" />
-      <Label layoutX="65.0" layoutY="14.0" text="id" />
+      <Label fx:id="idLabel" layoutX="65.0" layoutY="14.0" text="id" />
       <Label layoutX="14.0" layoutY="30.0" text="Milestone: " />
-      <Label layoutX="86.0" layoutY="30.0" text="id" />
+      <Label fx:id="milestoneLabel" layoutX="86.0" layoutY="30.0" text="id" />
       <Label layoutX="14.0" layoutY="46.0" text="Project:" />
-      <Label layoutX="68.0" layoutY="46.0" text="name" />
+      <Label fx:id="projectLabel" layoutX="68.0" layoutY="46.0" text="name" />
       <Label layoutX="14.0" layoutY="62.0" text="Author: " />
-      <Label layoutX="71.0" layoutY="62.0" text="author" />
+      <Label fx:id="authorLabel" layoutX="71.0" layoutY="62.0" text="author" />
       <Label layoutX="14.0" layoutY="78.0" text="Created: " />
-      <Label layoutX="80.0" layoutY="78.0" text="date" />
-      <TextArea layoutX="14.0" layoutY="110.0" prefHeight="93.0" prefWidth="306.0" />
+      <Label fx:id="dateLabel" layoutX="80.0" layoutY="78.0" text="date" />
+      <TextArea fx:id="descriptionArea" layoutX="14.0" layoutY="110.0" prefHeight="93.0" prefWidth="306.0" />
       <Label layoutX="14.0" layoutY="94.0" text="Description:" />
-      <Button layoutX="143.0" layoutY="17.0" mnemonicParsing="false" text="Update" />
-      <ListView layoutX="14.0" layoutY="225.0" prefHeight="147.0" prefWidth="306.0" />
+      <Button fx:id="updateButton" layoutX="195.0" layoutY="17.0" mnemonicParsing="false" onMouseClicked="#onClickUpdateButton" text="Update" />
+      <ListView fx:id="assigneeList" layoutX="14.0" layoutY="225.0" prefHeight="147.0" prefWidth="306.0" />
       <Label layoutX="18.0" layoutY="209.0" text="Assignees:" />
-      <TableView layoutX="326.0" layoutY="40.0" prefHeight="350.0" prefWidth="272.0">
+      <TableView fx:id="commentTable" layoutX="326.0" layoutY="40.0" prefHeight="350.0" prefWidth="272.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Date" />
-          <TableColumn prefWidth="75.0" text="User" />
-            <TableColumn prefWidth="121.0" text="Comment" />
+          <TableColumn fx:id="commentDateColumn" prefWidth="75.0" text="Date" />
+          <TableColumn fx:id="commentAuthorColumn" prefWidth="75.0" text="Author" />
+            <TableColumn fx:id="commentCommentColumn" prefWidth="121.0" text="Comment" />
         </columns>
       </TableView>
       <Label layoutX="326.0" layoutY="22.0" text="Comments:" />
-      <ChoiceBox layoutX="143.0" layoutY="73.0" prefWidth="150.0" />
-      <Label layoutX="143.0" layoutY="54.0" text="Status:" />
+      <ChoiceBox fx:id="statusBox" layoutX="195.0" layoutY="73.0" prefHeight="26.0" prefWidth="122.0" />
+      <Label layoutX="195.0" layoutY="54.0" text="Status:" />
+      <Button fx:id="addAssigneeButton" layoutX="145.0" layoutY="373.0" mnemonicParsing="false" onMouseClicked="#onClickAddAssigneeButton" text="Add" />
    </children>
 </AnchorPane>

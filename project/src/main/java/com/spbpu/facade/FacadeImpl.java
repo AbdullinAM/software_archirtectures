@@ -264,7 +264,7 @@ public class FacadeImpl implements Facade {
         for (BugReport it : proj.getReports())
             if (it.getId() == report)
                 return it.getComments().stream().
-                        map(comment -> new Triple(comment.getDate(), comment.getCommenter().getLogin(), comment.getComment())).
+                        map(comment -> new Triple<Date, String, String>(comment.getDate(), comment.getCommenter().getLogin(), comment.getComment())).
                         collect(Collectors.toList());
         return null;
     }
@@ -535,7 +535,7 @@ public class FacadeImpl implements Facade {
         for (Ticket it : all)
             if (it.getId() == ticket)
                 return it.getComments().stream().
-                        map(comment -> new Triple(comment.getDate(), comment.getCommenter().getLogin(), comment.getComment())).
+                        map(comment -> new Triple<Date, String, String>(comment.getDate(), comment.getCommenter().getLogin(), comment.getComment())).
                         collect(Collectors.toList());
         return null;
     }
@@ -668,6 +668,39 @@ public class FacadeImpl implements Facade {
                 repository.update();
                 return true;
             }
+        return false;
+    }
+
+    // assign developer to ticket
+    public boolean addTicketAssignee(String manager, String project, Integer id, String user) throws Exception {
+        Project proj = repository.getProject(project);
+
+        Ticket ticket = null;
+        List<Ticket> all = proj.getMilestones().stream().
+                flatMap(milestone -> milestone.getTickets().stream()).
+                collect(Collectors.toList());
+        for (Ticket it : all)
+            if (it.getId() == id) {
+                ticket = it;
+                break;
+            }
+        if (ticket == null) return false;
+
+        TicketDeveloper dev = null;
+        for (TicketDeveloper it : proj.getTicketDevelopers())
+            if (it.getUser().getLogin().equals(user)) {
+                dev = it;
+                break;
+            }
+        if (dev == null) return false;
+
+        for (TicketManager man : proj.getTicketManagers()) {
+            if (man.getUser().getLogin().equals(manager)) {
+                man.addAssignee(ticket, dev);
+                repository.update();
+                return true;
+            }
+        }
         return false;
     }
 }

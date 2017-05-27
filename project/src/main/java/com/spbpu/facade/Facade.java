@@ -77,4 +77,6 @@ public interface Facade {
     boolean setTicketInProgress(String user, String project, Integer ticket) throws Exception;
     boolean finishTicket(String user, String project, Integer ticket) throws Exception;
     boolean closeTicket(String user, String project, Integer ticket) throws Exception;
+    // assign developer to ticket
+    boolean addTicketAssignee(String manage, String project, Integer id, String user) throws Exception;
 }

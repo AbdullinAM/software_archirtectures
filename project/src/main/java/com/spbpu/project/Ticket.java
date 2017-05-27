@@ -75,6 +75,7 @@ public class Ticket {
     public void addAssignee(TicketDeveloper developer) {
         if (!assignees.contains(developer)) {
             assignees.add(developer);
+            developer.assign(this);
             developer.notifyNew(this);
         }
     }

@@ -18,6 +18,11 @@ public interface TicketManager  extends UserInterface {
         return ticket;
     }
 
+    default void addAssignee(Ticket ticket, TicketDeveloper developer) throws NotAuthenticatedException {
+        checkAuthenticated();
+        ticket.addAssignee(developer);
+    }
+
     default void commentTicket(Ticket ticket, String comment) throws NoRightsException, NotAuthenticatedException {
         checkAuthenticated();
         ticket.addComment(this, comment);
