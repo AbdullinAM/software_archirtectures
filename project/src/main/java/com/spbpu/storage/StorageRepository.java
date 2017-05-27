@@ -169,17 +169,13 @@ public class StorageRepository {
         testerMapper.clear();
     }
 
-    public void update() {
-        try {
-            userMapper.update();
-            managerMapper.update();
-            projectMapper.update();
-            teamLeaderMapper.update();
-            developerMapper.update();
-            testerMapper.update();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void update() throws SQLException {
+        userMapper.update();
+        managerMapper.update();
+        projectMapper.update();
+        teamLeaderMapper.update();
+        developerMapper.update();
+        testerMapper.update();
     }
 
     synchronized public void drop() {

@@ -97,8 +97,9 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
             managers.add(item);
         }
 
-        for (Project it : item.getProjects())
+        for (Project it : item.getProjects()) {
             projectMapper.update(it);
+        }
     }
 
     @Override

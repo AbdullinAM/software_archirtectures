@@ -1,33 +1,56 @@
 package com.spbpu;
 
-import com.spbpu.exceptions.AlreadyAcceptedException;
-import com.spbpu.exceptions.EndBeforeStartException;
-import com.spbpu.exceptions.NoRightsException;
-import com.spbpu.exceptions.NotAuthenticatedException;
-import com.spbpu.project.BugReport;
-import com.spbpu.project.Project;
-import com.spbpu.storage.StorageRepository;
-import com.spbpu.storage.user.DeveloperMapper;
-import com.spbpu.storage.user.ManagerMapper;
-import com.spbpu.storage.user.UserMapper;
-import com.spbpu.user.Manager;
-import com.spbpu.user.TeamLeader;
-import com.spbpu.user.User;
+import com.spbpu.facade.Facade;
+import com.spbpu.facade.FacadeImpl;
+import com.spbpu.gui.SignInController;
+import com.spbpu.gui.UserViewController;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
-public class Main {
 
-    public static void main(String[] args) throws IOException, SQLException, EndBeforeStartException, NotAuthenticatedException, NoRightsException, AlreadyAcceptedException {
-        ManagerMapper mmapper = new ManagerMapper();
-        Manager manager = mmapper.findByLogin("manager");
-        System.out.println(manager.getId());
-        System.out.println(manager.toString());
-        for (Project project : manager.getProjects()) {
-            System.out.println(project.toString());
-        }
-        mmapper.update(manager);
-        mmapper.closeConnection();
+public class Main extends Application {
+
+    public static Facade facade = new FacadeImpl();
+
+
+    private static Stage mainStage;
+
+
+    public static void main(String[] args) {
+        launch(args);
     }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        mainStage = stage;
+        mainStage.setTitle("PMS");
+
+        showSignInView();
+
+        mainStage.show();
+    }
+
+    public static void showSignInView() throws Exception {
+        String fxmlFile = "/fxml/SignIn.fxml";
+        FXMLLoader loader = new FXMLLoader();
+        AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
+        Scene scene = new Scene(root, 384, 275);
+        mainStage.setScene(scene);
+    }
+
+    public static void showMainView(String user) throws Exception {
+        String fxmlFile = "/fxml/UserView.fxml";
+        FXMLLoader loader = new FXMLLoader();
+        AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
+        UserViewController uvc = loader.getController();
+        uvc.setup(user);
+        Scene scene = new Scene(root, 600, 400);
+        mainStage.setScene(scene);
+    }
+
 }

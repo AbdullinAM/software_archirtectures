@@ -11,6 +11,7 @@ import com.spbpu.project.Project;
 import com.spbpu.project.Ticket;
 import com.spbpu.storage.StorageRepository;
 import com.spbpu.user.*;
+import javafx.fxml.FXML;
 import org.omg.CORBA.TIMEOUT;
 
 import java.util.Date;
@@ -28,6 +29,30 @@ public class FacadeImpl implements Facade {
     @Override
     public boolean authenticate(String login, String password) throws Exception {
         return repository.authenticateUser(login, password);
+    }
+
+    @Override
+    public String getUserEmail(String user) throws Exception {
+        return repository.getUser(user).getMailAddress();
+    }
+
+    @Override
+    public String getUserName(String user) throws Exception {
+        return repository.getUser(user).getName();
+    }
+
+    @Override
+    public List<String> getMessages(String user) throws Exception {
+        return repository.getUser(user).getMessages().stream().map(message -> message.getMessage()).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean createProject(String user, String name) throws Exception {
+        if (repository.getProject(name) != null) return false;
+        Manager manager = repository.getManager(repository.getUser(user));
+        Project project = manager.createProject(name);
+        repository.update();
+        return true;
     }
 
     @Override

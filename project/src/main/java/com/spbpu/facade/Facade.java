@@ -10,6 +10,12 @@ import java.util.List;
 public interface Facade {
 
     boolean authenticate(String login, String password) throws Exception;
+    // get user information
+    String getUserEmail(String user) throws Exception;
+    String getUserName(String user) throws Exception;
+    List<String> getMessages(String user) throws Exception;
+    // user availabilities
+    boolean createProject(String user, String name) throws Exception;
     // get projects
     List<String> getManagedProjects(String user) throws Exception;
     List<String> getLeadedProjects(String user) throws Exception;

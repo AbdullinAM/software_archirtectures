@@ -141,16 +141,18 @@ public class ProjectMapper implements Mapper<Project> {
     @Override
     public void update(Project item) throws SQLException {
         if (!projects.contains(item)) {
-            String[] generated = { "id" };
             String insertSQL = "INSERT INTO PROJECT(name, manager) VALUES (?, ?);";
-            PreparedStatement stmt = connection.prepareStatement(insertSQL, generated);
+            PreparedStatement stmt = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, item.getName());
-            stmt.setInt(1, item.getManager().getId());
+            stmt.setInt(2, item.getManager().getId());
+            stmt.execute();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 long id = rs.getLong(1);
+                System.out.println("Generated projectid: " + id);
                 item.setId((int) id);
             }
+            projects.add(item);
         }
         if (item.getTeamLeader() != null)
             teamLeaderMapper.update(item.getTeamLeader());
