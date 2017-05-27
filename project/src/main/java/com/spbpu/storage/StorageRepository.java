@@ -115,7 +115,7 @@ public class StorageRepository {
 
     public boolean authenticateUser(String login, String password) {
         User user = getUser(login);
-        return user != null && authenticateUser(user, password);
+        return user.signIn(password);
     }
 
     public boolean authenticateUser(User user, String password) {

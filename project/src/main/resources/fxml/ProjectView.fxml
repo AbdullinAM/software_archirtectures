@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="597.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.gui.ProjectViewController">
+   <children>
+      <Label layoutX="26.0" layoutY="14.0" text="Project: " />
+      <Label fx:id="projectLabel" layoutX="87.0" layoutY="14.0" text="project name" />
+      <Label layoutX="26.0" layoutY="30.0" text="Manager:" />
+      <Label fx:id="managerLabel" layoutX="101.0" layoutY="30.0" text="manager" />
+      <Label layoutX="26.0" layoutY="46.0" text="Team leader: " />
+      <Label fx:id="teamLeaderLabel" layoutX="120.0" layoutY="46.0" text="team leader" />
+      <AnchorPane layoutX="26.0" layoutY="76.0" prefHeight="248.0" prefWidth="242.0">
+         <children>
+            <Label layoutY="6.0" text="Developers" />
+            <ListView fx:id="developerList" layoutX="1.0" layoutY="22.0" prefHeight="200.0" prefWidth="247.0" />
+            <Button fx:id="addDeveloperButton" layoutX="103.0" layoutY="221.0" mnemonicParsing="false" onMouseClicked="#onClickAddDeveloperButton" text="Add" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="26.0" layoutY="331.0" prefHeight="248.0" prefWidth="248.0">
+         <children>
+            <Button fx:id="addTesterButton" layoutX="103.0" layoutY="221.0" mnemonicParsing="false" onMouseClicked="#onClickAddTesterButton" text="Add" />
+            <Label layoutY="6.0" text="Testers" />
+            <ListView fx:id="testerList" layoutX="1.0" layoutY="22.0" prefHeight="200.0" prefWidth="248.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="283.0" layoutY="76.0" prefHeight="249.0" prefWidth="309.0">
+         <children>
+            <Label layoutY="6.0" text="Milestones" />
+            <Button fx:id="addMilestoneButton" layoutX="133.0" layoutY="222.0" mnemonicParsing="false" text="Add" />
+            <TableView fx:id="milestoneTable" layoutX="1.0" layoutY="25.0" prefHeight="200.0" prefWidth="309.0">
+              <columns>
+                <TableColumn fx:id="milestoneIdColumn" prefWidth="41.0" text="ID" />
+                <TableColumn fx:id="milestoneStartDateColumn" prefWidth="96.0" text="Start date" />
+                  <TableColumn fx:id="milestoneEndDateColumn" prefWidth="103.0" text="End date" />
+                  <TableColumn fx:id="milestoneStatusColumn" prefWidth="68.0" text="Status" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="282.0" layoutY="338.0" prefHeight="242.0" prefWidth="309.0">
+         <children>
+            <Label text="Reports" />
+            <Button fx:id="addReportButton" layoutX="134.0" layoutY="214.0" mnemonicParsing="false" onMouseClicked="#onClickAddReportButton" text="Add" />
+            <TableView fx:id="reportTable" layoutX="2.0" layoutY="14.0" prefHeight="200.0" prefWidth="310.0">
+              <columns>
+                <TableColumn fx:id="reportIdColumn" prefWidth="39.0" text="ID" />
+                <TableColumn fx:id="reportStatusColumn" prefWidth="59.0" text="Status" />
+                  <TableColumn fx:id="reportDescriptionColumn" prefWidth="138.0" text="Description" />
+                  <TableColumn fx:id="reportAuthorColumn" prefWidth="73.0" text="Author" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+      <Button fx:id="setTeamLeaderButton" layoutX="283.0" layoutY="25.0" mnemonicParsing="false" onMouseClicked="#onClickSetTeamLeaderButton" text="Set team leader" />
+      <Button fx:id="updateButton" layoutX="438.0" layoutY="25.0" mnemonicParsing="false" onMouseClicked="#onClickUpdateButton" text="Update" />
+   </children>
+</AnchorPane>

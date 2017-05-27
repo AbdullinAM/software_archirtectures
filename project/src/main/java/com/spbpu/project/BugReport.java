@@ -33,15 +33,15 @@ public class BugReport {
     private List<Comment> comments;
 
     public BugReport(Project project_, ReportCreator creator_, String description_) {
-        this(-1, project_, creator_, description_, new Date());
+        this(-1, project_, creator_, Status.OPENED, description_, new Date());
     }
 
-    public BugReport(int id_, Project project_, ReportCreator creator_, String description_, Date creationTime_) {
+    public BugReport(int id_, Project project_, ReportCreator creator_, BugReport.Status status_, String description_, Date creationTime_) {
         id = id_;
         project = project_;
         creator = creator_;
         assignee = null;
-        status = Status.OPENED;
+        status = status_;
         creationTime = creationTime_;
         description = description_;
         comments = new ArrayList<>();

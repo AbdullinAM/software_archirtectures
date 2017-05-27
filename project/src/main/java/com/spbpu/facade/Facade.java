@@ -34,6 +34,10 @@ public interface Facade {
     List<Integer> getProjectTickets(String project) throws Exception;
     List<Integer> getProjectReports(String project) throws Exception;
     List<Integer> getProjectMilestones(String project) throws Exception;
+    // set proect
+    boolean setProjectTeamLeader(String manager, String project, String user) throws Exception;
+    boolean addDeveloper(String manager, String project, String user) throws Exception;
+    boolean addTester(String manager, String project, String user) throws Exception;
     // get bugreport information
     String getReportAuthor(String project, Integer report) throws Exception;
     String getReportAssignee(String project, Integer report) throws Exception;

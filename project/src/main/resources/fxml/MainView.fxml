@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.gui.MainViewController">
+   <children>
+      <Label fx:id="userLabel" alignment="TOP_CENTER" layoutX="9.0" layoutY="4.0" prefHeight="20.0" prefWidth="135.0" text="username" textAlignment="CENTER">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <TabPane fx:id="tabs" layoutY="28.0" prefHeight="373.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Projects">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="projectTable" layoutY="9.0" prefHeight="337.0" prefWidth="600.0">
+                          <columns>
+                            <TableColumn fx:id="projectNameColumn" editable="false" prefWidth="301.0" text="Project name" />
+                            <TableColumn fx:id="projectRoleColumn" editable="false" minWidth="0.0" prefWidth="298.0" text="Role" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Messages">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="messageTable" layoutY="14.0" prefHeight="333.0" prefWidth="600.0">
+                          <columns>
+                            <TableColumn fx:id="messageColumn" prefWidth="599.0" text="Message" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab fx:id="ticketTab" text="Tickets">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="ticketTable" layoutY="14.0" prefHeight="328.0" prefWidth="600.0">
+                          <columns>
+                            <TableColumn fx:id="ticketIdColumn" prefWidth="50.0" text="ID" />
+                              <TableColumn fx:id="ticketProjectColumn" prefWidth="86.0" text="Project" />
+                            <TableColumn fx:id="ticketStatusColumn" prefWidth="89.0" text="Status" />
+                              <TableColumn fx:id="ticketDescriptionColumn" prefWidth="273.0" text="Description" />
+                              <TableColumn fx:id="ticketAuthorColumn" prefWidth="101.0" text="Author" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab fx:id="reportTab" text="Bug reports">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="reportTable" layoutY="14.0" prefHeight="328.0" prefWidth="600.0">
+                          <columns>
+                            <TableColumn fx:id="reportIdColumn" prefWidth="48.0" text="ID" />
+                            <TableColumn fx:id="reportProjectColumn" prefWidth="102.0" text="Project" />
+                              <TableColumn fx:id="reportStatusColumn" prefWidth="105.0" text="Status" />
+                              <TableColumn fx:id="reportDescriptionColumn" prefWidth="257.0" text="Description" />
+                              <TableColumn fx:id="reportAuthorColumn" minWidth="0.0" prefWidth="87.0" text="Author" />
+                          </columns>
+                        </TableView>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <Button fx:id="signOutButton" layoutX="524.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#onClickSignOutButton" text="Sign out" />
+      <Button fx:id="updateButton" layoutX="427.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#onClickUpdateButton" text="Update" />
+      <Button fx:id="addProjectButton" layoutX="309.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#onClickAddProjectButton" text="Add project" />
+   </children>
+</AnchorPane>

@@ -82,7 +82,7 @@ public class BugReportMapper implements Mapper<BugReport> {
         String description = rs.getString("description");
 
         // create report
-        BugReport report = new BugReport(id, project, creator, description, creationTime);
+        BugReport report = new BugReport(id, project, creator, status, description, creationTime);
         bugReports.add(report);
 
         // extract comments
@@ -134,6 +134,7 @@ public class BugReportMapper implements Mapper<BugReport> {
             statement.setString(3, item.getStatus().name());
             statement.setDate(4, new java.sql.Date(item.getCreationTime().getTime()));
             statement.setString(5, item.getDescription());
+            statement.execute();
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 long id = rs.getLong(1);

@@ -132,7 +132,9 @@ public class FacadeImpl implements Facade {
     @Override
     public String getProjectTeamLeader(String project) throws Exception {
         Project proj = repository.getProject(project);
-        return proj.getTeamLeader().getLogin();
+        if (proj.getTeamLeader() != null)
+            return proj.getTeamLeader().getLogin();
+        else return "";
     }
 
     @Override
@@ -174,6 +176,42 @@ public class FacadeImpl implements Facade {
         return proj.getMilestones().stream().
                 map(milestone -> milestone.getId()).
                 collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean setProjectTeamLeader(String manager, String project, String user) throws Exception {
+        Project proj = repository.getProject(project);
+        Manager man = proj.getManager();
+        if (!man.getLogin().equals(manager)) return false;
+        User usr = repository.getUser(user);
+        if (usr == null) return false;
+        man.setTeamLeader(proj, usr);
+        repository.update();
+        return true;
+    }
+
+    @Override
+    public boolean addDeveloper(String manager, String project, String user) throws Exception {
+        Project proj = repository.getProject(project);
+        Manager man = proj.getManager();
+        if (!man.getLogin().equals(manager)) return false;
+        User usr = repository.getUser(user);
+        if (usr == null) return false;
+        man.addDeveloper(proj, usr);
+        repository.update();
+        return true;
+    }
+
+    @Override
+    public boolean addTester(String manager, String project, String user) throws Exception {
+        Project proj = repository.getProject(project);
+        Manager man = proj.getManager();
+        if (!man.getLogin().equals(manager)) return false;
+        User usr = repository.getUser(user);
+        if (usr == null) return false;
+        man.addTester(proj, usr);
+        repository.update();
+        return true;
     }
 
     @Override
@@ -321,10 +359,11 @@ public class FacadeImpl implements Facade {
     @Override
     public String getMilestoneStatus(String project, Integer milestone) throws Exception {
         Project proj = repository.getProject(project);
-        for (Milestone it : proj.getMilestones())
+        for (Milestone it : proj.getMilestones()) {
             if (it.getId() == milestone) {
                 return it.getStatus().name();
             }
+        }
         return null;
     }
 
