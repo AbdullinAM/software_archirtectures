@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 
+import java.text.*;
 import java.util.Date;
 import java.util.Optional;
 
@@ -201,6 +202,52 @@ public class ProjectViewController {
         }
     }
 
+    @FXML
+    private void onClickAddMilestoneButton() throws Exception {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Enter information");
+        dialog.setHeaderText("Enter milestone start date");
+
+        Optional<String> result = dialog.showAndWait();
+        if (!result.isPresent()) return;
+        DateFormat df = new SimpleDateFormat("dd-mm-yyyy");
+        Date startDate, endDate;
+        try {
+            startDate = df.parse(result.get());
+        } catch (ParseException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("Unable to parse date, try format DD-MM-YYYY");
+            alert.showAndWait();
+            return;
+        }
+
+        dialog = new TextInputDialog();
+        dialog.setTitle("Enter information");
+        dialog.setHeaderText("Enter milestone start date");
+
+        result = dialog.showAndWait();
+        if (!result.isPresent()) return;
+        try {
+            endDate = df.parse(result.get());
+        } catch (ParseException e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("Unable to parse date, try format DD-MM-YYYY");
+            alert.showAndWait();
+            return;
+        }
+
+        if (facade.createMilestone(user, project, startDate, endDate) != null) {
+            onClickUpdateButton();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("Unable to create milestone");
+            alert.showAndWait();
+        }
+    }
+
     private void updateDeveloperList() throws Exception {
         ObservableList<String> items = FXCollections.observableArrayList(facade.getProjectDevelopers(project));
         developerList.setItems(items);
@@ -223,7 +270,7 @@ public class ProjectViewController {
         });
         milestoneEndDateColumn.setCellValueFactory(cell -> {
             try {
-                return new SimpleStringProperty(facade.getMilestoneStartDate(project, cell.getValue()).toString());
+                return new SimpleStringProperty(facade.getMilestoneEndDate(project, cell.getValue()).toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -236,6 +283,20 @@ public class ProjectViewController {
                 e.printStackTrace();
             }
             return new SimpleStringProperty("");
+        });
+
+        milestoneTable.setRowFactory( tv -> {
+            TableRow<Integer> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    try {
+                        Main.showMilestoneView(user, project, row.getItem());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return row ;
         });
     }
 

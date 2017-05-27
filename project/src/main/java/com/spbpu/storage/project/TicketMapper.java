@@ -132,6 +132,7 @@ public class TicketMapper implements Mapper<Ticket> {
             insert.setString(3, item.getStatus().name());
             insert.setDate(4, new java.sql.Date(item.getCreationTime().getTime()));
             insert.setString(5, item.getTask());
+            insert.execute();
             ResultSet rs = insert.getGeneratedKeys();
             if (rs.next()) {
                 long id = rs.getLong(1);

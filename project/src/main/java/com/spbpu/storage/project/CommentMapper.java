@@ -72,12 +72,12 @@ public class CommentMapper implements Mapper<Comment> {
         } else {
             userMapper.update(item.getCommenter());
 
-            String[] generated = { "id" };
             String insertSQL = "INSERT INTO COMMENTS(COMMENTS.time, COMMENTS.commenter, COMMENTS.description) VALUES (?, ?, ?);";
-            PreparedStatement insertStatement = connection.prepareStatement(insertSQL, generated);
+            PreparedStatement insertStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             insertStatement.setDate(1, new java.sql.Date(item.getDate().getTime()));
             insertStatement.setInt(2, item.getCommenter().getId());
             insertStatement.setString(3, item.getComment());
+            insertStatement.execute();
             ResultSet rs = insertStatement.getGeneratedKeys();
             if (rs.next()) {
                 long id = rs.getLong(1);

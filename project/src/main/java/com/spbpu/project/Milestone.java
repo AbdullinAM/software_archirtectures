@@ -48,6 +48,17 @@ public class Milestone {
     public void setId(int id_) { id = id_; }
     public int getId() { return id; }
 
+    @Override
+    public int hashCode() {return project.hashCode() + startDate.hashCode() + endDate.hashCode();}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        Milestone other = (Milestone) obj;
+        return project.equals(other.getProject()) &&
+                startDate.equals(other.getStartDate()) &&
+                endDate.equals(other.getEndDate());
+    }
+
     public Milestone.Status getStatus() { return status; }
 
     public Project getProject() {

@@ -89,33 +89,38 @@ public class MilestoneMapper implements Mapper<Milestone> {
     @Override
     public void update(Milestone item) throws SQLException {
         if (!milestones.contains(item)) {
+            System.out.println("New!!");
             String insertSQL = "INSERT INTO MILESTONE(project, status, startDate, endDate) VALUES (?, ?, ?, ?);";
             PreparedStatement stmt = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, item.getProject().getId());
             stmt.setString(2, item.getStatus().name());
             stmt.setDate(3, new java.sql.Date(item.getStartDate().getTime()));
             stmt.setDate(4, new java.sql.Date(item.getEndDate().getTime()));
+            stmt.execute();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 long id = rs.getLong(1);
                 item.setId((int) id);
             }
+            milestones.add(item);
         } else {
-            String update = "UPDATE MILESTONE SET status = ? WHERE id = 1;";
+            String update = "UPDATE MILESTONE SET status = ? WHERE id = ?;";
             PreparedStatement updateStatus = connection.prepareStatement(update);
             updateStatus.setString(1, item.getStatus().name());
-            updateStatus.setInt(1, item.getId());
+            updateStatus.setInt(2, item.getId());
             updateStatus.execute();
         }
 
         if (item.getActiveDate() != null) {
             PreparedStatement updateActive = connection.prepareStatement("UPDATE MILESTONE SET activeDate = ? WHERE id = ?;");
             updateActive.setDate(1, new java.sql.Date(item.getActiveDate().getTime()));
+            updateActive.setInt(2, item.getId());
             updateActive.execute();
         }
         if (item.getClosingDate() != null) {
             PreparedStatement updateClosing = connection.prepareStatement("UPDATE MILESTONE SET closingDate = ? WHERE id = ?;");
             updateClosing.setDate(1, new java.sql.Date(item.getClosingDate().getTime()));
+            updateClosing.setInt(2, item.getId());
             updateClosing.execute();
         }
 

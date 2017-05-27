@@ -259,12 +259,12 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public List<Pair<String, String>> getReportComments(String project, Integer report) throws Exception {
+    public List<Triple<Date, String, String>> getReportComments(String project, Integer report) throws Exception {
         Project proj = repository.getProject(project);
         for (BugReport it : proj.getReports())
             if (it.getId() == report)
                 return it.getComments().stream().
-                        map(comment -> new Pair<String, String>(comment.getCommenter().getLogin(), comment.getComment())).
+                        map(comment -> new Triple(comment.getDate(), comment.getCommenter().getLogin(), comment.getComment())).
                         collect(Collectors.toList());
         return null;
     }
@@ -447,9 +447,12 @@ public class FacadeImpl implements Facade {
         if (!proj.getManager().getLogin().equals(user)) return false;
         for (Milestone it : proj.getMilestones())
             if (it.getId() == milestone) {
-                it.setClosed();
-                repository.update();
-                return true;
+                if (it.setClosed()) {
+                    repository.update();
+                    return true;
+                } else {
+                    return false;
+                }
             }
         return false;
     }
@@ -524,7 +527,7 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public List<Pair<String, String>> getTicketComments(String project, Integer ticket) throws Exception {
+    public List<Triple<Date, String, String>> getTicketComments(String project, Integer ticket) throws Exception {
         Project proj = repository.getProject(project);
         List<Ticket> all = proj.getMilestones().stream().
                 flatMap(milestone -> milestone.getTickets().stream()).
@@ -532,7 +535,7 @@ public class FacadeImpl implements Facade {
         for (Ticket it : all)
             if (it.getId() == ticket)
                 return it.getComments().stream().
-                        map(comment -> new Pair<String, String>(comment.getCommenter().getLogin(), comment.getComment())).
+                        map(comment -> new Triple(comment.getDate(), comment.getCommenter().getLogin(), comment.getComment())).
                         collect(Collectors.toList());
         return null;
     }

@@ -189,6 +189,22 @@ public class MainViewController {
             return new SimpleStringProperty("");
         });
 
+        ticketIdColumn.setCellFactory(col -> {
+            final TableCell<Pair<String, Integer>, String> cell = new TableCell<>();
+            cell.textProperty().bind(cell.itemProperty());
+            cell.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                    try {
+                        Pair<String, Integer> item = (Pair<String, Integer>) cell.getTableRow().getItem();
+                        Main.showTicketView(user, item.getFirst(), item.getSecond());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return cell;
+        });
+
         ticketProjectColumn.setCellFactory(col -> {
             final TableCell<Pair<String, Integer>, String> cell = new TableCell<>();
             cell.textProperty().bind(cell.itemProperty());
@@ -201,7 +217,7 @@ public class MainViewController {
                     }
                 }
             });
-            return cell ;
+            return cell;
         });
 
         // on doule-click to ticket author open view with his info
@@ -217,7 +233,7 @@ public class MainViewController {
                     }
                 }
             });
-            return cell ;
+            return cell;
         });
     }
 
@@ -254,6 +270,21 @@ public class MainViewController {
             return new SimpleStringProperty("");
         });
 
+        reportIdColumn.setCellFactory(col -> {
+            final TableCell<Pair<String, Integer>, String> cell = new TableCell<>();
+            cell.textProperty().bind(cell.itemProperty());
+            cell.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                    try {
+                        Pair<String, Integer> item = (Pair<String, Integer>) cell.getTableRow().getItem();
+                        Main.showReportView(user, item.getFirst(), item.getSecond());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return cell ;
+        });
 
         reportProjectColumn.setCellFactory(col -> {
             final TableCell<Pair<String, Integer>, String> cell = new TableCell<>();

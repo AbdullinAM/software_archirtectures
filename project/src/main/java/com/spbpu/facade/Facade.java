@@ -44,7 +44,7 @@ public interface Facade {
     String getReportStatus(String project, Integer report) throws Exception;
     Date getReportCreationTime(String project, Integer report) throws Exception;
     String getReportDescription(String project, Integer report) throws Exception;
-    List<Pair<String, String>> getReportComments(String project, Integer report) throws Exception;
+    List<Triple<Date, String, String>> getReportComments(String project, Integer report) throws Exception;
     // bugreport actions
     Integer createReport(String user, String project, String description) throws Exception;
     boolean reopenReport(String user, String project, Integer report, String comment) throws Exception;
@@ -69,7 +69,7 @@ public interface Facade {
     List<String> getTicketAssignees(String project, Integer ticket) throws Exception;
     Date getTicketCreationTime(String project, Integer ticket) throws Exception;
     String getTicketTask(String project, Integer ticket) throws Exception;
-    List<Pair<String, String>> getTicketComments(String project, Integer ticket) throws Exception;
+    List<Triple<Date, String, String>> getTicketComments(String project, Integer ticket) throws Exception;
     // ticket actions
     Integer createTicket(String user, String project, Integer milestone, String task) throws Exception;
     boolean reopenTicket(String user, String project, Integer ticket, String comment) throws Exception;

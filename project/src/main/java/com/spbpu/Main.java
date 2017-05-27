@@ -3,6 +3,7 @@ package com.spbpu;
 import com.spbpu.facade.Facade;
 import com.spbpu.facade.FacadeImpl;
 import com.spbpu.gui.MainViewController;
+import com.spbpu.gui.MilestoneViewController;
 import com.spbpu.gui.ProjectViewController;
 import com.spbpu.gui.UserViewController;
 import javafx.application.Application;
@@ -76,6 +77,27 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setTitle("Project info");
         stage.show();
+    }
+
+    public static void showMilestoneView(String user, String project, Integer milestone) throws Exception {
+        Stage stage = new Stage();
+        String fxmlFile = "/fxml/MilestoneView.fxml";
+        FXMLLoader loader = new FXMLLoader();
+        AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
+        MilestoneViewController uvc = loader.getController();
+        uvc.setup(user, project, milestone);
+        Scene scene = new Scene(root, 320, 440);
+        stage.setScene(scene);
+        stage.setTitle("Milestone info");
+        stage.show();
+    }
+
+    public static void showTicketView(String user, String project, Integer tiket) throws Exception {
+        System.out.println("ticket");
+    }
+
+    public static void showReportView(String user, String project, Integer report) throws Exception {
+        System.out.println("report");
     }
 
 }

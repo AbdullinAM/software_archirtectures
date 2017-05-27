@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="440.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.gui.MilestoneViewController">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" text="Milestone:" />
+      <Label fx:id="idLabel" layoutX="87.0" layoutY="14.0" text="id" />
+      <Label layoutX="15.0" layoutY="30.0" text="Project:" />
+      <Label fx:id="projectLabel" layoutX="75.0" layoutY="30.0" text="project" />
+      <Label layoutX="14.0" layoutY="46.0" text="Status:" />
+      <Label fx:id="statusLabel" layoutX="67.0" layoutY="46.0" text="status" />
+      <Label layoutX="14.0" layoutY="62.0" text="Start date:" />
+      <Label fx:id="startDateLabel" layoutX="89.0" layoutY="62.0" text="start date" />
+      <Label layoutX="14.0" layoutY="78.0" text="End date:" />
+      <Label fx:id="endDateLabel" layoutX="89.0" layoutY="78.0" text="end date" />
+      <Label fx:id="activeDateNameLabel" layoutX="14.0" layoutY="94.0" text="Active date:" />
+      <Label fx:id="activeDateLabel" layoutX="100.0" layoutY="94.0" text="active date" />
+      <Label fx:id="closingDateNameLabel" layoutX="14.0" layoutY="110.0" text="Closing date:" />
+      <Label fx:id="closingDateLabel" layoutX="107.0" layoutY="110.0" text="closing date" />
+      <Button fx:id="activateButton" layoutX="72.0" layoutY="135.0" mnemonicParsing="false" onMouseClicked="#onClickActivateButton" text="Activate" />
+      <Button fx:id="closeButton" layoutX="173.0" layoutY="135.0" mnemonicParsing="false" onMouseClicked="#onClickCloseButton" text="Close" />
+      <TableView fx:id="ticketTable" layoutY="192.0" prefHeight="248.0" prefWidth="320.0">
+        <columns>
+          <TableColumn fx:id="ticketIdColumn" prefWidth="47.0" text="ID" />
+            <TableColumn fx:id="ticketStatusColumn" prefWidth="88.0" text="Status" />
+            <TableColumn fx:id="ticketDescriptionColumn" prefWidth="180.0" text="Description" />
+        </columns>
+      </TableView>
+      <Label layoutX="14.0" layoutY="176.0" text="Tickets" />
+      <Button fx:id="updateButton" layoutX="244.0" layoutY="17.0" mnemonicParsing="false" onMouseClicked="#onClickUpdateButton" text="Update" />
+   </children>
+</AnchorPane>
