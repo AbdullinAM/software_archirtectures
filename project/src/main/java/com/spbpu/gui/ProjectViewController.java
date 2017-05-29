@@ -331,6 +331,22 @@ public class ProjectViewController {
             return new SimpleStringProperty("");
         });
 
+        reportIdColumn.setCellFactory(col -> {
+            final TableCell<Integer, String> cell = new TableCell<>();
+            cell.textProperty().bind(cell.itemProperty());
+            cell.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                    try {
+                        Integer item = (Integer) cell.getTableRow().getItem();
+                        Main.showReportView(user, project, item);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return cell ;
+        });
+
         // on doule-click to report author open view with his info
         reportAuthorColumn.setCellFactory(col -> {
             final TableCell<Integer, String> cell = new TableCell<>();

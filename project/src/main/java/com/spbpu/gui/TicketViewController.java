@@ -57,6 +57,13 @@ public class TicketViewController {
         milestoneLabel.setText(milestone.toString());
         projectLabel.setText(project);
         authorLabel.setText(facade.getTicketAuthor(project, id));
+        authorLabel.setOnMouseClicked(mouseEvent -> {
+            try {
+                Main.showUserView(authorLabel.getText());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         dateLabel.setText(facade.getTicketCreationTime(project, id).toString());
         descriptionArea.setText(facade.getTicketTask(project, id));
         descriptionArea.setEditable(false);

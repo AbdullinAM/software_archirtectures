@@ -4,10 +4,14 @@ import com.spbpu.facade.Facade;
 import com.spbpu.facade.FacadeImpl;
 import com.spbpu.gui.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Main extends Application {
@@ -16,7 +20,11 @@ public class Main extends Application {
 
 
     private static Stage mainStage;
-
+    private static Map<String, Stage> projectViews = new HashMap<>();
+    private static Map<String, Stage> userViews = new HashMap<>();
+    private static Map<Integer, Stage> milestoneViews = new HashMap<>();
+    private static Map<Integer, Stage> ticketViews = new HashMap<>();
+    private static Map<Integer, Stage> reportViews = new HashMap<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -48,9 +56,14 @@ public class Main extends Application {
         uvc.setup(user);
         Scene scene = new Scene(root, 600, 400);
         mainStage.setScene(scene);
+        mainStage.setOnCloseRequest(windowEvent -> Platform.exit());
     }
 
     public static void showUserView(String user) throws Exception {
+        if (userViews.containsKey(user)) {
+            userViews.get(user).toFront();
+            return;
+        }
         Stage stage = new Stage();
         String fxmlFile = "/fxml/UserView.fxml";
         FXMLLoader loader = new FXMLLoader();
@@ -61,9 +74,15 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setTitle("User info");
         stage.show();
+        stage.setOnCloseRequest(windowEvent -> userViews.remove(user));
+        userViews.put(user, stage);
     }
 
     public static void showProjectView(String user, String project) throws Exception {
+        if (projectViews.containsKey(project)) {
+            projectViews.get(project).toFront();
+            return;
+        }
         Stage stage = new Stage();
         String fxmlFile = "/fxml/ProjectView.fxml";
         FXMLLoader loader = new FXMLLoader();
@@ -74,9 +93,15 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setTitle("Project info");
         stage.show();
+        stage.setOnCloseRequest(windowEvent -> projectViews.remove(project));
+        projectViews.put(project, stage);
     }
 
     public static void showMilestoneView(String user, String project, Integer milestone) throws Exception {
+        if (milestoneViews.containsKey(milestone)) {
+            milestoneViews.get(milestone).toFront();
+            return;
+        }
         Stage stage = new Stage();
         String fxmlFile = "/fxml/MilestoneView.fxml";
         FXMLLoader loader = new FXMLLoader();
@@ -87,22 +112,34 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setTitle("Milestone info");
         stage.show();
+        stage.setOnCloseRequest(windowEvent -> milestoneViews.remove(milestone));
+        milestoneViews.put(milestone, stage);
     }
 
-    public static void showTicketView(String user, String project, Integer tiket) throws Exception {
+    public static void showTicketView(String user, String project, Integer ticket) throws Exception {
+        if (ticketViews.containsKey(ticket)) {
+            ticketViews.get(ticket).toFront();
+            return;
+        }
         Stage stage = new Stage();
         String fxmlFile = "/fxml/TicketView.fxml";
         FXMLLoader loader = new FXMLLoader();
         AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
         TicketViewController uvc = loader.getController();
-        uvc.setup(user, project, tiket);
+        uvc.setup(user, project, ticket);
         Scene scene = new Scene(root, 600, 400);
         stage.setScene(scene);
         stage.setTitle("Ticket info");
         stage.show();
+        stage.setOnCloseRequest(windowEvent -> ticketViews.remove(ticket));
+        ticketViews.put(ticket, stage);
     }
 
     public static void showReportView(String user, String project, Integer report) throws Exception {
+        if (reportViews.containsKey(report)) {
+            reportViews.get(report).toFront();
+            return;
+        }
         Stage stage = new Stage();
         String fxmlFile = "/fxml/BugReportView.fxml";
         FXMLLoader loader = new FXMLLoader();
@@ -113,6 +150,8 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setTitle("Report info");
         stage.show();
+        stage.setOnCloseRequest(windowEvent -> reportViews.remove(report));
+        reportViews.put(report, stage);
     }
 
 }
