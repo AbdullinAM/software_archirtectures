@@ -7,6 +7,7 @@ import com.spbpu.exceptions.AlreadyExistsException;
 import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
+import com.spbpu.service.VerifyEmailService;
 import com.spbpu.storage.project.ProjectMapper;
 import com.spbpu.storage.user.*;
 import com.spbpu.user.*;
@@ -49,6 +50,9 @@ public class StorageRepository {
             e.printStackTrace();
             return false;
         }
+
+        VerifyEmailService verificator = new VerifyEmailService(login, name, email, password);
+        if (!verificator.verify()) return false;
 
         User newUser = new User(0, login, name, email, null);
         try {

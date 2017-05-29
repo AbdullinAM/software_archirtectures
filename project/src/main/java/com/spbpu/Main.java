@@ -3,6 +3,7 @@ package com.spbpu;
 import com.spbpu.facade.Facade;
 import com.spbpu.facade.FacadeImpl;
 import com.spbpu.controller.*;
+import com.spbpu.service.VerifyEmailService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

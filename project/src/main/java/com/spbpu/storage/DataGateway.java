@@ -1,10 +1,11 @@
-package com.spbpu.storage;
-
 /**
  * Created by kivi on 08.05.17.
  */
 
+package com.spbpu.storage;
+
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.spbpu.config.ConfigReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,24 +15,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-/**
- * Created by Admin on 21.04.2016.
- */
 public class DataGateway {
 
-    static final String url = "jdbc:mysql://localhost/pmsdb";
-    static final String user = "user";
-    static final String password = "1";
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    private static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static DataGateway dataGateway;
     private static MysqlDataSource dataSource;
 
     private DataGateway() throws IOException {
         //Структура соединения с базой данных
+        ConfigReader config = ConfigReader.getInstance();
         dataSource = new MysqlDataSource();
-        dataSource.setURL(url);
-        dataSource.setUser(user);
-        dataSource.setPassword(password);
+        dataSource.setURL(config.getDburl());
+        dataSource.setUser(config.getDbuser());
+        dataSource.setPassword(config.getDbpassword());
 
         try {
             Class.forName(JDBC_DRIVER);
