@@ -147,11 +147,20 @@ public class TicketMapper implements Mapper<Ticket> {
             updateStatus.execute();
         }
 
+        for (TicketDeveloper dev : item.getAssignees()) {
+            String update = "INSERT IGNORE INTO TICKET_ASSIGNEES(ticket, assignee) VALUES (?, ?);";
+            PreparedStatement stmt = connection.prepareStatement(update);
+            stmt.setInt(1, item.getId());
+            stmt.setInt(2, dev.getId());
+            stmt.execute();
+        }
+
         for (Comment it : item.getComments()) {
-            String insertSQL = "INSERT UPDATE INTO TICKET_COMMENTS(commentid, ticket) VALUES (?, ?);";
+            String insertSQL = "INSERT IGNORE INTO TICKET_COMMENTS(commentid, ticket) VALUES (?, ?);";
             PreparedStatement stmt = connection.prepareStatement(insertSQL);
             stmt.setInt(1, it.getId());
             stmt.setInt(2, item.getId());
+            stmt.execute();
             commentMapper.update(it);
         }
 

@@ -93,7 +93,7 @@ public class BugReportViewController {
 
     private void setUpStatusBox() throws Exception {
         List<Object> items = new ArrayList<>();
-        items.add(facade.getTicketStatus(project, id));
+        items.add(facade.getReportStatus(project, id));
         items.add(new Separator());
         if (!items.get(0).equals("CLOSED")) {
             switch (role) {
@@ -164,6 +164,11 @@ public class BugReportViewController {
                     alert.setHeaderText("Can't change report status");
                     alert.showAndWait();
                 }
+            }
+            try {
+                onClickUpdateButton();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

@@ -127,7 +127,7 @@ public class BugReportMapper implements Mapper<BugReport> {
     @Override
     public void update(BugReport item) throws SQLException {
         if (!bugReports.contains(item)) {
-            String insertSQL = "INSERT INTO BUGREPORT(project, creator, status, creationTime, description) VALUES (?, ?, ?, ?, ?)";
+            String insertSQL = "INSERT INTO BUGREPORT(project, creator, status, creationTime, description) VALUES (?, ?, ?, ?, ?);";
             PreparedStatement statement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1, item.getProject().getId());
             statement.setInt(2, item.getCreator().getId());
@@ -150,10 +150,11 @@ public class BugReportMapper implements Mapper<BugReport> {
         }
 
         for (Comment it : item.getComments()) {
-            String insertSQL = "INSERT UPDATE INTO BUGREPORT_COMMENTS(commentid, bugreport) VALUES (?, ?);";
+            String insertSQL = "INSERT IGNORE INTO BUGREPORT_COMMENTS(commentid, bugreport) VALUES (?, ?);";
             PreparedStatement stmt = connection.prepareStatement(insertSQL);
             stmt.setInt(1, it.getId());
             stmt.setInt(2, item.getId());
+            stmt.execute();
             commentMapper.update(it);
         }
 

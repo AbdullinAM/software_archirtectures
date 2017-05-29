@@ -51,4 +51,18 @@ public class Comment {
         builder.append(comment);
         return builder.toString();
     }
+
+    @Override
+    public int hashCode() {
+        return comment.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        Comment other = (Comment) obj;
+        return date.equals(other.getDate()) &&
+                commenter.equals(other.getCommenter()) &&
+                comment.equals(other.getComment());
+    }
 }

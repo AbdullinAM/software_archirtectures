@@ -199,6 +199,11 @@ public class TicketViewController {
                     alert.showAndWait();
                 }
             }
+            try {
+                onClickUpdateButton();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
