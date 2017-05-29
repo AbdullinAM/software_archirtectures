@@ -103,7 +103,16 @@ public class Main extends Application {
     }
 
     public static void showReportView(String user, String project, Integer report) throws Exception {
-        System.out.println("report");
+        Stage stage = new Stage();
+        String fxmlFile = "/fxml/BugReportView.fxml";
+        FXMLLoader loader = new FXMLLoader();
+        AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
+        BugReportViewController uvc = loader.getController();
+        uvc.setup(user, project, report);
+        Scene scene = new Scene(root, 600, 250);
+        stage.setScene(scene);
+        stage.setTitle("Report info");
+        stage.show();
     }
 
 }

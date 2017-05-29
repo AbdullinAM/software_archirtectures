@@ -17,6 +17,7 @@ import javafx.scene.input.MouseButton;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 public class MilestoneViewController {
 
@@ -39,6 +40,7 @@ public class MilestoneViewController {
     @FXML private Button activateButton;
     @FXML private Button closeButton;
     @FXML private Button updateButton;
+    @FXML private Button addTicketButton;
 
     @FXML private TableView<Integer> ticketTable;
     @FXML private TableColumn<Integer, String> ticketIdColumn;
@@ -57,6 +59,9 @@ public class MilestoneViewController {
         statusLabel.setText(facade.getMilestoneStatus(project, id));
         startDateLabel.setText(facade.getMilestoneStartDate(project,id).toString());
         endDateLabel.setText(facade.getMilestoneEndDate(project, id).toString());
+
+        if (role != Role.TEAMLEADER && role != Role.MANAGER)
+            addTicketButton.setDisable(true);
 
         setUpTicketTable();
 
@@ -127,6 +132,25 @@ public class MilestoneViewController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText("Cannot change status of milestone");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    private void onClickAddTicketButton() throws Exception {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Enter information");
+        dialog.setHeaderText("Enter new ticket description");
+
+        Optional<String> result = dialog.showAndWait();
+        if (!result.isPresent()) return;
+
+        if (facade.createTicket(user, project, id, result.get()) != null) {
+            onClickUpdateButton();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText("Cannot add ticket to milestone");
             alert.showAndWait();
         }
     }

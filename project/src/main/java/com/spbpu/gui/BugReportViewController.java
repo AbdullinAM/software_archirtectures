@@ -1,5 +1,5 @@
 /**
- * Created by kivi on 27.05.17.
+ * Created by kivi on 29.05.17.
  */
 
 package com.spbpu.gui;
@@ -19,26 +19,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public class TicketViewController {
+public class BugReportViewController {
 
     private Facade facade = Main.facade;
     private String user;
     private String project;
-    private Integer milestone;
     private Integer id;
     private Role role;
 
     @FXML private Label idLabel;
-    @FXML private Label milestoneLabel;
     @FXML private Label projectLabel;
-    @FXML private Label authorLabel;
+    @FXML private Label creatorLabel;
+    @FXML private Label assigneeLabel;
     @FXML private Label dateLabel;
     @FXML private ChoiceBox statusBox;
     @FXML private TextArea descriptionArea;
     @FXML private Button updateButton;
-
-    @FXML private ListView<String> assigneeList;
-    @FXML private Button addAssigneeButton;
 
     @FXML private TableView<Triple<Date, String, String>> commentTable;
     @FXML private TableColumn<Triple<Date, String, String>, String> commentDateColumn;
@@ -46,33 +42,28 @@ public class TicketViewController {
     @FXML private TableColumn<Triple<Date, String, String>, String> commentCommentColumn;
 
 
-    public void setup(String user_, String project_, Integer tiket_) throws Exception {
+    public void setup(String user_, String project_, Integer report_) throws Exception {
         user = user_;
         project = project_;
         role = facade.getRoleForProject(user, project);
-        id = tiket_;
-        milestone = facade.getTicketMilestone(project, id);
+        id = report_;
 
         idLabel.setText(id.toString());
-        milestoneLabel.setText(milestone.toString());
         projectLabel.setText(project);
-        authorLabel.setText(facade.getTicketAuthor(project, id));
-        dateLabel.setText(facade.getTicketCreationTime(project, id).toString());
-        descriptionArea.setText(facade.getTicketTask(project, id));
-        descriptionArea.setEditable(false);
-        if (role != Role.MANAGER && role != Role.TEAMLEADER)
-            addAssigneeButton.setDisable(true);
-
-        assigneeList.setOnMouseClicked(mouseEvent -> {
+        creatorLabel.setText(facade.getReportAuthor(project, id));
+        creatorLabel.setOnMouseClicked(mouseEvent -> {
             try {
-                if (mouseEvent.getClickCount() == 2) Main.showUserView(assigneeList.getSelectionModel().getSelectedItem());
+                Main.showUserView(creatorLabel.getText());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+        dateLabel.setText(facade.getReportCreationTime(project, id).toString());
+        descriptionArea.setText(facade.getReportDescription(project, id));
+        descriptionArea.setEditable(false);
 
-        setUpCommentTable();
         setUpStatusBox();
+        setUpCommentTable();
 
         onClickUpdateButton();
     }
@@ -82,31 +73,23 @@ public class TicketViewController {
 
     @FXML
     private void onClickUpdateButton() throws Exception {
-        updateAssigneeList();
+        setUpAssigneeLabel();
         updateCommentTable();
     }
 
-    @FXML
-    private void onClickAddAssigneeButton() throws Exception {
-        if (role == Role.MANAGER || role == Role.TEAMLEADER) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Enter information");
-            dialog.setHeaderText("Enter developer name");
-
-            Optional<String> result = dialog.showAndWait();
-            if (!result.isPresent()) return;
-
-            if (facade.addTicketAssignee(user, project, id, result.get())) {
-                onClickUpdateButton();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Can't add assignee to ticket");
-                alert.showAndWait();
-            }
-        }
+    private void setUpAssigneeLabel() throws Exception {
+        String assignee = facade.getReportAssignee(project, id);
+        if (assignee != null) {
+            assigneeLabel.setText(assignee);
+            assigneeLabel.setOnMouseClicked(mouseEvent -> {
+                try {
+                    Main.showUserView(assigneeLabel.getText());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        } else assigneeLabel.setText("None");
     }
-
 
     private void setUpStatusBox() throws Exception {
         List<Object> items = new ArrayList<>();
@@ -115,17 +98,16 @@ public class TicketViewController {
         if (!items.get(0).equals("CLOSED")) {
             switch (role) {
                 case NONE:
-                case TESTER:
-                    break;
                 case MANAGER:
-                case TEAMLEADER:
-                    if (!items.contains("NEW")) items.add("NEW");
+                    break;
+                case TESTER:
+                    if (!items.contains("OPENED")) items.add("OPENED");
                     if (!items.contains("CLOSED")) items.add("CLOSED");
                     break;
                 case DEVELOPER:
+                case TEAMLEADER:
                     if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
-                    if (!items.contains("IN_PROGRESS")) items.add("IN_PROGRESS");
-                    if (!items.contains("FINISHED")) items.add("FINISHED");
+                    if (!items.contains("FIXED")) items.add("FIXED");
             }
         }
 
@@ -133,7 +115,7 @@ public class TicketViewController {
         statusBox.getSelectionModel().selectFirst();
 
         statusBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldVal, newVal) -> {
-            if (newVal.equals("NEW")) {
+            if (newVal.equals("OPENED")) {
                 TextInputDialog dialog = new TextInputDialog();
                 dialog.setTitle("Enter information");
                 dialog.setHeaderText("Enter comment");
@@ -142,7 +124,7 @@ public class TicketViewController {
                 if (!result.isPresent()) return;
                 boolean isChanged = false;
                 try {
-                    if (!facade.reopenTicket(user, project, id, result.get())) {
+                    if (!facade.reopenReport(user, project, id, result.get())) {
                         isChanged = true;
                         onClickUpdateButton();
                     }
@@ -151,53 +133,41 @@ public class TicketViewController {
                     if (!isChanged) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Error");
-                        alert.setHeaderText("Can't change ticket status");
+                        alert.setHeaderText("Can't change report status");
                         alert.showAndWait();
                     }
                 }
             } else if (newVal.equals("CLOSED")) {
                 try {
-                    facade.closeTicket(user, project, id);
+                    facade.closeReport(user, project, id);
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
+                    alert.setHeaderText("Can't change report status");
                     alert.showAndWait();
                 }
             } else if (newVal.equals("ACCEPTED")) {
                 try {
-                    facade.acceptTicket(user, project, id);
+                    facade.acceptReport(user, project, id);
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
+                    alert.setHeaderText("Can't change report status");
                     alert.showAndWait();
                 }
-            } else if (newVal.equals("IN_PROGRESS")) {
+            } else if (newVal.equals("FIXED")) {
                 try {
-                    facade.setTicketInProgress(user, project, id);
+                    facade.fixReport(user, project, id);
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
-                    alert.showAndWait();
-                }
-            } else if (newVal.equals("FINISHED")) {
-                try {
-                    facade.finishTicket(user, project, id);
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
+                    alert.setHeaderText("Can't change report status");
                     alert.showAndWait();
                 }
             }
         });
     }
 
-    private void updateAssigneeList() throws Exception {
-        assigneeList.setItems(FXCollections.observableArrayList(facade.getTicketAssignees(project, id)));
-    }
 
     private void setUpCommentTable() throws Exception {
         commentDateColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst().toString()));
@@ -223,7 +193,7 @@ public class TicketViewController {
     }
 
     private void updateCommentTable() throws Exception {
-        commentTable.setItems(FXCollections.observableArrayList(facade.getTicketComments(project, id)));
+        commentTable.setItems(FXCollections.observableArrayList(facade.getReportComments(project, id)));
     }
 
 }
