@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.gui.MainViewController">
+<AnchorPane prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.controller.MainViewController">
    <children>
       <Label fx:id="userLabel" alignment="TOP_CENTER" layoutX="9.0" layoutY="4.0" prefHeight="20.0" prefWidth="135.0" text="username" textAlignment="CENTER">
          <font>

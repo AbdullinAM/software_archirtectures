@@ -2,11 +2,10 @@
  * Created by kivi on 27.05.17.
  */
 
-package com.spbpu.gui;
+package com.spbpu.controller;
 
 import com.spbpu.Main;
 import com.spbpu.facade.Facade;
-import com.spbpu.facade.Pair;
 import com.spbpu.facade.Role;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -15,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Optional;
 

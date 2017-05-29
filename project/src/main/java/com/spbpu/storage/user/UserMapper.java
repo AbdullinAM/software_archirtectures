@@ -30,9 +30,8 @@ public class UserMapper implements UserMapperInterface<User> {
     }
 
     public boolean addUser(User user, String password) throws SQLException {
-        String generatedColumns[] = { "USERS.id" };
         String insertSQL = "INSERT INTO USERS(USERS.name, USERS.login, USERS.email, USERS.password) VALUES (?, ?, ?, SHA1(?));";
-        PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+        PreparedStatement insertStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
         insertStatement.setString(1, user.getName());
         insertStatement.setString(2, user.getLogin());
         insertStatement.setString(3, user.getMailAddress());
@@ -43,7 +42,6 @@ public class UserMapper implements UserMapperInterface<User> {
             long id = rs.getLong(1);
             user.setId((int) id);
         }
-        users.add(user);
         return true;
     }
 

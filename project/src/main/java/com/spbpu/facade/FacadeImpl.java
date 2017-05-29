@@ -4,6 +4,7 @@
 
 package com.spbpu.facade;
 
+import com.spbpu.exceptions.AlreadyExistsException;
 import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Milestone;
@@ -24,6 +25,15 @@ public class FacadeImpl implements Facade {
 
     public FacadeImpl() {
         repository = new StorageRepository();
+    }
+
+    @Override
+    public boolean addUser(String login, String name, String email, String password) {
+        try {
+            return repository.addUser(login, name, email, password);
+        } catch (AlreadyExistsException e) {
+            return false;
+        }
     }
 
     @Override

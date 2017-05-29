@@ -2,7 +2,7 @@ package com.spbpu;
 
 import com.spbpu.facade.Facade;
 import com.spbpu.facade.FacadeImpl;
-import com.spbpu.gui.*;
+import com.spbpu.controller.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +46,14 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
         Scene scene = new Scene(root, 384, 275);
+        mainStage.setScene(scene);
+    }
+
+    public static void showRegisterView() throws IOException {
+        String fxmlFile = "/fxml/RegisterView.fxml";
+        FXMLLoader loader = new FXMLLoader();
+        AnchorPane root = (AnchorPane) loader.load(Main.class.getClass().getResourceAsStream(fxmlFile));
+        Scene scene = new Scene(root, 341, 277);
         mainStage.setScene(scene);
     }
 

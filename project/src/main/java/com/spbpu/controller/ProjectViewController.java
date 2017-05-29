@@ -1,8 +1,7 @@
-package com.spbpu.gui;
+package com.spbpu.controller;
 
 import com.spbpu.Main;
 import com.spbpu.facade.Facade;
-import com.spbpu.facade.Pair;
 import com.spbpu.facade.Role;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;

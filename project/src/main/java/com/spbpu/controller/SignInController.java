@@ -2,23 +2,15 @@
  * Created by kivi on 27.05.17.
  */
 
-package com.spbpu.gui;
+package com.spbpu.controller;
 
 import com.spbpu.Main;
 import com.spbpu.facade.Facade;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.control.*;
 
-import javax.xml.soap.Text;
+import java.io.IOException;
+import java.util.Optional;
 
 public class SignInController {
 
@@ -27,6 +19,7 @@ public class SignInController {
     @FXML private Label loginLabel;
     @FXML private Label passwordLabel;
     @FXML private Label errorLabel;
+    @FXML private Label registerLabel;
     @FXML private TextField loginField;
     @FXML private PasswordField passwordField;
     @FXML private Button signInButton;
@@ -52,5 +45,10 @@ public class SignInController {
             e.printStackTrace();
             errorLabel.setText("Error connecting to database");
         }
+    }
+
+    @FXML
+    private void onCLickRegister() throws IOException {
+        Main.showRegisterView();
     }
 }

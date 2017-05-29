@@ -2,34 +2,19 @@
  * Created by kivi on 27.05.17.
  */
 
-package com.spbpu.gui;
+package com.spbpu.controller;
 
 import com.spbpu.Main;
 import com.spbpu.facade.Facade;
 import com.spbpu.facade.Pair;
-import com.spbpu.project.Project;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import javafx.util.Callback;
-import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
 
-import javax.swing.text.*;
 import java.util.Optional;
 
 public class MainViewController {

@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface Facade {
 
+    boolean addUser(String login, String name, String email, String password);
     boolean authenticate(String login, String password) throws Exception;
     // get user information
     String getUserEmail(String user) throws Exception;

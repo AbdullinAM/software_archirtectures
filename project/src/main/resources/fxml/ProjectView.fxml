@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="597.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.gui.ProjectViewController">
+<AnchorPane prefHeight="597.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.controller.ProjectViewController">
    <children>
       <Label layoutX="26.0" layoutY="14.0" text="Project: " />
       <Label fx:id="projectLabel" layoutX="87.0" layoutY="14.0" text="project name" />

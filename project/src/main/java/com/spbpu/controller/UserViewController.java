@@ -2,7 +2,7 @@
  * Created by kivi on 27.05.17.
  */
 
-package com.spbpu.gui;
+package com.spbpu.controller;
 
 import com.spbpu.Main;
 import com.spbpu.facade.Facade;

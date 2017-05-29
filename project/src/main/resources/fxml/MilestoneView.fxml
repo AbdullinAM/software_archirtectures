@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="440.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.gui.MilestoneViewController">
+<AnchorPane prefHeight="440.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.spbpu.controller.MilestoneViewController">
    <children>
       <Label layoutX="14.0" layoutY="14.0" text="Milestone:" />
       <Label fx:id="idLabel" layoutX="87.0" layoutY="14.0" text="id" />
