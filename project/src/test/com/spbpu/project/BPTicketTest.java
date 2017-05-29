@@ -62,6 +62,8 @@ public class BPTicketTest extends TestCase {
 
     @Test
     public void testTicketBP() throws Exception {
+        int oldDevMessagesSize = developer.getMessages().size();
+        int oldTLMessagesSize = teamLeader.getMessages().size();
         Milestone milestone = manager.createMilestone(project, new Date(2017, 1, 1), new Date(2018, 1,1));
 
         Ticket ticket = manager.createTicket(milestone, "new task");
@@ -73,10 +75,10 @@ public class BPTicketTest extends TestCase {
         assertEquals(teamLeader, ticket.getAssignees().get(0));
         assertEquals(developer, ticket.getAssignees().get(1));
 
-        assertEquals(1, developer.getMessages().size());
-        assertEquals(1, teamLeader.getMessages().size());
-        assertEquals("New ticket: " + ticket.toString(), developer.getMessages().get(0).getMessage());
-        assertEquals("New ticket: " + ticket.toString(), teamLeader.getMessages().get(0).getMessage());
+        assertEquals(oldDevMessagesSize + 1, developer.getMessages().size());
+        assertEquals(oldTLMessagesSize + 1, teamLeader.getMessages().size());
+        assertEquals("New ticket: " + ticket.toString(), developer.getMessages().get(oldDevMessagesSize).getMessage());
+        assertEquals("New ticket: " + ticket.toString(), teamLeader.getMessages().get(oldTLMessagesSize).getMessage());
 
         developer.acceptTicket(ticket);
         assertTrue(ticket.isAccepted());

@@ -72,19 +72,22 @@ public class BPBugReportTest extends TestCase {
 
     @Test
     public void testBugReportBP() throws Exception {
+        int oldProjectReportsSize = project.getReports().size();
+        int oldDevMessagesSize = developer.getMessages().size();
+        int oldDevAssignedReportsSize = developer.getAssignedBugReports().size();
         BugReport report = teamLeader.createReport(project, "Bug in code");
         assertTrue("Report is new", report.isOpened());
 
-        assertEquals(1, project.getReports().size());
+        assertEquals(oldProjectReportsSize + 1, project.getReports().size());
         assertTrue(project.getReports().contains(report));
 
-        assertEquals(1, developer.getMessages().size());
-        assertEquals("New bug report: " + report.toString(), developer.getMessages().get(0).getMessage());
+        assertEquals(oldDevMessagesSize + 1, developer.getMessages().size());
+        assertEquals("New bug report: " + report.toString(), developer.getMessages().get(oldDevMessagesSize).getMessage());
 
         developer.acceptReport(report);
         assertTrue("Report not accepted", report.isAccepted());
 
-        assertEquals(report, developer.getAssignedBugReports().get(0));
+        assertEquals(report, developer.getAssignedBugReports().get(oldDevAssignedReportsSize));
 
         developer.fixReport(report);
         assertTrue("Report not fixed", report.isFixed());
