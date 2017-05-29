@@ -6,6 +6,7 @@ package com.spbpu.service;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.Hashtable;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -21,6 +22,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeMultipart;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 
 public class EmailUtil {
 
@@ -56,5 +62,17 @@ public class EmailUtil {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean doMailServerLookup( String hostName ) throws NamingException {
+        Hashtable env = new Hashtable();
+        env.put("java.naming.factory.initial",
+                "com.sun.jndi.dns.DnsContextFactory");
+        DirContext ictx = new InitialDirContext( env );
+        Attributes attrs =
+                ictx.getAttributes( hostName, new String[] { "MX" });
+        Attribute attr = attrs.get( "MX" );
+        if( attr == null ) return false;
+        return attr.size() > 0;
     }
 }

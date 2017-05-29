@@ -39,7 +39,6 @@ public class ConfigReader {
                 throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
             }
 
-            // get the property value and print it out
             dburl = prop.getProperty("dburl");
             dbuser = prop.getProperty("dbuser");
             dbpassword = prop.getProperty("dbpassword");

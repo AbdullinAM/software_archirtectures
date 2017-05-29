@@ -43,6 +43,7 @@ public class Developer extends User  implements ReportCreator, ReportDeveloper, 
 
     public List<Project> getProjects() { return projects; }
 
+    @Override
     public List<BugReport> getAssignedBugReports() {
         return assignedBugReports;
     }

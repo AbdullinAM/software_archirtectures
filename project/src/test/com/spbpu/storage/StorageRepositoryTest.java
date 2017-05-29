@@ -30,15 +30,16 @@ public class StorageRepositoryTest {
 
     @Test
     public void addUserTest() throws Exception {
-        assertTrue("Can't add user", repository.addUser("testuser", "testuser", "testuser@example.com", "pass"));
+        ConfigReader config = ConfigReader.getInstance();
+        assertTrue("Can't add user", repository.addUser("testuser", "testuser", config.getEmailAccount(), "pass"));
         assertNotNull("Added user not found", repository.getUser("testuser"));
 
         try {
-            assertFalse("Added user second time", repository.addUser("testuser", "testuser", "testuser@example.com", "pass"));
+            assertFalse("Added user second time", repository.addUser("testuser", "testuser", config.getEmailAccount(), "pass"));
         } catch (AlreadyExistsException e) {
             assertTrue("Exception thrown", true);
         }
-        assertTrue("Can't add user", repository.addUser("testuser2", "testuser2", "testuser2@example.com", "pass"));
+        assertTrue("Can't add user", repository.addUser("testuser2", "testuser2", config.getEmailAccount(), "pass"));
 
         assertNotNull("Added user not found", repository.getUser("testuser"));
         assertNotNull("Added user not found", repository.getUser("testuser2"));
@@ -46,7 +47,8 @@ public class StorageRepositoryTest {
 
     @Test
     public void authenticateUserTest() throws Exception {
-        assertTrue("Can't add user", repository.addUser("devel", "devel", "devel@example.com", "pass"));
+        ConfigReader config = ConfigReader.getInstance();
+        assertTrue("Can't add user", repository.addUser("devel", "devel", config.getEmailAccount(), "pass"));
 
         User user = repository.getUser("devel");
         assertNotNull("Added user not found", user);

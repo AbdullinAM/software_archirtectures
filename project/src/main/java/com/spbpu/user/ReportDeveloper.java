@@ -9,6 +9,8 @@ import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.BugReport;
 
+import java.util.List;
+
 public interface ReportDeveloper extends UserInterface {
 
     void assign(BugReport report);
@@ -29,4 +31,6 @@ public interface ReportDeveloper extends UserInterface {
         checkAuthenticated();
         report.setFixed(this);
     }
+
+    List<BugReport> getAssignedBugReports();
 }

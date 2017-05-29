@@ -10,6 +10,7 @@ import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.naming.NamingException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -38,7 +39,12 @@ public class VerifyEmailService {
         } catch (AddressException ex) {
             return false;
         }
-        return true;
+        String hostname = email.split("@")[1];
+        try {
+            return EmailUtil.doMailServerLookup(hostname);
+        } catch (NamingException e) {
+            return false;
+        }
     }
 
     private boolean sendEmail() {
