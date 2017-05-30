@@ -52,18 +52,25 @@ public class ProjectViewController {
     @FXML private TableColumn<Integer, String> reportDescriptionColumn;
     @FXML private TableColumn<Integer, String> reportAuthorColumn;
 
-    public void setup(String user_, String project_) throws Exception {
-        user = user_;
-        project = project_;
-        role = facade.getRoleForProject(user, project);
+    public void setup(String user_, String project_) {
+        try {
+            user = user_;
+            project = project_;
+            role = facade.getRoleForProject(user, project);
 
-        projectLabel.setText(project);
-        String manager = facade.getProjectManager(project);
-        if (manager.equals(user)) managerLabel.setText(manager + " (You)");
-        else managerLabel.setText(manager);
-        String teamLeader = facade.getProjectTeamLeader(project);
-        if (teamLeader.equals(user)) teamLeaderLabel.setText(teamLeader + " (You)");
-        else teamLeaderLabel.setText(teamLeader);
+            projectLabel.setText(project);
+            String manager = facade.getProjectManager(project);
+            if (manager.equals(user)) managerLabel.setText(manager + " (You)");
+            else managerLabel.setText(manager);
+            String teamLeader = facade.getProjectTeamLeader(project);
+            if (teamLeader.equals(user)) teamLeaderLabel.setText(teamLeader + " (You)");
+            else teamLeaderLabel.setText(teamLeader);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
 
         managerLabel.setOnMouseClicked(mouseEvent -> {
             try {
@@ -118,10 +125,17 @@ public class ProjectViewController {
     private void initialize() {}
 
     @FXML
-    private void onClickUpdateButton() throws Exception {
-        String teamLeader = facade.getProjectTeamLeader(project);
-        if (teamLeader.equals(user)) teamLeaderLabel.setText(teamLeader + " (You)");
-        else teamLeaderLabel.setText(teamLeader);
+    private void onClickUpdateButton() {
+        try {
+            String teamLeader = facade.getProjectTeamLeader(project);
+            if (teamLeader.equals(user)) teamLeaderLabel.setText(teamLeader + " (You)");
+            else teamLeaderLabel.setText(teamLeader);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
 
         updateDeveloperList();
         updateTesterList();
@@ -130,7 +144,7 @@ public class ProjectViewController {
     }
 
     @FXML
-    private void onClickSetTeamLeaderButton() throws Exception {
+    private void onClickSetTeamLeaderButton() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Enter information");
         dialog.setHeaderText("Enter teamleader login");
@@ -138,8 +152,19 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        if (facade.setProjectTeamLeader(user, project, result.get())) {
+        boolean added = false;
+        try {
+            added = facade.setProjectTeamLeader(user, project, result.get());
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
+            setTeamLeaderButton.setVisible(false);
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
@@ -149,7 +174,7 @@ public class ProjectViewController {
     }
 
     @FXML
-    private void onClickAddDeveloperButton() throws Exception {
+    private void onClickAddDeveloperButton() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Enter information");
         dialog.setHeaderText("Enter developer login");
@@ -157,7 +182,17 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        if (facade.addDeveloper(user, project, result.get())) {
+        boolean added = false;
+        try {
+            added = facade.addDeveloper(user, project, result.get());
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -168,7 +203,7 @@ public class ProjectViewController {
     }
 
     @FXML
-    private void onClickAddTesterButton() throws Exception {
+    private void onClickAddTesterButton() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Enter information");
         dialog.setHeaderText("Enter tester login");
@@ -176,7 +211,17 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        if (facade.addTester(user, project, result.get())) {
+        boolean added = false;
+        try {
+            added = facade.addTester(user, project, result.get());
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -187,7 +232,7 @@ public class ProjectViewController {
     }
 
     @FXML
-    private void onClickAddReportButton() throws Exception {
+    private void onClickAddReportButton() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Enter information");
         dialog.setHeaderText("Enter report description");
@@ -195,7 +240,17 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        if (facade.createReport(user, project, result.get()) != null) {
+        boolean added = false;
+        try {
+            added = (facade.createReport(user, project, result.get()) != null);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -206,7 +261,7 @@ public class ProjectViewController {
     }
 
     @FXML
-    private void onClickAddMilestoneButton() throws Exception {
+    private void onClickAddMilestoneButton() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Enter information");
         dialog.setHeaderText("Enter milestone start date");
@@ -241,7 +296,17 @@ public class ProjectViewController {
             return;
         }
 
-        if (facade.createMilestone(user, project, startDate, endDate) != null) {
+        boolean added = false;
+        try {
+            added = (facade.createMilestone(user, project, startDate, endDate) != null);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -251,17 +316,29 @@ public class ProjectViewController {
         }
     }
 
-    private void updateDeveloperList() throws Exception {
-        ObservableList<String> items = FXCollections.observableArrayList(facade.getProjectDevelopers(project));
+    private void updateDeveloperList() {
+        ObservableList<String> items = null;
+        try {
+            items = FXCollections.observableArrayList(facade.getProjectDevelopers(project));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         developerList.setItems(items);
     }
 
-    private void updateTesterList() throws Exception {
-        ObservableList<String> items = FXCollections.observableArrayList(facade.getProjectTesters(project));
+    private void updateTesterList() {
+        ObservableList<String> items = null;
+        try {
+            items = FXCollections.observableArrayList(facade.getProjectTesters(project));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         testerList.setItems(items);
     }
 
-    private void setUpMilestoneTale() throws Exception {
+    private void setUpMilestoneTale() {
         milestoneIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().toString()));
         milestoneStartDateColumn.setCellValueFactory(cell -> {
             try {
@@ -303,11 +380,17 @@ public class ProjectViewController {
         });
     }
 
-    private void updateMilestoneTable() throws Exception {
-        ObservableList<Integer> items = FXCollections.observableArrayList(facade.getProjectMilestones(project));
+    private void updateMilestoneTable() {
+        ObservableList<Integer> items = null;
+        try {
+            items = FXCollections.observableArrayList(facade.getProjectMilestones(project));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         milestoneTable.setItems(items);
     }
-    private void setUpReportTable() throws Exception {
+    private void setUpReportTable() {
         reportIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().toString()));
         reportStatusColumn.setCellValueFactory(cell -> {
             try {
@@ -367,8 +450,14 @@ public class ProjectViewController {
         });
     }
 
-    private void updateReportTable() throws Exception {
-        ObservableList<Integer> tickets = FXCollections.observableArrayList(facade.getProjectReports(project));
+    private void updateReportTable() {
+        ObservableList<Integer> tickets = null;
+        try {
+            tickets = FXCollections.observableArrayList(facade.getProjectReports(project));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         reportTable.setItems(tickets);
     }
 }

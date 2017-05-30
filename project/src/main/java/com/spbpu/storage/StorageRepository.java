@@ -4,6 +4,7 @@
 package com.spbpu.storage;
 
 import com.spbpu.exceptions.AlreadyExistsException;
+import com.spbpu.exceptions.EmailNotVerifiedException;
 import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
@@ -43,7 +44,7 @@ public class StorageRepository {
         }
     }
 
-    public boolean addUser(String login, String name, String email, String password) throws AlreadyExistsException {
+    public boolean addUser(String login, String name, String email, String password) throws AlreadyExistsException, EmailNotVerifiedException {
         try {
             if (userMapper.findByLogin(login) != null) throw new AlreadyExistsException("User with login " + login + " already exists");
         } catch (SQLException e) {
@@ -52,7 +53,7 @@ public class StorageRepository {
         }
 
         VerifyEmailService verificator = new VerifyEmailService(login, name, email, password);
-        if (!verificator.verify()) return false;
+        if (!verificator.verify()) throw new EmailNotVerifiedException(email);
 
         User newUser = new User(0, login, name, email, null);
         try {

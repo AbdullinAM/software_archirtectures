@@ -7,6 +7,7 @@ package com.spbpu.controller;
 import com.spbpu.Main;
 import com.spbpu.facade.Facade;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 
@@ -20,11 +21,18 @@ public class UserViewController {
     @FXML private Label emailLabel;
 
 
-    public void setup(String user_) throws Exception {
+    public void setup(String user_) {
         user = user_;
         loginLabel.setText(user);
-        nameLabel.setText(facade.getUserName(user));
-        emailLabel.setText(facade.getUserEmail(user));
+        try {
+            nameLabel.setText(facade.getUserName(user));
+            emailLabel.setText(facade.getUserEmail(user));
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     @FXML

@@ -28,12 +28,8 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public boolean addUser(String login, String name, String email, String password) {
-        try {
-            return repository.addUser(login, name, email, password);
-        } catch (AlreadyExistsException e) {
-            return false;
-        }
+    public boolean addUser(String login, String name, String email, String password) throws Exception {
+        return repository.addUser(login, name, email, password);
     }
 
     @Override

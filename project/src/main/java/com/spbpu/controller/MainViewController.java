@@ -53,7 +53,7 @@ public class MainViewController {
     @FXML private TableColumn<Pair<String, Integer>, String> reportDescriptionColumn;
     @FXML private TableColumn<Pair<String, Integer>, String> reportAuthorColumn;
 
-    public void setup(String user_) throws Exception {
+    public void setup(String user_) {
         user = user_;
         userLabel.setText(user);
         userLabel.setOnMouseClicked(mouseEvent -> {
@@ -74,12 +74,12 @@ public class MainViewController {
     private void initialize() {}
 
     @FXML
-    private void onClickSignOutButton() throws Exception {
+    private void onClickSignOutButton() {
         Main.showSignInView();
     }
 
     @FXML
-    private void onClickUpdateButton() throws Exception {
+    private void onClickUpdateButton() {
         updateProjectTable();
         updateMessageTable();
         updateTicketTable();
@@ -87,7 +87,7 @@ public class MainViewController {
     }
 
     @FXML
-    private void onClickAddProjectButton() throws Exception {
+    private void onClickAddProjectButton() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Enter information");
         dialog.setHeaderText("Enter new project name");
@@ -95,7 +95,17 @@ public class MainViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        if (facade.createProject(user, result.get())) {
+        boolean added = false;
+        try {
+            added = facade.createProject(user, result.get());
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -132,8 +142,14 @@ public class MainViewController {
         });
     }
 
-    private void updateProjectTable() throws Exception {
-        ObservableList<String> projects = FXCollections.observableArrayList(facade.getAllProjects(user));
+    private void updateProjectTable() {
+        ObservableList<String> projects = null;
+        try {
+            projects = FXCollections.observableArrayList(facade.getAllProjects(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         projectTable.setItems(projects);
     }
 
@@ -141,12 +157,18 @@ public class MainViewController {
         messageColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue()));
     }
 
-    private void updateMessageTable() throws Exception {
-        ObservableList<String> messages = FXCollections.observableArrayList(facade.getMessages(user));
+    private void updateMessageTable() {
+        ObservableList<String> messages = null;
+        try {
+            messages = FXCollections.observableArrayList(facade.getMessages(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         messageTable.setItems(messages);
     }
 
-    private void setUpTicketTable() throws Exception {
+    private void setUpTicketTable() {
         ticketIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSecond().toString()));
         ticketProjectColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst()));
         ticketStatusColumn.setCellValueFactory(cell -> {
@@ -222,12 +244,18 @@ public class MainViewController {
         });
     }
 
-    private void updateTicketTable() throws Exception {
-        ObservableList<Pair<String, Integer>> tickets = FXCollections.observableArrayList(facade.getAssignedTickets(user));
+    private void updateTicketTable() {
+        ObservableList<Pair<String, Integer>> tickets = null;
+        try {
+            tickets = FXCollections.observableArrayList(facade.getAssignedTickets(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         ticketTable.setItems(tickets);
     }
 
-    private void setUpReportTable() throws Exception {
+    private void setUpReportTable() {
         reportIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSecond().toString()));
         reportProjectColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst()));
         reportStatusColumn.setCellValueFactory(cell -> {
@@ -303,8 +331,14 @@ public class MainViewController {
         });
     }
 
-    private void updateReportTable() throws Exception {
-        ObservableList<Pair<String, Integer>> tickets = FXCollections.observableArrayList(facade.getAssignedReports(user));
+    private void updateReportTable() {
+        ObservableList<Pair<String, Integer>> tickets = null;
+        try {
+            tickets = FXCollections.observableArrayList(facade.getAssignedReports(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         reportTable.setItems(tickets);
     }
 }

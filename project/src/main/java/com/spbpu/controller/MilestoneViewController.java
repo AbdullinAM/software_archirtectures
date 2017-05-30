@@ -46,17 +46,24 @@ public class MilestoneViewController {
     @FXML private TableColumn<Integer, String> ticketDescriptionColumn;
 
 
-    public void setup(String user_, String project_, Integer milestone) throws Exception {
-        user = user_;
-        project = project_;
-        id = milestone;
-        role = facade.getRoleForProject(user, project);
+    public void setup(String user_, String project_, Integer milestone) {
+        try {
+            user = user_;
+            project = project_;
+            id = milestone;
+            role = facade.getRoleForProject(user, project);
 
-        idLabel.setText(id.toString());
-        projectLabel.setText(project);
-        statusLabel.setText(facade.getMilestoneStatus(project, id));
-        startDateLabel.setText(facade.getMilestoneStartDate(project,id).toString());
-        endDateLabel.setText(facade.getMilestoneEndDate(project, id).toString());
+            idLabel.setText(id.toString());
+            projectLabel.setText(project);
+            statusLabel.setText(facade.getMilestoneStatus(project, id));
+            startDateLabel.setText(facade.getMilestoneStartDate(project,id).toString());
+            endDateLabel.setText(facade.getMilestoneEndDate(project, id).toString());
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
 
         if (role != Role.TEAMLEADER && role != Role.MANAGER)
             addTicketButton.setDisable(true);
@@ -70,7 +77,8 @@ public class MilestoneViewController {
     private void initialize() {}
 
     @FXML
-    private void onClickUpdateButton() throws Exception {
+    private void onClickUpdateButton() {
+        try {
         statusLabel.setText(facade.getMilestoneStatus(project, id));
         if (role != Role.MANAGER) {
             activateButton.setVisible(false);
@@ -106,13 +114,29 @@ public class MilestoneViewController {
             closingDateLabel.setVisible(false);
             closingDateNameLabel.setVisible(false);
         }
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
 
         updateTicketTable();
     }
 
     @FXML
-    private void onClickActivateButton() throws Exception {
-        if (facade.activateMilestone(user, project, id)) {
+    private void onClickActivateButton() {
+        boolean added = false;
+        try {
+            added = facade.activateMilestone(user, project, id);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -123,8 +147,18 @@ public class MilestoneViewController {
     }
 
     @FXML
-    private void onClickCloseButton() throws Exception {
-        if (facade.closeMilestone(user, project, id)) {
+    private void onClickCloseButton() {
+        boolean added = false;
+        try {
+            added = facade.closeMilestone(user, project, id);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -135,7 +169,7 @@ public class MilestoneViewController {
     }
 
     @FXML
-    private void onClickAddTicketButton() throws Exception {
+    private void onClickAddTicketButton() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Enter information");
         dialog.setHeaderText("Enter new ticket description");
@@ -143,7 +177,17 @@ public class MilestoneViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        if (facade.createTicket(user, project, id, result.get()) != null) {
+        boolean added = false;
+        try {
+            added = (facade.createTicket(user, project, id, result.get()) != null);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+
+        if (added) {
             onClickUpdateButton();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -154,7 +198,7 @@ public class MilestoneViewController {
     }
 
 
-    private void setUpTicketTable() throws Exception {
+    private void setUpTicketTable() {
         ticketIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().toString()));
         ticketStatusColumn.setCellValueFactory(cell -> {
             try {
@@ -190,8 +234,14 @@ public class MilestoneViewController {
         });
     }
 
-    private void updateTicketTable() throws Exception {
-        ObservableList<Integer> tickets = FXCollections.observableArrayList(facade.getMilestoneTickets(project, id));
+    private void updateTicketTable() {
+        ObservableList<Integer> tickets = null;
+        try {
+            tickets = FXCollections.observableArrayList(facade.getMilestoneTickets(project, id));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         ticketTable.setItems(tickets);
     }
 }

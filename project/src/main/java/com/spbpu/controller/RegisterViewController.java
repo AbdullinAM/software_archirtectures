@@ -27,7 +27,7 @@ public class RegisterViewController {
 
 
     @FXML
-    private void onClickRegisterButton() throws Exception {
+    private void onClickRegisterButton() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Error");
 
@@ -62,7 +62,16 @@ public class RegisterViewController {
             return;
         }
 
-        if (!facade.addUser(login, name, email, pass1)) {
+        boolean added = false;
+        try {
+            added = facade.addUser(login, name, email, pass1);
+        } catch (Exception e) {
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+            return;
+        }
+
+        if (!added) {
             alert.setHeaderText("Cannot add user");
             alert.showAndWait();
             return;
@@ -71,7 +80,7 @@ public class RegisterViewController {
     }
 
     @FXML
-    private void onClickCancelButton() throws Exception {
+    private void onClickCancelButton() {
         Main.showSignInView();
     }
 }

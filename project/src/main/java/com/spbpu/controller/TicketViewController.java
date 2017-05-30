@@ -46,29 +46,36 @@ public class TicketViewController {
     @FXML private TableColumn<Triple<Date, String, String>, String> commentCommentColumn;
 
 
-    public void setup(String user_, String project_, Integer tiket_) throws Exception {
-        user = user_;
-        project = project_;
-        role = facade.getRoleForProject(user, project);
-        id = tiket_;
-        milestone = facade.getTicketMilestone(project, id);
+    public void setup(String user_, String project_, Integer tiket_) {
+        try {
+            user = user_;
+            project = project_;
+            role = facade.getRoleForProject(user, project);
+            id = tiket_;
+            milestone = facade.getTicketMilestone(project, id);
 
-        idLabel.setText(id.toString());
-        milestoneLabel.setText(milestone.toString());
-        projectLabel.setText(project);
-        authorLabel.setText(facade.getTicketAuthor(project, id));
-        authorLabel.setOnMouseClicked(mouseEvent -> {
-            try {
-                Main.showUserView(authorLabel.getText());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        dateLabel.setText(facade.getTicketCreationTime(project, id).toString());
-        descriptionArea.setText(facade.getTicketTask(project, id));
-        descriptionArea.setEditable(false);
-        if (role != Role.MANAGER && role != Role.TEAMLEADER)
-            addAssigneeButton.setDisable(true);
+            idLabel.setText(id.toString());
+            milestoneLabel.setText(milestone.toString());
+            projectLabel.setText(project);
+            authorLabel.setText(facade.getTicketAuthor(project, id));
+            authorLabel.setOnMouseClicked(mouseEvent -> {
+                try {
+                    Main.showUserView(authorLabel.getText());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            dateLabel.setText(facade.getTicketCreationTime(project, id).toString());
+            descriptionArea.setText(facade.getTicketTask(project, id));
+            descriptionArea.setEditable(false);
+            if (role != Role.MANAGER && role != Role.TEAMLEADER)
+                addAssigneeButton.setDisable(true);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
 
         assigneeList.setOnMouseClicked(mouseEvent -> {
             try {
@@ -88,13 +95,13 @@ public class TicketViewController {
     private void initialize() {}
 
     @FXML
-    private void onClickUpdateButton() throws Exception {
+    private void onClickUpdateButton() {
         updateAssigneeList();
         updateCommentTable();
     }
 
     @FXML
-    private void onClickAddAssigneeButton() throws Exception {
+    private void onClickAddAssigneeButton() {
         if (role == Role.MANAGER || role == Role.TEAMLEADER) {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Enter information");
@@ -103,7 +110,17 @@ public class TicketViewController {
             Optional<String> result = dialog.showAndWait();
             if (!result.isPresent()) return;
 
-            if (facade.addTicketAssignee(user, project, id, result.get())) {
+            boolean added = false;
+            try {
+                added = facade.addTicketAssignee(user, project, id, result.get());
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText(e.getMessage());
+                alert.showAndWait();
+            }
+
+            if (added) {
                 onClickUpdateButton();
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -115,29 +132,36 @@ public class TicketViewController {
     }
 
 
-    private void setUpStatusBox() throws Exception {
-        List<Object> items = new ArrayList<>();
-        items.add(facade.getTicketStatus(project, id));
-        items.add(new Separator());
-        if (!items.get(0).equals("CLOSED")) {
-            switch (role) {
-                case NONE:
-                case TESTER:
-                    break;
-                case MANAGER:
-                case TEAMLEADER:
-                    if (!items.contains("NEW")) items.add("NEW");
-                    if (!items.contains("CLOSED")) items.add("CLOSED");
-                    break;
-                case DEVELOPER:
-                    if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
-                    if (!items.contains("IN_PROGRESS")) items.add("IN_PROGRESS");
-                    if (!items.contains("FINISHED")) items.add("FINISHED");
+    private void setUpStatusBox() {
+        try {
+            List<Object> items = new ArrayList<>();
+            items.add(facade.getTicketStatus(project, id));
+            items.add(new Separator());
+            if (!items.get(0).equals("CLOSED")) {
+                switch (role) {
+                    case NONE:
+                    case TESTER:
+                        break;
+                    case MANAGER:
+                    case TEAMLEADER:
+                        if (!items.contains("NEW")) items.add("NEW");
+                        if (!items.contains("CLOSED")) items.add("CLOSED");
+                        break;
+                    case DEVELOPER:
+                        if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
+                        if (!items.contains("IN_PROGRESS")) items.add("IN_PROGRESS");
+                        if (!items.contains("FINISHED")) items.add("FINISHED");
+                }
             }
-        }
 
-        statusBox.setItems(FXCollections.observableArrayList(items));
-        statusBox.getSelectionModel().selectFirst();
+            statusBox.setItems(FXCollections.observableArrayList(items));
+            statusBox.getSelectionModel().selectFirst();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
 
         statusBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldVal, newVal) -> {
             if (newVal.equals("NEW")) {
@@ -207,11 +231,15 @@ public class TicketViewController {
         });
     }
 
-    private void updateAssigneeList() throws Exception {
-        assigneeList.setItems(FXCollections.observableArrayList(facade.getTicketAssignees(project, id)));
+    private void updateAssigneeList() {
+        try {
+            assigneeList.setItems(FXCollections.observableArrayList(facade.getTicketAssignees(project, id)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void setUpCommentTable() throws Exception {
+    private void setUpCommentTable() {
         commentDateColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst().toString()));
         commentAuthorColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSecond()));
         commentCommentColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getThird()));
@@ -234,8 +262,12 @@ public class TicketViewController {
         });
     }
 
-    private void updateCommentTable() throws Exception {
-        commentTable.setItems(FXCollections.observableArrayList(facade.getTicketComments(project, id)));
+    private void updateCommentTable() {
+        try {
+            commentTable.setItems(FXCollections.observableArrayList(facade.getTicketComments(project, id)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
