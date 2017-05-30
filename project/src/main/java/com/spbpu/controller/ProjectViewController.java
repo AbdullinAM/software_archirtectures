@@ -213,7 +213,7 @@ public class ProjectViewController {
 
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
-        DateFormat df = new SimpleDateFormat("dd-mm-yyyy");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         Date startDate, endDate;
         try {
             startDate = df.parse(result.get());
