@@ -101,10 +101,26 @@ public class ProjectMapper implements Mapper<Project> {
         if (!rs.next()) return null;
 
         Manager manager = managerMapper.findByID(rs.getInt("manager"));
-        for (Project it : manager.getProjects())
-            if (it.getId() == rs.getInt("id")) return it;
+        Project project = new Project(rs.getInt("id"), name, manager);
+        projects.add(project);
 
-        return null;
+        TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
+        if (tl != null) project.setTeamLeader(tl);
+
+        for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
+            project.addDeveloper(dev);
+        }
+        for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
+            project.addTester(tester);
+        }
+        for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
+            project.addMilestone(milestone);
+        }
+        for (BugReport report : reportMapper.findReportsOfProject(project)) {
+            project.addReport(report);
+        }
+
+        return project;
     }
 
     @Override
@@ -120,10 +136,27 @@ public class ProjectMapper implements Mapper<Project> {
         if (!rs.next()) return null;
 
         Manager manager = managerMapper.findByID(rs.getInt("manager"));
-        for (Project it : manager.getProjects())
-            if (it.getId() == id) return it;
+        String name = rs.getString("name");
+        Project project = new Project(id, name, manager);
+        projects.add(project);
 
-        return null;
+        TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
+        if (tl != null) project.setTeamLeader(tl);
+
+        for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
+            project.addDeveloper(dev);
+        }
+        for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
+            project.addTester(tester);
+        }
+        for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
+            project.addMilestone(milestone);
+        }
+        for (BugReport report : reportMapper.findReportsOfProject(project)) {
+            project.addReport(report);
+        }
+
+        return project;
     }
 
     @Override

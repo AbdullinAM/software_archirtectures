@@ -34,7 +34,7 @@ public class Manager extends User implements TicketManager {
 
     public void addProject(Project project) throws NoRightsException {
         if (!project.getManager().equals(this)) throw new NoRightsException("Can't add project to wrong manager");
-        projects.add(project);
+        if (!projects.contains(project)) projects.add(project);
     }
 
     public List<Project> getProjects() { return projects; }

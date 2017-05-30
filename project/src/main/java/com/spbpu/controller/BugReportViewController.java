@@ -42,25 +42,32 @@ public class BugReportViewController {
     @FXML private TableColumn<Triple<Date, String, String>, String> commentCommentColumn;
 
 
-    public void setup(String user_, String project_, Integer report_) throws Exception {
-        user = user_;
-        project = project_;
-        role = facade.getRoleForProject(user, project);
-        id = report_;
+    public void setup(String user_, String project_, Integer report_) {
+        try {
+            user = user_;
+            project = project_;
+            role = facade.getRoleForProject(user, project);
+            id = report_;
 
-        idLabel.setText(id.toString());
-        projectLabel.setText(project);
-        creatorLabel.setText(facade.getReportAuthor(project, id));
-        creatorLabel.setOnMouseClicked(mouseEvent -> {
-            try {
-                Main.showUserView(creatorLabel.getText());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        dateLabel.setText(facade.getReportCreationTime(project, id).toString());
-        descriptionArea.setText(facade.getReportDescription(project, id));
-        descriptionArea.setEditable(false);
+            idLabel.setText(id.toString());
+            projectLabel.setText(project);
+            creatorLabel.setText(facade.getReportAuthor(project, id));
+            creatorLabel.setOnMouseClicked(mouseEvent -> {
+                try {
+                    Main.showUserView(creatorLabel.getText());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            dateLabel.setText(facade.getReportCreationTime(project, id).toString());
+            descriptionArea.setText(facade.getReportDescription(project, id));
+            descriptionArea.setEditable(false);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
 
         setUpStatusBox();
         setUpCommentTable();
@@ -72,109 +79,123 @@ public class BugReportViewController {
     private void initialize() {}
 
     @FXML
-    private void onClickUpdateButton() throws Exception {
+    private void onClickUpdateButton() {
         setUpAssigneeLabel();
         updateCommentTable();
     }
 
-    private void setUpAssigneeLabel() throws Exception {
-        String assignee = facade.getReportAssignee(project, id);
-        if (assignee != null) {
-            assigneeLabel.setText(assignee);
-            assigneeLabel.setOnMouseClicked(mouseEvent -> {
-                try {
-                    Main.showUserView(assigneeLabel.getText());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } else assigneeLabel.setText("None");
+    private void setUpAssigneeLabel() {
+        try {
+            String assignee = facade.getReportAssignee(project, id);
+            if (assignee != null) {
+                assigneeLabel.setText(assignee);
+                assigneeLabel.setOnMouseClicked(mouseEvent -> {
+                    try {
+                        Main.showUserView(assigneeLabel.getText());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else assigneeLabel.setText("None");
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
-    private void setUpStatusBox() throws Exception {
-        List<Object> items = new ArrayList<>();
-        items.add(facade.getReportStatus(project, id));
-        items.add(new Separator());
-        if (!items.get(0).equals("CLOSED")) {
-            switch (role) {
-                case NONE:
-                case MANAGER:
-                    break;
-                case TESTER:
-                    if (!items.contains("OPENED")) items.add("OPENED");
-                    if (!items.contains("CLOSED")) items.add("CLOSED");
-                    break;
-                case DEVELOPER:
-                case TEAMLEADER:
-                    if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
-                    if (!items.contains("FIXED")) items.add("FIXED");
+    private void setUpStatusBox() {
+        try {
+            List<Object> items = new ArrayList<>();
+            items.add(facade.getReportStatus(project, id));
+            items.add(new Separator());
+            if (!items.get(0).equals("CLOSED")) {
+                switch (role) {
+                    case NONE:
+                    case MANAGER:
+                        break;
+                    case TESTER:
+                        if (!items.contains("OPENED")) items.add("OPENED");
+                        if (!items.contains("CLOSED")) items.add("CLOSED");
+                        break;
+                    case DEVELOPER:
+                    case TEAMLEADER:
+                        if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
+                        if (!items.contains("FIXED")) items.add("FIXED");
+                }
             }
-        }
 
-        statusBox.setItems(FXCollections.observableArrayList(items));
-        statusBox.getSelectionModel().selectFirst();
+            statusBox.setItems(FXCollections.observableArrayList(items));
+            statusBox.getSelectionModel().selectFirst();
 
-        statusBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldVal, newVal) -> {
-            if (newVal.equals("OPENED")) {
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Enter information");
-                dialog.setHeaderText("Enter comment");
+            statusBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldVal, newVal) -> {
+                if (newVal.equals("OPENED")) {
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("Enter information");
+                    dialog.setHeaderText("Enter comment");
 
-                Optional<String> result = dialog.showAndWait();
-                if (!result.isPresent()) return;
-                boolean isChanged = false;
-                try {
-                    if (!facade.reopenReport(user, project, id, result.get())) {
-                        isChanged = true;
-                        onClickUpdateButton();
+                    Optional<String> result = dialog.showAndWait();
+                    if (!result.isPresent()) return;
+                    boolean isChanged = false;
+                    try {
+                        if (!facade.reopenReport(user, project, id, result.get())) {
+                            isChanged = true;
+                            onClickUpdateButton();
+                        }
+                    } catch (Exception e) {
+                    } finally {
+                        if (!isChanged) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Error");
+                            alert.setHeaderText("Can't change report status");
+                            alert.showAndWait();
+                        }
                     }
-                } catch (Exception e) {
-                } finally {
-                    if (!isChanged) {
+                } else if (newVal.equals("CLOSED")) {
+                    try {
+                        facade.closeReport(user, project, id);
+                    } catch (Exception e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Can't change report status");
+                        alert.showAndWait();
+                    }
+                } else if (newVal.equals("ACCEPTED")) {
+                    try {
+                        facade.acceptReport(user, project, id);
+                    } catch (Exception e) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Can't change report status");
+                        alert.showAndWait();
+                    }
+                } else if (newVal.equals("FIXED")) {
+                    try {
+                        facade.fixReport(user, project, id);
+                    } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Error");
                         alert.setHeaderText("Can't change report status");
                         alert.showAndWait();
                     }
                 }
-            } else if (newVal.equals("CLOSED")) {
                 try {
-                    facade.closeReport(user, project, id);
+                    onClickUpdateButton();
                 } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("Can't change report status");
-                    alert.showAndWait();
+                    e.printStackTrace();
                 }
-            } else if (newVal.equals("ACCEPTED")) {
-                try {
-                    facade.acceptReport(user, project, id);
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("Can't change report status");
-                    alert.showAndWait();
-                }
-            } else if (newVal.equals("FIXED")) {
-                try {
-                    facade.fixReport(user, project, id);
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("Can't change report status");
-                    alert.showAndWait();
-                }
-            }
-            try {
-                onClickUpdateButton();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+            });
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
 
-    private void setUpCommentTable() throws Exception {
+    private void setUpCommentTable() {
         commentDateColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst().toString()));
         commentAuthorColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSecond()));
         commentCommentColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getThird()));
@@ -197,8 +218,15 @@ public class BugReportViewController {
         });
     }
 
-    private void updateCommentTable() throws Exception {
-        commentTable.setItems(FXCollections.observableArrayList(facade.getReportComments(project, id)));
+    private void updateCommentTable() {
+        try {
+            commentTable.setItems(FXCollections.observableArrayList(facade.getReportComments(project, id)));
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
 }

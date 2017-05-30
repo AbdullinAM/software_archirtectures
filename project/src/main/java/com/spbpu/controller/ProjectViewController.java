@@ -119,6 +119,10 @@ public class ProjectViewController {
 
     @FXML
     private void onClickUpdateButton() throws Exception {
+        String teamLeader = facade.getProjectTeamLeader(project);
+        if (teamLeader.equals(user)) teamLeaderLabel.setText(teamLeader + " (You)");
+        else teamLeaderLabel.setText(teamLeader);
+
         updateDeveloperList();
         updateTesterList();
         updateMilestoneTable();

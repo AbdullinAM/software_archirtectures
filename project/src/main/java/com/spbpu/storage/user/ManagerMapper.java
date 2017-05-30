@@ -51,7 +51,6 @@ public class ManagerMapper implements UserMapperInterface<Manager> {
                 e.printStackTrace();
             }
         }
-
         return manager;
     }
 
