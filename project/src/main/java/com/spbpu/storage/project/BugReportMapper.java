@@ -98,7 +98,7 @@ public class BugReportMapper implements Mapper<BugReport> {
         int developerId = rs.getInt("developer");
         ReportDeveloper developer = null;
         for (ReportDeveloper rd : project.getReportDevelopers()) {
-            if (rd.getId() == creatorId) {
+            if (rd.getId() == developerId) {
                 developer = rd;
                 break;
             }
@@ -145,6 +145,13 @@ public class BugReportMapper implements Mapper<BugReport> {
             String update = "UPDATE BUGREPORT SET status = ? WHERE id = ?;";
             PreparedStatement updateStatus = connection.prepareStatement(update);
             updateStatus.setString(1, item.getStatus().name());
+            updateStatus.setInt(2, item.getId());
+            updateStatus.execute();
+        }
+        if (item.getAssignee() != null) {
+            String update = "UPDATE BUGREPORT SET developer = ? WHERE id = ?;";
+            PreparedStatement updateStatus = connection.prepareStatement(update);
+            updateStatus.setInt(1, item.getAssignee().getId());
             updateStatus.setInt(2, item.getId());
             updateStatus.execute();
         }

@@ -23,7 +23,6 @@ public class ProjectViewController {
     private Facade facade = Main.facade;
     private String user;
     private String project;
-    private Role role;
 
     @FXML private Label projectLabel;
     @FXML private Label managerLabel;
@@ -56,7 +55,6 @@ public class ProjectViewController {
         try {
             user = user_;
             project = project_;
-            role = facade.getRoleForProject(user, project);
 
             projectLabel.setText(project);
             String manager = facade.getProjectManager(project);
@@ -104,15 +102,6 @@ public class ProjectViewController {
             }
         });
 
-        if (role != Role.MANAGER) {
-            setTeamLeaderButton.setVisible(false);
-            addDeveloperButton.setVisible(false);
-            addTesterButton.setVisible(false);
-            addMilestoneButton.setVisible(false);
-        }
-        if (role == Role.MANAGER || role == Role.NONE) {
-            addReportButton.setVisible(false);
-        }
         if (!teamLeaderLabel.getText().isEmpty()) setTeamLeaderButton.setVisible(false);
 
         setUpMilestoneTale();
@@ -272,7 +261,7 @@ public class ProjectViewController {
     }
 
     private void updateDeveloperList() {
-        ObservableList<String> items = null;
+        ObservableList<String> items;
         try {
             items = FXCollections.observableArrayList(facade.getProjectDevelopers(project));
         } catch (Exception e) {
@@ -283,7 +272,7 @@ public class ProjectViewController {
     }
 
     private void updateTesterList() {
-        ObservableList<String> items = null;
+        ObservableList<String> items;
         try {
             items = FXCollections.observableArrayList(facade.getProjectTesters(project));
         } catch (Exception e) {
@@ -325,7 +314,7 @@ public class ProjectViewController {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
                     try {
-                        Main.showMilestoneView(user, project, row.getItem());
+                        if (!row.isEmpty()) Main.showMilestoneView(user, project, row.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -336,7 +325,7 @@ public class ProjectViewController {
     }
 
     private void updateMilestoneTable() {
-        ObservableList<Integer> items = null;
+        ObservableList<Integer> items;
         try {
             items = FXCollections.observableArrayList(facade.getProjectMilestones(project));
         } catch (Exception e) {
@@ -379,7 +368,7 @@ public class ProjectViewController {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
                         Integer item = (Integer) cell.getTableRow().getItem();
-                        Main.showReportView(user, project, item);
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showReportView(user, project, item);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -395,7 +384,7 @@ public class ProjectViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showUserView(cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showUserView(cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -406,7 +395,7 @@ public class ProjectViewController {
     }
 
     private void updateReportTable() {
-        ObservableList<Integer> tickets = null;
+        ObservableList<Integer> tickets;
         try {
             tickets = FXCollections.observableArrayList(facade.getProjectReports(project));
         } catch (Exception e) {

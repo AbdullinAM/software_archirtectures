@@ -22,7 +22,6 @@ public class MilestoneViewController {
     private Facade facade = Main.facade;
     private String user;
     private String project;
-    private Role role;
     private Integer id;
 
     @FXML private Label idLabel;
@@ -51,7 +50,6 @@ public class MilestoneViewController {
             user = user_;
             project = project_;
             id = milestone;
-            role = facade.getRoleForProject(user, project);
 
             idLabel.setText(id.toString());
             projectLabel.setText(project);
@@ -64,9 +62,6 @@ public class MilestoneViewController {
             alert.setHeaderText(e.getMessage());
             alert.showAndWait();
         }
-
-        if (role != Role.TEAMLEADER && role != Role.MANAGER)
-            addTicketButton.setDisable(true);
 
         setUpTicketTable();
 
@@ -181,7 +176,7 @@ public class MilestoneViewController {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
                         Integer item = (Integer) cell.getTableRow().getItem();
-                        Main.showTicketView(user, project, item);
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showTicketView(user, project, item);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -192,7 +187,7 @@ public class MilestoneViewController {
     }
 
     private void updateTicketTable() {
-        ObservableList<Integer> tickets = null;
+        ObservableList<Integer> tickets;
         try {
             tickets = FXCollections.observableArrayList(facade.getMilestoneTickets(project, id));
         } catch (Exception e) {

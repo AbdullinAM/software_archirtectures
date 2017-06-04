@@ -102,23 +102,21 @@ public class TicketViewController {
 
     @FXML
     private void onClickAddAssigneeButton() {
-        if (role == Role.MANAGER || role == Role.TEAMLEADER) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Enter information");
-            dialog.setHeaderText("Enter developer name");
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Enter information");
+        dialog.setHeaderText("Enter developer name");
 
-            Optional<String> result = dialog.showAndWait();
-            if (!result.isPresent()) return;
+        Optional<String> result = dialog.showAndWait();
+        if (!result.isPresent()) return;
 
-            try {
-                facade.addTicketAssignee(user, project, id, result.get());
-                onClickUpdateButton();
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText(e.getMessage());
-                alert.showAndWait();
-            }
+        try {
+            facade.addTicketAssignee(user, project, id, result.get());
+            onClickUpdateButton();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
         }
     }
 
@@ -128,23 +126,11 @@ public class TicketViewController {
             List<Object> items = new ArrayList<>();
             items.add(facade.getTicketStatus(project, id));
             items.add(new Separator());
-            if (!items.get(0).equals("CLOSED")) {
-                switch (role) {
-                    case NONE:
-                    case TESTER:
-                        break;
-                    case MANAGER:
-                    case TEAMLEADER:
-                        if (!items.contains("NEW")) items.add("NEW");
-                        if (!items.contains("CLOSED")) items.add("CLOSED");
-                        break;
-                    case DEVELOPER:
-                        if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
-                        if (!items.contains("IN_PROGRESS")) items.add("IN_PROGRESS");
-                        if (!items.contains("FINISHED")) items.add("FINISHED");
-                }
-            }
-
+            if (!items.contains("NEW")) items.add("NEW");
+            if (!items.contains("CLOSED")) items.add("CLOSED");
+            if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
+            if (!items.contains("IN_PROGRESS")) items.add("IN_PROGRESS");
+            if (!items.contains("FINISHED")) items.add("FINISHED");
             statusBox.setItems(FXCollections.observableArrayList(items));
             statusBox.getSelectionModel().selectFirst();
         } catch (Exception e) {
@@ -161,7 +147,10 @@ public class TicketViewController {
                 dialog.setHeaderText("Enter comment");
 
                 Optional<String> result = dialog.showAndWait();
-                if (!result.isPresent()) return;
+                if (!result.isPresent()) {
+                    statusBox.getSelectionModel().select(oldVal);
+                    return;
+                }
                 try {
                     facade.reopenTicket(user, project, id, result.get());
                     onClickUpdateButton();
@@ -170,6 +159,7 @@ public class TicketViewController {
                     alert.setTitle("Error");
                     alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
+                    statusBox.getSelectionModel().select(oldVal);
                 }
             } else if (newVal.equals("CLOSED")) {
                 try {
@@ -179,6 +169,7 @@ public class TicketViewController {
                     alert.setTitle("Error");
                     alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
+                    statusBox.getSelectionModel().select(oldVal);
                 }
             } else if (newVal.equals("ACCEPTED")) {
                 try {
@@ -188,6 +179,7 @@ public class TicketViewController {
                     alert.setTitle("Error");
                     alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
+                    statusBox.getSelectionModel().select(oldVal);
                 }
             } else if (newVal.equals("IN_PROGRESS")) {
                 try {
@@ -197,6 +189,7 @@ public class TicketViewController {
                     alert.setTitle("Error");
                     alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
+                    statusBox.getSelectionModel().select(oldVal);
                 }
             } else if (newVal.equals("FINISHED")) {
                 try {
@@ -206,6 +199,7 @@ public class TicketViewController {
                     alert.setTitle("Error");
                     alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
+                    statusBox.getSelectionModel().select(oldVal);
                 }
             }
             onClickUpdateButton();
@@ -233,7 +227,7 @@ public class TicketViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showUserView(cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showUserView(cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

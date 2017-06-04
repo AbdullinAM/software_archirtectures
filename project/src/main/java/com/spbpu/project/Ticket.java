@@ -31,14 +31,14 @@ public class Ticket {
     private ArrayList<Comment> comments;
 
     public Ticket(Milestone milestone_, TicketManager creator_, String task_) {
-        this(-1, milestone_, creator_, new Date(), task_);
+        this(-1, milestone_, Status.NEW, creator_, new Date(), task_);
     }
 
-    public Ticket(int id_, Milestone milestone_, TicketManager creator_, Date creationTime_, String task_) {
+    public Ticket(int id_, Milestone milestone_, Ticket.Status status_, TicketManager creator_, Date creationTime_, String task_) {
         id = id_;
         milestone = milestone_;
         creator = creator_;
-        status = Status.NEW;
+        status = status_;
         assignees = new ArrayList<>();
         creationTime = creationTime_;
         task = task_;

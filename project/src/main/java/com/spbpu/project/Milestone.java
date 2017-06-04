@@ -31,14 +31,14 @@ public class Milestone {
     private Set<Ticket> tickets;
 
     public Milestone(Project project_, Date startDate, Date endDate) throws EndBeforeStartException {
-        this(-1, project_, startDate, endDate);
+        this(-1, project_, Status.OPENED, startDate, endDate);
     }
 
-    public Milestone(int id_, Project project_, Date startDate, Date endDate) throws EndBeforeStartException {
+    public Milestone(int id_, Project project_, Milestone.Status status_, Date startDate, Date endDate) throws EndBeforeStartException {
         if (endDate.before(startDate)) throw new EndBeforeStartException("Milestone end is before start");
         id = id_;
         project = project_;
-        status = Status.OPENED;
+        status = status_;
         this.startDate = startDate;
         this.endDate = endDate;
         tickets = new HashSet<>();

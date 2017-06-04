@@ -131,7 +131,8 @@ public class MainViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showProjectView(user, cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty())
+                            Main.showProjectView(user, cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -142,7 +143,7 @@ public class MainViewController {
     }
 
     private void updateProjectTable() {
-        ObservableList<String> projects = null;
+        ObservableList<String> projects;
         try {
             projects = FXCollections.observableArrayList(facade.getAllProjects(user));
         } catch (Exception e) {
@@ -202,7 +203,7 @@ public class MainViewController {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
                         Pair<String, Integer> item = (Pair<String, Integer>) cell.getTableRow().getItem();
-                        Main.showTicketView(user, item.getFirst(), item.getSecond());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showTicketView(user, item.getFirst(), item.getSecond());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -217,7 +218,7 @@ public class MainViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showProjectView(user, cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showProjectView(user, cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -233,7 +234,7 @@ public class MainViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showUserView(cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showUserView(cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -289,7 +290,7 @@ public class MainViewController {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
                         Pair<String, Integer> item = (Pair<String, Integer>) cell.getTableRow().getItem();
-                        Main.showReportView(user, item.getFirst(), item.getSecond());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showReportView(user, item.getFirst(), item.getSecond());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -304,7 +305,7 @@ public class MainViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showProjectView(user, cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showProjectView(user, cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -320,7 +321,7 @@ public class MainViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showUserView(cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showUserView(cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

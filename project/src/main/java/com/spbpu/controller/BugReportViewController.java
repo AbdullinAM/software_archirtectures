@@ -25,7 +25,6 @@ public class BugReportViewController {
     private String user;
     private String project;
     private Integer id;
-    private Role role;
 
     @FXML private Label idLabel;
     @FXML private Label projectLabel;
@@ -46,7 +45,6 @@ public class BugReportViewController {
         try {
             user = user_;
             project = project_;
-            role = facade.getRoleForProject(user, project);
             id = report_;
 
             idLabel.setText(id.toString());
@@ -110,21 +108,10 @@ public class BugReportViewController {
             List<Object> items = new ArrayList<>();
             items.add(facade.getReportStatus(project, id));
             items.add(new Separator());
-            if (!items.get(0).equals("CLOSED")) {
-                switch (role) {
-                    case NONE:
-                    case MANAGER:
-                        break;
-                    case TESTER:
-                        if (!items.contains("OPENED")) items.add("OPENED");
-                        if (!items.contains("CLOSED")) items.add("CLOSED");
-                        break;
-                    case DEVELOPER:
-                    case TEAMLEADER:
-                        if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
-                        if (!items.contains("FIXED")) items.add("FIXED");
-                }
-            }
+            if (!items.contains("OPENED")) items.add("OPENED");
+            if (!items.contains("CLOSED")) items.add("CLOSED");
+            if (!items.contains("ACCEPTED")) items.add("ACCEPTED");
+            if (!items.contains("FIXED")) items.add("FIXED");
 
             statusBox.setItems(FXCollections.observableArrayList(items));
             statusBox.getSelectionModel().selectFirst();
@@ -136,7 +123,10 @@ public class BugReportViewController {
                     dialog.setHeaderText("Enter comment");
 
                     Optional<String> result = dialog.showAndWait();
-                    if (!result.isPresent()) return;
+                    if (!result.isPresent()) {
+                        statusBox.getSelectionModel().select(oldVal);
+                        return;
+                    }
                     try {
                         facade.reopenReport(user, project, id, result.get());
                         onClickUpdateButton();
@@ -145,6 +135,7 @@ public class BugReportViewController {
                         alert.setTitle("Error");
                         alert.setHeaderText(e.getMessage());
                         alert.showAndWait();
+                        statusBox.getSelectionModel().select(oldVal);
                     }
                 } else if (newVal.equals("CLOSED")) {
                     try {
@@ -154,6 +145,7 @@ public class BugReportViewController {
                         alert.setTitle("Error");
                         alert.setHeaderText(e.getMessage());
                         alert.showAndWait();
+                        statusBox.getSelectionModel().select(oldVal);
                     }
                 } else if (newVal.equals("ACCEPTED")) {
                     try {
@@ -163,6 +155,7 @@ public class BugReportViewController {
                         alert.setTitle("Error");
                         alert.setHeaderText(e.getMessage());
                         alert.showAndWait();
+                        statusBox.getSelectionModel().select(oldVal);
                     }
                 } else if (newVal.equals("FIXED")) {
                     try {
@@ -172,6 +165,7 @@ public class BugReportViewController {
                         alert.setTitle("Error");
                         alert.setHeaderText(e.getMessage());
                         alert.showAndWait();
+                        statusBox.getSelectionModel().select(oldVal);
                     }
                 }
                 onClickUpdateButton();
@@ -197,7 +191,7 @@ public class BugReportViewController {
             cell.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                     try {
-                        Main.showUserView(cell.getItem());
+                        if (cell != null && !cell.getItem().isEmpty()) Main.showUserView(cell.getItem());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

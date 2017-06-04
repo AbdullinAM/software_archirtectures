@@ -65,7 +65,7 @@ public class MilestoneMapper implements Mapper<Milestone> {
         Date activeDate = rs.getDate("activeDate");
         Date closingDate = rs.getDate("closingDate");
 
-        Milestone milestone = new Milestone(id, project, startDate, endDate);
+        Milestone milestone = new Milestone(id, project, status, startDate, endDate);
         if (activeDate != null) milestone.setActiveDate(activeDate);
         if (closingDate != null) milestone.setClosingDate(closingDate);
         milestones.add(milestone);

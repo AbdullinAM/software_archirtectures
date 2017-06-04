@@ -4,6 +4,7 @@
 
 package com.spbpu.user;
 
+import com.spbpu.exceptions.MilestoneAlreadyClosedException;
 import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.Milestone;
@@ -11,8 +12,9 @@ import com.spbpu.project.Ticket;
 
 public interface TicketManager  extends UserInterface {
 
-    default Ticket createTicket(Milestone milestone, String task) throws NotAuthenticatedException {
+    default Ticket createTicket(Milestone milestone, String task) throws NotAuthenticatedException, MilestoneAlreadyClosedException {
         checkAuthenticated();
+        if (milestone.isClosed()) throw new MilestoneAlreadyClosedException();
         Ticket ticket = new Ticket(milestone, this, task);
         milestone.addTicket(ticket);
         return ticket;

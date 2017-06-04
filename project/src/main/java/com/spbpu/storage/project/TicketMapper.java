@@ -76,7 +76,7 @@ public class TicketMapper implements Mapper<Ticket> {
         // get description
         String task = rs.getString("task");
 
-        Ticket ticket = new Ticket(id, milestone, manager, creationTime, task);
+        Ticket ticket = new Ticket(id, milestone, status, manager, creationTime, task);
         tickets.add(ticket);
 
         // extract comments
