@@ -325,14 +325,12 @@ public class ProjectViewController {
     }
 
     private void updateMilestoneTable() {
-        ObservableList<Integer> items;
         try {
-            items = FXCollections.observableArrayList(facade.getProjectMilestones(project));
+            milestoneTable.setItems(FXCollections.observableArrayList(facade.getProjectMilestones(project)));
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
-        milestoneTable.setItems(items);
+        milestoneTable.refresh();
     }
     private void setUpReportTable() {
         reportIdColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().toString()));
@@ -395,13 +393,11 @@ public class ProjectViewController {
     }
 
     private void updateReportTable() {
-        ObservableList<Integer> tickets;
         try {
-            tickets = FXCollections.observableArrayList(facade.getProjectReports(project));
+            reportTable.setItems(FXCollections.observableArrayList(facade.getProjectReports(project)));
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
-        reportTable.setItems(tickets);
+        reportTable.refresh();
     }
 }

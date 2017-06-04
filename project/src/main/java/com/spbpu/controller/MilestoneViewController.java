@@ -99,7 +99,6 @@ public class MilestoneViewController {
             alert.setHeaderText(e.getMessage());
             alert.showAndWait();
         }
-
         updateTicketTable();
     }
 
@@ -184,16 +183,15 @@ public class MilestoneViewController {
             });
             return cell;
         });
+
     }
 
     private void updateTicketTable() {
-        ObservableList<Integer> tickets;
         try {
-            tickets = FXCollections.observableArrayList(facade.getMilestoneTickets(project, id));
+            ticketTable.setItems(FXCollections.observableArrayList(facade.getMilestoneTickets(project, id)));
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
-        ticketTable.setItems(tickets);
+        ticketTable.refresh();
     }
 }

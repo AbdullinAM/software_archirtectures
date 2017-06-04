@@ -143,14 +143,12 @@ public class MainViewController {
     }
 
     private void updateProjectTable() {
-        ObservableList<String> projects;
         try {
-            projects = FXCollections.observableArrayList(facade.getAllProjects(user));
+            projectTable.setItems(FXCollections.observableArrayList(facade.getAllProjects(user)));
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
-        projectTable.setItems(projects);
+        projectTable.refresh();
     }
 
     private void setUpMessageTable() {
@@ -158,14 +156,12 @@ public class MainViewController {
     }
 
     private void updateMessageTable() {
-        ObservableList<String> messages = null;
         try {
-            messages = FXCollections.observableArrayList(facade.getMessages(user));
+            messageTable.setItems(FXCollections.observableArrayList(facade.getMessages(user)));
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
-        messageTable.setItems(messages);
+        messageTable.refresh();
     }
 
     private void setUpTicketTable() {
@@ -245,14 +241,12 @@ public class MainViewController {
     }
 
     private void updateTicketTable() {
-        ObservableList<Pair<String, Integer>> tickets = null;
         try {
-            tickets = FXCollections.observableArrayList(facade.getAssignedTickets(user));
+            ticketTable.setItems(FXCollections.observableArrayList(facade.getAssignedTickets(user)));
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
-        ticketTable.setItems(tickets);
+        ticketTable.refresh();
     }
 
     private void setUpReportTable() {
@@ -332,14 +326,12 @@ public class MainViewController {
     }
 
     private void updateReportTable() {
-        ObservableList<Pair<String, Integer>> tickets = null;
         try {
-            tickets = FXCollections.observableArrayList(facade.getAssignedReports(user));
+            reportTable.setItems(FXCollections.observableArrayList(facade.getAssignedReports(user)));
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
-        reportTable.setItems(tickets);
+        reportTable.refresh();
     }
 }
 

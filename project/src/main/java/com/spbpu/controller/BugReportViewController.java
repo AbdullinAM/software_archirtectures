@@ -210,6 +210,7 @@ public class BugReportViewController {
             alert.setHeaderText(e.getMessage());
             alert.showAndWait();
         }
+        commentTable.refresh();
     }
 
 }
