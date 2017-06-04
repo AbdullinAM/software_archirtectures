@@ -8,6 +8,7 @@ import com.spbpu.exceptions.MilestoneAlreadyClosedException;
 import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.Milestone;
+import com.spbpu.project.Project;
 import com.spbpu.project.Ticket;
 
 public interface TicketManager  extends UserInterface {
@@ -20,8 +21,11 @@ public interface TicketManager  extends UserInterface {
         return ticket;
     }
 
-    default void addAssignee(Ticket ticket, TicketDeveloper developer) throws NotAuthenticatedException {
+    default void addAssignee(Ticket ticket, TicketDeveloper developer) throws NotAuthenticatedException, NoRightsException {
         checkAuthenticated();
+        Project project = ticket.getMilestone().getProject();
+        if (!project.getTicketDevelopers().contains(developer))
+            throw new NoRightsException("User " + developer.getUser().getLogin() + " has no rights for project " + project.getName());
         ticket.addAssignee(developer);
     }
 
