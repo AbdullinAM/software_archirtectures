@@ -96,8 +96,14 @@ public class StorageRepository {
         }
     }
 
-    public void authenticateUser(String login, String password) throws UserNotFoundException, DBConnectionException, IncorrectPasswordException {
-        getUser(login).signIn(password);
+    public void authenticateUser(String login, String password) throws DBConnectionException, IncorrectPasswordException {
+        // replase UserNotFound exception with IncorrectPassword exception,
+        // so nobody can find out if login was correct or not
+        try {
+            getUser(login).signIn(password);
+        } catch (UserNotFoundException e) {
+            throw new IncorrectPasswordException();
+        }
     }
 
     public void authenticateUser(User user, String password) throws DBConnectionException, IncorrectPasswordException {
