@@ -152,23 +152,14 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        boolean added = false;
         try {
-            added = facade.setProjectTeamLeader(user, project, result.get());
+            facade.setProjectTeamLeader(user, project, result.get());
+            onClickUpdateButton();
+            setTeamLeaderButton.setVisible(false);
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-            setTeamLeaderButton.setVisible(false);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Unable to set team leader to project");
             alert.showAndWait();
         }
     }
@@ -182,22 +173,13 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        boolean added = false;
         try {
-            added = facade.addDeveloper(user, project, result.get());
+            facade.addDeveloper(user, project, result.get());
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Unable to add developer to project");
             alert.showAndWait();
         }
     }
@@ -211,22 +193,13 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        boolean added = false;
         try {
-            added = facade.addTester(user, project, result.get());
+            facade.addTester(user, project, result.get());
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Unable to add tester to project");
             alert.showAndWait();
         }
     }
@@ -240,22 +213,13 @@ public class ProjectViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        boolean added = false;
         try {
-            added = (facade.createReport(user, project, result.get()) != null);
+            facade.createReport(user, project, result.get());
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Unable to create report");
             alert.showAndWait();
         }
     }
@@ -296,22 +260,13 @@ public class ProjectViewController {
             return;
         }
 
-        boolean added = false;
         try {
-            added = (facade.createMilestone(user, project, startDate, endDate) != null);
+            facade.createMilestone(user, project, startDate, endDate);
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Unable to create milestone");
             alert.showAndWait();
         }
     }

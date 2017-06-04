@@ -110,22 +110,13 @@ public class TicketViewController {
             Optional<String> result = dialog.showAndWait();
             if (!result.isPresent()) return;
 
-            boolean added = false;
             try {
-                added = facade.addTicketAssignee(user, project, id, result.get());
+                facade.addTicketAssignee(user, project, id, result.get());
+                onClickUpdateButton();
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error");
                 alert.setHeaderText(e.getMessage());
-                alert.showAndWait();
-            }
-
-            if (added) {
-                onClickUpdateButton();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Can't add assignee to ticket");
                 alert.showAndWait();
             }
         }
@@ -171,20 +162,14 @@ public class TicketViewController {
 
                 Optional<String> result = dialog.showAndWait();
                 if (!result.isPresent()) return;
-                boolean isChanged = false;
                 try {
-                    if (!facade.reopenTicket(user, project, id, result.get())) {
-                        isChanged = true;
-                        onClickUpdateButton();
-                    }
+                    facade.reopenTicket(user, project, id, result.get());
+                    onClickUpdateButton();
                 } catch (Exception e) {
-                } finally {
-                    if (!isChanged) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Error");
-                        alert.setHeaderText("Can't change ticket status");
-                        alert.showAndWait();
-                    }
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(e.getMessage());
+                    alert.showAndWait();
                 }
             } else if (newVal.equals("CLOSED")) {
                 try {
@@ -192,7 +177,7 @@ public class TicketViewController {
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
+                    alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
                 }
             } else if (newVal.equals("ACCEPTED")) {
@@ -201,7 +186,7 @@ public class TicketViewController {
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
+                    alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
                 }
             } else if (newVal.equals("IN_PROGRESS")) {
@@ -210,7 +195,7 @@ public class TicketViewController {
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
+                    alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
                 }
             } else if (newVal.equals("FINISHED")) {
@@ -219,15 +204,11 @@ public class TicketViewController {
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Can't change ticket status");
+                    alert.setHeaderText(e.getMessage());
                     alert.showAndWait();
                 }
             }
-            try {
-                onClickUpdateButton();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            onClickUpdateButton();
         });
     }
 

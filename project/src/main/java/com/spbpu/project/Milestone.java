@@ -5,7 +5,9 @@
 package com.spbpu.project;
 
 import com.spbpu.exceptions.EndBeforeStartException;
+import com.spbpu.exceptions.MilestoneTicketsNotCLosedException;
 import com.spbpu.exceptions.TwoActiveMilestonesException;
+import com.spbpu.exceptions.WrongStatusException;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -101,8 +103,9 @@ public class Milestone {
     public boolean isActive() { return status.equals(Status.ACTIVE); }
     public boolean isClosed() { return status.equals(Status.CLOSED); }
 
-    public boolean setActive() throws TwoActiveMilestonesException {
-        if (isActive()) return true;
+    public void setActive() throws TwoActiveMilestonesException, WrongStatusException {
+        if (isActive()) return;
+        if (!isOpened()) throw new WrongStatusException(getStatus().name(), Status.ACTIVE.name());
 
         for (Milestone milestone : project.getMilestones()) {
             if (milestone.isActive()) throw new TwoActiveMilestonesException("Attempting to create two active milestones");
@@ -110,15 +113,14 @@ public class Milestone {
 
         status = Status.ACTIVE;
         activeDate = new Date();
-        return true;
     }
 
-    public boolean setClosed() {
-        if (isClosed()) return true;
+    public void setClosed() throws MilestoneTicketsNotCLosedException, WrongStatusException {
+        if (isClosed()) return;
+        if (!isActive()) throw new WrongStatusException(getStatus().name(), Status.CLOSED.name());
         for (Ticket t : tickets)
-            if (!t.isClosed()) return false;
+            if (!t.isClosed()) throw new MilestoneTicketsNotCLosedException();
         closingDate = new Date();
         status = Status.CLOSED;
-        return true;
     }
 }

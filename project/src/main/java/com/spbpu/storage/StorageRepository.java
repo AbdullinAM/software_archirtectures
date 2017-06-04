@@ -3,21 +3,15 @@
  */
 package com.spbpu.storage;
 
-import com.spbpu.exceptions.AlreadyExistsException;
-import com.spbpu.exceptions.EmailNotVerifiedException;
-import com.spbpu.exceptions.EndBeforeStartException;
-import com.spbpu.project.Milestone;
+import com.spbpu.exceptions.*;
 import com.spbpu.project.Project;
 import com.spbpu.service.VerifyEmailService;
 import com.spbpu.storage.project.ProjectMapper;
 import com.spbpu.storage.user.*;
 import com.spbpu.user.*;
 
-import javax.jws.soap.SOAPBinding;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class StorageRepository {
 
@@ -44,125 +38,103 @@ public class StorageRepository {
         }
     }
 
-    public boolean addUser(String login, String name, String email, String password) throws AlreadyExistsException, EmailNotVerifiedException {
+    public void addUser(String login, String name, String email, String password)
+            throws UserAlreadyExistsException, EmailNotVerifiedException, DBConnectionException {
         try {
-            if (userMapper.findByLogin(login) != null) throw new AlreadyExistsException("User with login " + login + " already exists");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+            if (userMapper.findByLogin(login) != null)
+                throw new UserAlreadyExistsException(login);
 
-        VerifyEmailService verificator = new VerifyEmailService(login, name, email, password);
-        if (!verificator.verify()) throw new EmailNotVerifiedException(email);
+            VerifyEmailService verificator = new VerifyEmailService(login, name, email, password);
+            if (!verificator.verify()) throw new EmailNotVerifiedException(email);
 
-        User newUser = new User(0, login, name, email, null);
-        try {
+            User newUser = new User(0, login, name, email, null);
             userMapper.addUser(newUser, password);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DBConnectionException();
         }
-        return true;
     }
 
-    public User getUser(String login) {
+    public User getUser(String login) throws UserNotFoundException, DBConnectionException {
         try {
-            return userMapper.findByLogin(login);
+            User user = userMapper.findByLogin(login);
+            if (user == null) throw new UserNotFoundException(login);
+            return user;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
-    public Manager getManager(User user) {
+    public Manager getManager(User user) throws EndBeforeStartException, DBConnectionException {
         try {
             return managerMapper.findByLogin(user.getLogin());
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (EndBeforeStartException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
-    public TeamLeader getTeamLeader(User user) {
+    public TeamLeader getTeamLeader(User user) throws EndBeforeStartException, DBConnectionException {
         try {
             return teamLeaderMapper.findByLogin(user.getLogin());
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (EndBeforeStartException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
-    public Developer getDeveloper(User user) {
+    public Developer getDeveloper(User user) throws EndBeforeStartException, DBConnectionException {
         try {
             return developerMapper.findByLogin(user.getLogin());
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (EndBeforeStartException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
-    public Tester getTester(User user) {
+    public Tester getTester(User user) throws EndBeforeStartException, DBConnectionException {
         try {
             return testerMapper.findByLogin(user.getLogin());
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (EndBeforeStartException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
-    public boolean authenticateUser(String login, String password) {
-        User user = getUser(login);
-        return user.signIn(password);
+    public void authenticateUser(String login, String password) throws UserNotFoundException, DBConnectionException, IncorrectPasswordException {
+        getUser(login).signIn(password);
     }
 
-    public boolean authenticateUser(User user, String password) {
+    public void authenticateUser(User user, String password) throws DBConnectionException, IncorrectPasswordException {
         try {
-            return userMapper.authenticateUser(user, password);
+            if (!userMapper.authenticateUser(user, password))
+                throw new IncorrectPasswordException();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return false;
     }
 
-    public Project addProject(String name, Manager manager) {
+    public Project addProject(String name, Manager manager)
+            throws DBConnectionException, ProjectAlreadyExistsException, EndBeforeStartException {
         Project project = new Project(name, manager);
         try {
+            if (projectMapper.findByName(name) != null) throw new ProjectAlreadyExistsException(name);
             projectMapper.update(project);
             return project;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
-    public Project getProject(String name) {
+    public Project getProject(String name) throws DBConnectionException, EndBeforeStartException {
         try {
             return projectMapper.findByName(name);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (EndBeforeStartException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
-    public Project getProject(int id) {
+    public Project getProject(int id) throws DBConnectionException, EndBeforeStartException {
         try {
             return projectMapper.findByID(id);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (EndBeforeStartException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         }
-        return null;
     }
 
     public void clear() {
@@ -183,11 +155,11 @@ public class StorageRepository {
         testerMapper.update();
     }
 
-    synchronized public void drop() {
+    synchronized public void drop() throws DBConnectionException {
         try {
             DataGateway.getInstance().dropAll();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DBConnectionException();
         } catch (IOException e) {
             e.printStackTrace();
         }

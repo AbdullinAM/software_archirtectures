@@ -62,17 +62,10 @@ public class RegisterViewController {
             return;
         }
 
-        boolean added = false;
         try {
-            added = facade.addUser(login, name, email, pass1);
+            facade.addUser(login, name, email, pass1);
         } catch (Exception e) {
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-            return;
-        }
-
-        if (!added) {
-            alert.setHeaderText("Cannot add user");
             alert.showAndWait();
             return;
         }

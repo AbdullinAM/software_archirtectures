@@ -1,6 +1,7 @@
 package com.spbpu.project;
 
 import com.spbpu.exceptions.EndBeforeStartException;
+import com.spbpu.exceptions.MilestoneTicketsNotCLosedException;
 import com.spbpu.exceptions.TwoActiveMilestonesException;
 import com.spbpu.storage.StorageRepository;
 import com.spbpu.user.Developer;
@@ -63,12 +64,22 @@ public class BPMilestoneTest extends TestCase {
         teamLeader.acceptTicket(ticket);
         assertEquals(1, milestone.getTickets().size());
 
-        assertFalse("Cannot close milestone while tickets are opened", milestone.setClosed());
+        try {
+            milestone.setClosed();
+            fail("Cannot close milestone while tickets are opened");
+        } catch (MilestoneTicketsNotCLosedException e) {
+            assertTrue("Cannot close milestone while tickets are opened", true);
+        }
         assertFalse(milestone.isClosed());
 
         teamLeader.closeTicket(ticket);
 
-        assertTrue(milestone.setClosed());
+        try {
+            milestone.setClosed();
+            assertTrue("Cannot close milestone while tickets are opened", true);
+        } catch (MilestoneTicketsNotCLosedException e) {
+            assertTrue("Cannot close milestone while tickets are opened", false);
+        }
         assertTrue(milestone.isClosed());
     }
 
@@ -94,7 +105,11 @@ public class BPMilestoneTest extends TestCase {
         assertTrue(milestone2.isOpened());
         assertEquals(2, project.getMilestones().size());
 
-        assertTrue(milestone.setActive());
+        try {
+            milestone.setActive();
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
 
         try {
             milestone2.setActive();

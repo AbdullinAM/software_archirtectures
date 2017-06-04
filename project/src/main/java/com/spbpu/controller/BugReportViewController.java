@@ -137,20 +137,14 @@ public class BugReportViewController {
 
                     Optional<String> result = dialog.showAndWait();
                     if (!result.isPresent()) return;
-                    boolean isChanged = false;
                     try {
-                        if (!facade.reopenReport(user, project, id, result.get())) {
-                            isChanged = true;
-                            onClickUpdateButton();
-                        }
+                        facade.reopenReport(user, project, id, result.get());
+                        onClickUpdateButton();
                     } catch (Exception e) {
-                    } finally {
-                        if (!isChanged) {
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Error");
-                            alert.setHeaderText("Can't change report status");
-                            alert.showAndWait();
-                        }
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Error");
+                        alert.setHeaderText(e.getMessage());
+                        alert.showAndWait();
                     }
                 } else if (newVal.equals("CLOSED")) {
                     try {
@@ -158,7 +152,7 @@ public class BugReportViewController {
                     } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Error");
-                        alert.setHeaderText("Can't change report status");
+                        alert.setHeaderText(e.getMessage());
                         alert.showAndWait();
                     }
                 } else if (newVal.equals("ACCEPTED")) {
@@ -167,7 +161,7 @@ public class BugReportViewController {
                     } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Error");
-                        alert.setHeaderText("Can't change report status");
+                        alert.setHeaderText(e.getMessage());
                         alert.showAndWait();
                     }
                 } else if (newVal.equals("FIXED")) {
@@ -176,15 +170,11 @@ public class BugReportViewController {
                     } catch (Exception e) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Error");
-                        alert.setHeaderText("Can't change report status");
+                        alert.setHeaderText(e.getMessage());
                         alert.showAndWait();
                     }
                 }
-                try {
-                    onClickUpdateButton();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                onClickUpdateButton();
             });
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -199,7 +189,6 @@ public class BugReportViewController {
         commentDateColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFirst().toString()));
         commentAuthorColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSecond()));
         commentCommentColumn.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getThird()));
-
 
         // on doule-click to ticket author open view with his info
         commentAuthorColumn.setCellFactory(col -> {

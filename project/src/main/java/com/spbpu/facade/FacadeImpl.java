@@ -4,16 +4,12 @@
 
 package com.spbpu.facade;
 
-import com.spbpu.exceptions.AlreadyExistsException;
-import com.spbpu.exceptions.NoRightsException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
 import com.spbpu.project.Ticket;
 import com.spbpu.storage.StorageRepository;
 import com.spbpu.user.*;
-import javafx.fxml.FXML;
-import org.omg.CORBA.TIMEOUT;
 
 import java.util.Date;
 import java.util.List;
@@ -28,13 +24,19 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public boolean addUser(String login, String name, String email, String password) throws Exception {
-        return repository.addUser(login, name, email, password);
+    public void addUser(String login, String name, String email, String password) throws Exception {
+        repository.addUser(login, name, email, password);
     }
 
     @Override
-    public boolean authenticate(String login, String password) throws Exception {
-        return repository.authenticateUser(login, password);
+    public void authenticate(String login, String password) throws Exception {
+        repository.authenticateUser(login, password);
+    }
+
+    @Override
+    public void signOut(String user) throws Exception {
+        User usr = repository.getUser(user);
+        usr.signOut();
     }
 
     @Override
@@ -69,12 +71,10 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public boolean createProject(String user, String name) throws Exception {
-        if (repository.getProject(name) != null) return false;
+    public void createProject(String user, String name) throws Exception {
         Manager manager = repository.getManager(repository.getUser(user));
-        Project project = manager.createProject(name);
+        manager.createProject(name);
         repository.update();
-        return true;
     }
 
     @Override
@@ -185,39 +185,30 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public boolean setProjectTeamLeader(String manager, String project, String user) throws Exception {
+    public void setProjectTeamLeader(String manager, String project, String user) throws Exception {
         Project proj = repository.getProject(project);
-        Manager man = proj.getManager();
-        if (!man.getLogin().equals(manager)) return false;
+        Manager man = repository.getManager(repository.getUser(manager));
         User usr = repository.getUser(user);
-        if (usr == null) return false;
         man.setTeamLeader(proj, usr);
         repository.update();
-        return true;
     }
 
     @Override
-    public boolean addDeveloper(String manager, String project, String user) throws Exception {
+    public void addDeveloper(String manager, String project, String user) throws Exception {
         Project proj = repository.getProject(project);
-        Manager man = proj.getManager();
-        if (!man.getLogin().equals(manager)) return false;
+        Manager man = repository.getManager(repository.getUser(manager));
         User usr = repository.getUser(user);
-        if (usr == null) return false;
         man.addDeveloper(proj, usr);
         repository.update();
-        return true;
     }
 
     @Override
-    public boolean addTester(String manager, String project, String user) throws Exception {
+    public void addTester(String manager, String project, String user) throws Exception {
         Project proj = repository.getProject(project);
-        Manager man = proj.getManager();
-        if (!man.getLogin().equals(manager)) return false;
+        Manager man = repository.getManager(repository.getUser(manager));
         User usr = repository.getUser(user);
-        if (usr == null) return false;
         man.addTester(proj, usr);
         repository.update();
-        return true;
     }
 
     @Override
@@ -293,7 +284,7 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public boolean reopenReport(String user, String project, Integer report, String comment) throws Exception {
+    public void reopenReport(String user, String project, Integer report, String comment) throws Exception {
         Project proj = repository.getProject(project);
         User usr = repository.getUser(user);
         ReportManager manager = repository.getTester(usr);
@@ -301,55 +292,37 @@ public class FacadeImpl implements Facade {
             if (it.getId() == report) {
                 manager.reopenReport(it, comment);
                 repository.update();
-                return true;
             }
-        return false;
     }
 
     @Override
-    public boolean acceptReport(String user, String project, Integer report) throws Exception {
+    public void acceptReport(String user, String project, Integer report) throws Exception {
         Project proj = repository.getProject(project);
         User usr = repository.getUser(user);
-        ReportDeveloper dev = null;
-        for (ReportDeveloper it : proj.getReportDevelopers())
-            if (it.getId() == usr.getId()) {
-                dev = it;
-                break;
-            }
-        if (dev == null) return false;
+        ReportDeveloper dev = repository.getDeveloper(usr);
 
         for (BugReport it : proj.getReports())
             if (it.getId() == report) {
                 it.setAccepted(dev);
                 repository.update();
-                return true;
             }
-        return false;
     }
 
     @Override
-    public boolean fixReport(String user, String project, Integer report) throws Exception {
+    public void fixReport(String user, String project, Integer report) throws Exception {
         Project proj = repository.getProject(project);
         User usr = repository.getUser(user);
-        ReportDeveloper dev = null;
-        for (ReportDeveloper it : proj.getReportDevelopers())
-            if (it.getId() == usr.getId()) {
-                dev = it;
-                break;
-            }
-        if (dev == null) return false;
+        ReportDeveloper dev = repository.getDeveloper(usr);
 
         for (BugReport it : proj.getReports())
             if (it.getId() == report) {
                 it.setFixed(dev);
                 repository.update();
-                return true;
             }
-        return false;
     }
 
     @Override
-    public boolean closeReport(String user, String project, Integer report) throws Exception {
+    public void closeReport(String user, String project, Integer report) throws Exception {
         Project proj = repository.getProject(project);
         User usr = repository.getUser(user);
         ReportManager manager = repository.getTester(usr);
@@ -357,9 +330,7 @@ public class FacadeImpl implements Facade {
             if (it.getId() == report) {
                 it.setClosed(manager);
                 repository.update();
-                return true;
             }
-        return false;
     }
 
     @Override
@@ -435,32 +406,25 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public boolean activateMilestone(String user, String project, Integer milestone) throws Exception {
+    public void activateMilestone(String user, String project, Integer milestone) throws Exception {
         Project proj = repository.getProject(project);
-        if (!proj.getManager().getLogin().equals(user)) return false;
+        Manager manager = repository.getManager(repository.getUser(user));
         for (Milestone it : proj.getMilestones())
             if (it.getId() == milestone) {
-                it.setActive();
+                manager.setActive(it);
                 repository.update();
-                return true;
             }
-        return false;
     }
 
     @Override
-    public boolean closeMilestone(String user, String project, Integer milestone) throws Exception {
+    public void closeMilestone(String user, String project, Integer milestone) throws Exception {
         Project proj = repository.getProject(project);
-        if (!proj.getManager().getLogin().equals(user)) return false;
+        Manager manager = repository.getManager(repository.getUser(user));
         for (Milestone it : proj.getMilestones())
             if (it.getId() == milestone) {
-                if (it.setClosed()) {
-                    repository.update();
-                    return true;
-                } else {
-                    return false;
-                }
+                manager.closeMilestone(it);
+                repository.update();
             }
-        return false;
     }
 
     @Override
@@ -569,15 +533,9 @@ public class FacadeImpl implements Facade {
     }
 
     @Override
-    public boolean reopenTicket(String user, String project, Integer ticket, String comment) throws Exception {
+    public void reopenTicket(String user, String project, Integer ticket, String comment) throws Exception {
         Project proj = repository.getProject(project);
-        TicketManager manager = null;
-        for (TicketManager it : proj.getTicketManagers())
-            if (it.getUser().getLogin().equals(user)) {
-                manager = it;
-                break;
-            }
-        if (manager == null) return false;
+        TicketManager manager = repository.getTeamLeader(repository.getUser(user));
 
         List<Ticket> all = proj.getMilestones().stream().
                 flatMap(milestone -> milestone.getTickets().stream()).
@@ -586,84 +544,49 @@ public class FacadeImpl implements Facade {
             if (it.getId() == ticket) {
                 it.setNew(manager, comment);
                 repository.update();
-                return true;
             }
-        return false;
     }
 
     @Override
-    public boolean acceptTicket(String user, String project, Integer ticket) throws Exception {
+    public void acceptTicket(String user, String project, Integer ticket) throws Exception {
         Project proj = repository.getProject(project);
-        TicketDeveloper dev = null;
-        for (TicketDeveloper it : proj.getTicketDevelopers())
-            if (it.getUser().getLogin().equals(user)) {
-                dev = it;
-                break;
-            }
-        if (dev == null) return false;
+        TicketDeveloper dev = repository.getDeveloper(repository.getUser(user));
 
         for (Ticket it : dev.getAssignedTickets())
             if (it.getId() == ticket) {
                 it.setAccepted(dev);
                 repository.update();
-                return true;
             }
-
-        return false;
     }
 
     @Override
-    public boolean setTicketInProgress(String user, String project, Integer ticket) throws Exception {
+    public void setTicketInProgress(String user, String project, Integer ticket) throws Exception {
         Project proj = repository.getProject(project);
-        TicketDeveloper dev = null;
-        for (TicketDeveloper it : proj.getTicketDevelopers())
-            if (it.getUser().getLogin().equals(user)) {
-                dev = it;
-                break;
-            }
-        if (dev == null) return false;
+        TicketDeveloper dev = repository.getDeveloper(repository.getUser(user));
 
         for (Ticket it : dev.getAssignedTickets())
             if (it.getId() == ticket) {
                 it.setInProgress(dev);
                 repository.update();
-                return true;
             }
-
-        return false;
     }
 
     @Override
-    public boolean finishTicket(String user, String project, Integer ticket) throws Exception {
+    public void finishTicket(String user, String project, Integer ticket) throws Exception {
         Project proj = repository.getProject(project);
-        TicketDeveloper dev = null;
-        for (TicketDeveloper it : proj.getTicketDevelopers())
-            if (it.getUser().getLogin().equals(user)) {
-                dev = it;
-                break;
-            }
-        if (dev == null) return false;
+        TicketDeveloper dev = repository.getDeveloper(repository.getUser(user));
 
         for (Ticket it : dev.getAssignedTickets())
             if (it.getId() == ticket) {
                 it.setFinished(dev);
                 repository.update();
-                return true;
             }
-
-        return false;
     }
 
     @Override
-    public boolean closeTicket(String user, String project, Integer ticket) throws Exception {
+    public void closeTicket(String user, String project, Integer ticket) throws Exception {
         Project proj = repository.getProject(project);
-        TicketManager manager = null;
-        for (TicketManager it : proj.getTicketManagers())
-            if (it.getUser().getLogin().equals(user)) {
-                manager = it;
-                break;
-            }
-        if (manager == null) return false;
+        TicketManager manager = repository.getTeamLeader(repository.getUser(user));
 
         List<Ticket> all = proj.getMilestones().stream().
                 flatMap(milestone -> milestone.getTickets().stream()).
@@ -672,13 +595,11 @@ public class FacadeImpl implements Facade {
             if (it.getId() == ticket) {
                 it.setClosed(manager);
                 repository.update();
-                return true;
             }
-        return false;
     }
 
     // assign developer to ticket
-    public boolean addTicketAssignee(String manager, String project, Integer id, String user) throws Exception {
+    public void addTicketAssignee(String manager, String project, Integer id, String user) throws Exception {
         Project proj = repository.getProject(project);
 
         Ticket ticket = null;
@@ -690,23 +611,10 @@ public class FacadeImpl implements Facade {
                 ticket = it;
                 break;
             }
-        if (ticket == null) return false;
 
-        TicketDeveloper dev = null;
-        for (TicketDeveloper it : proj.getTicketDevelopers())
-            if (it.getUser().getLogin().equals(user)) {
-                dev = it;
-                break;
-            }
-        if (dev == null) return false;
+        TicketDeveloper dev = repository.getDeveloper(repository.getUser(user));
 
-        for (TicketManager man : proj.getTicketManagers()) {
-            if (man.getUser().getLogin().equals(manager)) {
-                man.addAssignee(ticket, dev);
-                repository.update();
-                return true;
-            }
-        }
-        return false;
+        TicketManager man = repository.getTeamLeader(repository.getUser(manager));
+        man.addAssignee(ticket, dev);
     }
 }

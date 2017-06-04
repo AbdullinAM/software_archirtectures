@@ -80,22 +80,6 @@ public class MilestoneViewController {
     private void onClickUpdateButton() {
         try {
         statusLabel.setText(facade.getMilestoneStatus(project, id));
-        if (role != Role.MANAGER) {
-            activateButton.setVisible(false);
-            closeButton.setVisible(false);
-        } else {
-            String status = statusLabel.getText();
-            if (status.equals("OPENED")) {
-                closeButton.setDisable(true);
-                activateButton.setDisable(false);
-            } else if (status.equals("ACTIVE")) {
-                closeButton.setDisable(false);
-                activateButton.setDisable(true);
-            } else {
-                closeButton.setDisable(true);
-                activateButton.setDisable(true);
-            }
-        }
         Date activeDate = facade.getMilestoneActiveDate(project, id);
         if (activeDate != null) {
             activeDateLabel.setText(activeDate.toString());
@@ -126,44 +110,26 @@ public class MilestoneViewController {
 
     @FXML
     private void onClickActivateButton() {
-        boolean added = false;
         try {
-            added = facade.activateMilestone(user, project, id);
+            facade.activateMilestone(user, project, id);
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Cannot change status of milestone");
             alert.showAndWait();
         }
     }
 
     @FXML
     private void onClickCloseButton() {
-        boolean added = false;
         try {
-            added = facade.closeMilestone(user, project, id);
+            facade.closeMilestone(user, project, id);
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Cannot change status of milestone");
             alert.showAndWait();
         }
     }
@@ -177,22 +143,13 @@ public class MilestoneViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        boolean added = false;
         try {
-            added = (facade.createTicket(user, project, id, result.get()) != null);
+            facade.createTicket(user, project, id, result.get());
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Cannot add ticket to milestone");
             alert.showAndWait();
         }
     }

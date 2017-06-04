@@ -4,6 +4,8 @@
 
 package com.spbpu.user;
 
+import com.spbpu.exceptions.DBConnectionException;
+import com.spbpu.exceptions.IncorrectPasswordException;
 import com.spbpu.exceptions.NotAuthenticatedException;
 import com.spbpu.project.Message;
 import com.spbpu.storage.StorageRepository;
@@ -50,9 +52,9 @@ public class User implements UserInterface {
         return email;
     }
 
-    public boolean signIn(String password) {
-        authenticated = (new StorageRepository()).authenticateUser(this, password);
-        return authenticated;
+    public void signIn(String password) throws DBConnectionException, IncorrectPasswordException {
+        (new StorageRepository()).authenticateUser(this, password);
+        authenticated = true;
     }
 
     public boolean isAuthenticated() {

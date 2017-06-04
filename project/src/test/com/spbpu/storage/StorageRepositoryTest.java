@@ -1,7 +1,8 @@
 package com.spbpu.storage;
 
 import com.spbpu.config.ConfigReader;
-import com.spbpu.exceptions.AlreadyExistsException;
+import com.spbpu.exceptions.IncorrectPasswordException;
+import com.spbpu.exceptions.UserAlreadyExistsException;
 import com.spbpu.user.User;
 import org.junit.After;
 import org.junit.Before;
@@ -31,15 +32,26 @@ public class StorageRepositoryTest {
     @Test
     public void addUserTest() throws Exception {
         ConfigReader config = ConfigReader.getInstance();
-        assertTrue("Can't add user", repository.addUser("testuser", "testuser", config.getEmailAccount(), "pass"));
+        try {
+            repository.addUser("testuser", "testuser", config.getEmailAccount(), "pass");
+            assertTrue("Added user", true);
+        } catch (Exception e) {
+            assertTrue("Can't add user", false);
+        }
         assertNotNull("Added user not found", repository.getUser("testuser"));
 
         try {
-            assertFalse("Added user second time", repository.addUser("testuser", "testuser", config.getEmailAccount(), "pass"));
-        } catch (AlreadyExistsException e) {
+            repository.addUser("testuser", "testuser", config.getEmailAccount(), "pass");
+            assertTrue("Added user", false);
+        } catch (UserAlreadyExistsException e) {
             assertTrue("Exception thrown", true);
         }
-        assertTrue("Can't add user", repository.addUser("testuser2", "testuser2", config.getEmailAccount(), "pass"));
+        try {
+            repository.addUser("testuser2", "testuser2", config.getEmailAccount(), "pass");
+            assertTrue("Added user", true);
+        } catch (Exception e) {
+            assertTrue("Can't add user", false);
+        }
 
         assertNotNull("Added user not found", repository.getUser("testuser"));
         assertNotNull("Added user not found", repository.getUser("testuser2"));
@@ -48,13 +60,28 @@ public class StorageRepositoryTest {
     @Test
     public void authenticateUserTest() throws Exception {
         ConfigReader config = ConfigReader.getInstance();
-        assertTrue("Can't add user", repository.addUser("devel", "devel", config.getEmailAccount(), "pass"));
+        try {
+            repository.addUser("devel", "devel", config.getEmailAccount(), "pass");
+            assertTrue("Exception not thrown", true);
+        } catch (UserAlreadyExistsException e) {
+            assertTrue("Exception thrown", false);
+        }
 
         User user = repository.getUser("devel");
         assertNotNull("Added user not found", user);
 
-        assertFalse("Authenticated with wrong password", repository.authenticateUser(user, "pass2"));
-        assertTrue("Not authenticated with correct password", repository.authenticateUser(user, "pass"));
+        try {
+            repository.authenticateUser(user, "pass2");
+            assertFalse("Authenticated with wrong password", true);
+        } catch (IncorrectPasswordException e) {
+            assertTrue("Exception thrown", true);
+        }
+        try {
+            repository.authenticateUser(user, "pass");
+            assertFalse("Authenticated with correct password", false);
+        } catch (IncorrectPasswordException e) {
+            assertTrue("Not authenticated with correct password", false);
+        }
     }
 
 }

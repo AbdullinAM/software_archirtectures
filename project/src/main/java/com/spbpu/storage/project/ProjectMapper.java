@@ -182,7 +182,6 @@ public class ProjectMapper implements Mapper<Project> {
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 long id = rs.getLong(1);
-                System.out.println("Generated projectid: " + id);
                 item.setId((int) id);
             }
             projects.add(item);

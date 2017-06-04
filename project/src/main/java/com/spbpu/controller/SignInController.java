@@ -36,14 +36,10 @@ public class SignInController {
             return;
         }
         try {
-            if (facade.authenticate(login, password)) {
-                Main.showMainView(login);
-            } else {
-                errorLabel.setText("Incorrect login or password");
-            }
+            facade.authenticate(login, password);
+            Main.showMainView(login);
         } catch (Exception e) {
-            e.printStackTrace();
-            errorLabel.setText("Error connecting to database");
+            errorLabel.setText(e.getMessage());
         }
     }
 

@@ -75,6 +75,14 @@ public class MainViewController {
 
     @FXML
     private void onClickSignOutButton() {
+        try {
+            facade.signOut(user);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
         Main.showSignInView();
     }
 
@@ -95,22 +103,13 @@ public class MainViewController {
         Optional<String> result = dialog.showAndWait();
         if (!result.isPresent()) return;
 
-        boolean added = false;
         try {
-            added = facade.createProject(user, result.get());
+            facade.createProject(user, result.get());
+            onClickUpdateButton();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        }
-
-        if (added) {
-            onClickUpdateButton();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Project with name \"" + result.get() + "\" already exists");
             alert.showAndWait();
         }
     }

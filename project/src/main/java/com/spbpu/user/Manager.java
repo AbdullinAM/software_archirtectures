@@ -4,9 +4,7 @@
 
 package com.spbpu.user;
 
-import com.spbpu.exceptions.NoRightsException;
-import com.spbpu.exceptions.NotAuthenticatedException;
-import com.spbpu.exceptions.TwoActiveMilestonesException;
+import com.spbpu.exceptions.*;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
 import com.spbpu.storage.StorageRepository;
@@ -26,8 +24,8 @@ public class Manager extends User implements TicketManager {
         projects = new ArrayList<>();
     }
 
-    public Project createProject(String name) {
-        Project project = new Project(name, this);
+    public Project createProject(String name) throws EndBeforeStartException, DBConnectionException, ProjectAlreadyExistsException {
+        Project project = repository.addProject(name, this);//new Project(name, this);
         projects.add(project);
         return project;
     }
@@ -40,32 +38,49 @@ public class Manager extends User implements TicketManager {
     public List<Project> getProjects() { return projects; }
 
     public Milestone createMilestone(Project project, Date start, Date end) throws Exception {
+        if (!projects.contains(project))
+            throw new NoRightsException("User " + getLogin() + " cannot change project " + project.getName());
         Milestone milestone = new Milestone(project, start, end);
         project.addMilestone(milestone);
         return milestone;
     }
 
-    public boolean setActive(Milestone milestone) throws TwoActiveMilestonesException {
-        return milestone.setActive();
+    public void setActive(Milestone milestone)
+            throws TwoActiveMilestonesException, NoRightsException, WrongStatusException {
+        if (!projects.contains(milestone.getProject()))
+            throw new NoRightsException("User " + getLogin() + " cannot change project " + milestone.getProject().getName());
+        milestone.setActive();
     }
 
-    public boolean closeMilestone(Milestone milestone) {
-        return milestone.setClosed();
+    public void closeMilestone(Milestone milestone)
+            throws NoRightsException, MilestoneTicketsNotCLosedException, WrongStatusException {
+        if (!projects.contains(milestone.getProject()))
+            throw new NoRightsException("User " + getLogin() + " cannot change project " + milestone.getProject().getName());
+        milestone.setClosed();
     }
 
-    public void setTeamLeader(Project project, User user) {
+    public void setTeamLeader(Project project, User user)
+            throws DBConnectionException, EndBeforeStartException, NoRightsException {
+        if (!projects.contains(project))
+            throw new NoRightsException("User " + getLogin() + " cannot change project " + project.getName());
         TeamLeader tl = repository.getTeamLeader(user);
         project.setTeamLeader(tl);
         tl.addProject(project);
     }
 
-    public void addDeveloper(Project project, User user) {
+    public void addDeveloper(Project project, User user)
+            throws DBConnectionException, EndBeforeStartException, NoRightsException {
+        if (!projects.contains(project))
+            throw new NoRightsException("User " + getLogin() + " cannot change project " + project.getName());
         Developer dev = repository.getDeveloper(user);
         project.addDeveloper(dev);
         dev.addProject(project);
     }
 
-    public void addTester(Project project, User user) {
+    public void addTester(Project project, User user)
+            throws DBConnectionException, EndBeforeStartException, NoRightsException {
+        if (!projects.contains(project))
+            throw new NoRightsException("User " + getLogin() + " cannot change project " + project.getName());
         Tester tester = repository.getTester(user);
         project.addTester(tester);
         tester.addProject(project);
