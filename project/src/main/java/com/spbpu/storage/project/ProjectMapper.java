@@ -5,6 +5,7 @@
 package com.spbpu.storage.project;
 
 import com.spbpu.exceptions.EndBeforeStartException;
+import com.spbpu.exceptions.UserAlreadyHasRoleException;
 import com.spbpu.project.BugReport;
 import com.spbpu.project.Milestone;
 import com.spbpu.project.Project;
@@ -68,22 +69,24 @@ public class ProjectMapper implements Mapper<Project> {
             Project project = new Project(projid, name, manager);
             projects.add(project);
 
-            TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
-            if (tl != null) project.setTeamLeader(tl);
-            managerProjects.add(project);
+            try {
+                TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
+                if (tl != null) project.setTeamLeader(tl);
+                managerProjects.add(project);
 
-            for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
-                project.addDeveloper(dev);
-            }
-            for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
-                project.addTester(tester);
-            }
-            for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
-                project.addMilestone(milestone);
-            }
-            for (BugReport report : reportMapper.findReportsOfProject(project)) {
-                project.addReport(report);
-            }
+                for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
+                    project.addDeveloper(dev);
+                }
+                for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
+                    project.addTester(tester);
+                }
+                for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
+                    project.addMilestone(milestone);
+                }
+                for (BugReport report : reportMapper.findReportsOfProject(project)) {
+                    project.addReport(report);
+                }
+            } catch (UserAlreadyHasRoleException e) {}
         }
 
         return managerProjects;
@@ -104,21 +107,23 @@ public class ProjectMapper implements Mapper<Project> {
         Project project = new Project(rs.getInt("id"), name, manager);
         projects.add(project);
 
-        TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
-        if (tl != null) project.setTeamLeader(tl);
+        try {
+            TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
+            if (tl != null) project.setTeamLeader(tl);
 
-        for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
-            project.addDeveloper(dev);
-        }
-        for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
-            project.addTester(tester);
-        }
-        for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
-            project.addMilestone(milestone);
-        }
-        for (BugReport report : reportMapper.findReportsOfProject(project)) {
-            project.addReport(report);
-        }
+            for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
+                project.addDeveloper(dev);
+            }
+            for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
+                project.addTester(tester);
+            }
+            for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
+                project.addMilestone(milestone);
+            }
+            for (BugReport report : reportMapper.findReportsOfProject(project)) {
+                project.addReport(report);
+            }
+        } catch (UserAlreadyHasRoleException e) {}
 
         return project;
     }
@@ -140,21 +145,23 @@ public class ProjectMapper implements Mapper<Project> {
         Project project = new Project(id, name, manager);
         projects.add(project);
 
-        TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
-        if (tl != null) project.setTeamLeader(tl);
+        try{
+            TeamLeader tl = teamLeaderMapper.findTeamLeaderOfProject(project);
+            if (tl != null) project.setTeamLeader(tl);
 
-        for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
-            project.addDeveloper(dev);
-        }
-        for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
-            project.addTester(tester);
-        }
-        for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
-            project.addMilestone(milestone);
-        }
-        for (BugReport report : reportMapper.findReportsOfProject(project)) {
-            project.addReport(report);
-        }
+            for (Developer dev : developerMapper.findDevelopersOfProject(project)) {
+                project.addDeveloper(dev);
+            }
+            for (Tester tester : testerMapper.findDevelopersOfProject(project)) {
+                project.addTester(tester);
+            }
+            for (Milestone milestone : milestoneMapper.findProjectMilestones(project)) {
+                project.addMilestone(milestone);
+            }
+            for (BugReport report : reportMapper.findReportsOfProject(project)) {
+                project.addReport(report);
+            }
+        } catch (UserAlreadyHasRoleException e) {}
 
         return project;
     }

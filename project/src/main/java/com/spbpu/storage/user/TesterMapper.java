@@ -1,6 +1,7 @@
 package com.spbpu.storage.user;
 
 import com.spbpu.exceptions.EndBeforeStartException;
+import com.spbpu.exceptions.UserAlreadyHasRoleException;
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.project.ProjectMapper;
@@ -47,7 +48,7 @@ public class TesterMapper implements UserMapperInterface<Tester> {
     }
 
     @Override
-    public Tester findByLogin(String login) throws SQLException, EndBeforeStartException {
+    public Tester findByLogin(String login) throws SQLException, EndBeforeStartException, UserAlreadyHasRoleException {
         for (Tester it : testers)
             if (it.getName().equals(login)) return it;
 

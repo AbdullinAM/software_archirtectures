@@ -552,7 +552,10 @@ public class FacadeImpl implements Facade {
         Project proj = repository.getProject(project);
         TicketDeveloper dev = repository.getDeveloper(repository.getUser(user));
 
-        for (Ticket it : dev.getAssignedTickets())
+        List<Ticket> all = proj.getMilestones().stream().
+                flatMap(milestone -> milestone.getTickets().stream()).
+                collect(Collectors.toList());
+        for (Ticket it : all)
             if (it.getId() == ticket) {
                 it.setAccepted(dev);
                 repository.update();
@@ -564,7 +567,10 @@ public class FacadeImpl implements Facade {
         Project proj = repository.getProject(project);
         TicketDeveloper dev = repository.getDeveloper(repository.getUser(user));
 
-        for (Ticket it : dev.getAssignedTickets())
+        List<Ticket> all = proj.getMilestones().stream().
+                flatMap(milestone -> milestone.getTickets().stream()).
+                collect(Collectors.toList());
+        for (Ticket it : all)
             if (it.getId() == ticket) {
                 it.setInProgress(dev);
                 repository.update();
@@ -576,7 +582,10 @@ public class FacadeImpl implements Facade {
         Project proj = repository.getProject(project);
         TicketDeveloper dev = repository.getDeveloper(repository.getUser(user));
 
-        for (Ticket it : dev.getAssignedTickets())
+        List<Ticket> all = proj.getMilestones().stream().
+                flatMap(milestone -> milestone.getTickets().stream()).
+                collect(Collectors.toList());
+        for (Ticket it : all)
             if (it.getId() == ticket) {
                 it.setFinished(dev);
                 repository.update();

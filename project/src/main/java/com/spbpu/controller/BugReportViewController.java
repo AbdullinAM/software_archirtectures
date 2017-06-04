@@ -117,6 +117,9 @@ public class BugReportViewController {
             statusBox.getSelectionModel().selectFirst();
 
             statusBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldVal, newVal) -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                String message = "";
                 if (newVal.equals("OPENED")) {
                     TextInputDialog dialog = new TextInputDialog();
                     dialog.setTitle("Enter information");
@@ -124,51 +127,39 @@ public class BugReportViewController {
 
                     Optional<String> result = dialog.showAndWait();
                     if (!result.isPresent()) {
-                        statusBox.getSelectionModel().select(oldVal);
                         return;
                     }
                     try {
                         facade.reopenReport(user, project, id, result.get());
                         onClickUpdateButton();
                     } catch (Exception e) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(e.getMessage());
-                        alert.showAndWait();
-                        statusBox.getSelectionModel().select(oldVal);
+                        message = e.getMessage();
                     }
                 } else if (newVal.equals("CLOSED")) {
                     try {
                         facade.closeReport(user, project, id);
                     } catch (Exception e) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(e.getMessage());
-                        alert.showAndWait();
-                        statusBox.getSelectionModel().select(oldVal);
+                        message = e.getMessage();
                     }
                 } else if (newVal.equals("ACCEPTED")) {
                     try {
                         facade.acceptReport(user, project, id);
                     } catch (Exception e) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(e.getMessage());
-                        alert.showAndWait();
-                        statusBox.getSelectionModel().select(oldVal);
+                        message = e.getMessage();
                     }
                 } else if (newVal.equals("FIXED")) {
                     try {
                         facade.fixReport(user, project, id);
                     } catch (Exception e) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(e.getMessage());
-                        alert.showAndWait();
-                        statusBox.getSelectionModel().select(oldVal);
+                        message = e.getMessage();
                     }
                 }
-                onClickUpdateButton();
+                if (!message.isEmpty()) {
+                    alert.setHeaderText(message);
+                    alert.showAndWait();
+                } else {
+                    onClickUpdateButton();
+                }
             });
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

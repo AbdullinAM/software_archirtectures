@@ -141,6 +141,9 @@ public class TicketViewController {
         }
 
         statusBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldVal, newVal) -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            String message = "";
             if (newVal.equals("NEW")) {
                 TextInputDialog dialog = new TextInputDialog();
                 dialog.setTitle("Enter information");
@@ -148,61 +151,45 @@ public class TicketViewController {
 
                 Optional<String> result = dialog.showAndWait();
                 if (!result.isPresent()) {
-                    statusBox.getSelectionModel().select(oldVal);
                     return;
                 }
                 try {
                     facade.reopenTicket(user, project, id, result.get());
                     onClickUpdateButton();
                 } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(e.getMessage());
-                    alert.showAndWait();
-                    statusBox.getSelectionModel().select(oldVal);
+                    message = e.getMessage();
                 }
             } else if (newVal.equals("CLOSED")) {
                 try {
                     facade.closeTicket(user, project, id);
                 } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(e.getMessage());
-                    alert.showAndWait();
-                    statusBox.getSelectionModel().select(oldVal);
+                    message = e.getMessage();
                 }
             } else if (newVal.equals("ACCEPTED")) {
                 try {
                     facade.acceptTicket(user, project, id);
                 } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(e.getMessage());
-                    alert.showAndWait();
-                    statusBox.getSelectionModel().select(oldVal);
+                    message = e.getMessage();
                 }
             } else if (newVal.equals("IN_PROGRESS")) {
                 try {
                     facade.setTicketInProgress(user, project, id);
                 } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(e.getMessage());
-                    alert.showAndWait();
-                    statusBox.getSelectionModel().select(oldVal);
+                    message = e.getMessage();
                 }
             } else if (newVal.equals("FINISHED")) {
                 try {
                     facade.finishTicket(user, project, id);
                 } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(e.getMessage());
-                    alert.showAndWait();
-                    statusBox.getSelectionModel().select(oldVal);
+                    message = e.getMessage();
                 }
             }
-            onClickUpdateButton();
+            if (!message.isEmpty()) {
+                alert.setHeaderText(message);
+                alert.showAndWait();
+            } else {
+                onClickUpdateButton();
+            }
         });
     }
 

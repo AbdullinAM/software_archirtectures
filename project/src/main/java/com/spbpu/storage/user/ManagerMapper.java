@@ -6,6 +6,7 @@ package com.spbpu.storage.user;
 
 import com.spbpu.exceptions.EndBeforeStartException;
 import com.spbpu.exceptions.NoRightsException;
+import com.spbpu.exceptions.UserAlreadyHasRoleException;
 import com.spbpu.project.Project;
 import com.spbpu.storage.DataGateway;
 import com.spbpu.storage.project.ProjectMapper;

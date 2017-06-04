@@ -88,7 +88,7 @@ public class StorageRepository {
         }
     }
 
-    public Tester getTester(User user) throws EndBeforeStartException, DBConnectionException {
+    public Tester getTester(User user) throws EndBeforeStartException, DBConnectionException, UserAlreadyHasRoleException {
         try {
             return testerMapper.findByLogin(user.getLogin());
         } catch (SQLException e) {

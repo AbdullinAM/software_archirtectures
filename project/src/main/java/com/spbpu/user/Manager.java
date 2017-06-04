@@ -60,7 +60,7 @@ public class Manager extends User implements TicketManager {
     }
 
     public void setTeamLeader(Project project, User user)
-            throws DBConnectionException, EndBeforeStartException, NoRightsException {
+            throws DBConnectionException, EndBeforeStartException, NoRightsException, UserAlreadyHasRoleException {
         if (!projects.contains(project))
             throw new NoRightsException("User " + getLogin() + " cannot change project " + project.getName());
         TeamLeader tl = repository.getTeamLeader(user);
@@ -69,7 +69,7 @@ public class Manager extends User implements TicketManager {
     }
 
     public void addDeveloper(Project project, User user)
-            throws DBConnectionException, EndBeforeStartException, NoRightsException {
+            throws DBConnectionException, EndBeforeStartException, NoRightsException, UserAlreadyHasRoleException {
         if (!projects.contains(project))
             throw new NoRightsException("User " + getLogin() + " cannot change project " + project.getName());
         Developer dev = repository.getDeveloper(user);
@@ -78,7 +78,7 @@ public class Manager extends User implements TicketManager {
     }
 
     public void addTester(Project project, User user)
-            throws DBConnectionException, EndBeforeStartException, NoRightsException {
+            throws DBConnectionException, EndBeforeStartException, NoRightsException, UserAlreadyHasRoleException {
         if (!projects.contains(project))
             throw new NoRightsException("User " + getLogin() + " cannot change project " + project.getName());
         Tester tester = repository.getTester(user);

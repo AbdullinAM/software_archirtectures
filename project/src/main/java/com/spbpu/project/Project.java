@@ -4,6 +4,7 @@
 
 package com.spbpu.project;
 
+import com.spbpu.exceptions.UserAlreadyHasRoleException;
 import com.spbpu.user.*;
 
 import java.util.ArrayList;
@@ -61,15 +62,26 @@ public class Project {
     public void setId(int id_) { id = id_; }
     public int getId() { return id; }
 
-    public void setTeamLeader(TeamLeader tl) {
+    public boolean containsUser(User usr) {
+        if (manager.equals(usr)) return true;
+        else if (teamLeader != null && teamLeader.equals(usr)) return true;
+        else if (developers.contains(usr)) return true;
+        else if (testers.contains(usr)) return true;
+        return false;
+    }
+
+    public void setTeamLeader(TeamLeader tl) throws UserAlreadyHasRoleException {
+        if (containsUser(tl)) throw new UserAlreadyHasRoleException(tl.getLogin(), getName());
         teamLeader = tl;
     }
 
-    public void addDeveloper(Developer d) {
+    public void addDeveloper(Developer d) throws UserAlreadyHasRoleException {
+        if (containsUser(d)) throw new UserAlreadyHasRoleException(d.getLogin(), getName());
         developers.add(d);
     }
 
-    public void addTester(Tester t) {
+    public void addTester(Tester t) throws UserAlreadyHasRoleException {
+        if (containsUser(t)) throw new UserAlreadyHasRoleException(t.getLogin(), getName());
         testers.add(t);
     }
 
